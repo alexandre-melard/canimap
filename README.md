@@ -1,5 +1,7 @@
 # Canimap
 
+[![Join the chat at https://gitter.im/canimap/Lobby](https://badges.gitter.im/canimap/Lobby.svg)](https://gitter.im/canimap/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.3.1.
 
 ## Development server
