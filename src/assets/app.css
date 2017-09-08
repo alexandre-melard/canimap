@@ -1,0 +1,69 @@
+﻿html, body, app, .container {
+  width:100%;
+  height: 100%;
+  margin:0;
+  padding:0;
+}
+
+.canimap-menu {
+  position: absolute;
+  left: 50px;
+  top: 10px;
+  z-index: 1000;
+}
+
+canimap-location {
+  position: absolute;
+  right: 70px;
+  top: 10px;
+  z-index: 1000;
+}
+
+.canimap-menu button {
+  background-color: rgba(255,255,255,0.9);
+  cursor: pointer;
+}
+
+.help-block {
+    font-size: 12px;
+}
+
+.loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+}
+
+
+.leaflet-draw-toolbar > .leaflet-draw-draw-color {
+  background-image: url("../assets/colorwheel-30x30.png") !important;
+  background-size: 25px 25px;
+}
+
+
+.canimap-menu-mobile {
+  display: none;
+  position: absolute;
+  left: 50px;
+  top: 10px;
+  z-index: 9999;
+}
+
+.canimap-menu-mobile button {
+  background-color: rgba(255,255,255,0.9);
+  cursor: pointer;
+}
+
+@media (max-width : 1024px) {
+  .leaflet-control-container {
+    display: none;
+  }
+  .canimap-menu {
+    display: none;
+  }
+  .canimap-menu-mobile {
+    display: block;
+  }
+}

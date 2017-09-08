@@ -1,0 +1,14 @@
+﻿<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+  <div class="input-group">
+    <input placeholder="search for location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #search [formControl]="searchControl">
+    <span class="input-group-addon" id="btnGroupAddon"><i class="fa fa-search" aria-hidden="true"></i> </span>
+  </div>
+  &nbsp;
+  <button type="button" class="btn btn-default"
+          aria-label="Coordinates"
+          placement="bottom" ngbTooltip="Cliquez sur la carte pour obtenir la position GPS"
+          i18n="GPG|Add GPS marker"
+          data-toggle="modal" data-target="#gpsMarker">
+    <i class="fa fa-map-marker" aria-hidden="true"></i>
+  </button>
+</div>
