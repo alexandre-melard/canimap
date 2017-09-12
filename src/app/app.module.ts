@@ -20,7 +20,7 @@ import { AlertComponent } from './_directives/index';
 import { SliderComponent } from './_directives/index';
 import { ModalComponent } from './_directives/index';
 import { AuthGuard } from './_guards/index';
-import { AlertService, AuthenticationService, UserService, MenuEventService, CanimapService } from './_services/index';
+import { AlertService, AuthenticationService, UserService, MenuEventService, CanimapService, HelperEventService } from './_services/index';
 import { HomeComponent } from './home/index';
 import { LocationComponent } from './location/index';
 import { MenuComponent } from './menu/index';
@@ -64,6 +64,7 @@ import { RegisterComponent } from './register/index';
     AuthenticationService,
     UserService,
     MenuEventService,
+    HelperEventService,
     CanimapService,
 
     // providers used to create fake backend

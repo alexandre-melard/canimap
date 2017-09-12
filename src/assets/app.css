@@ -5,6 +5,13 @@
   padding:0;
 }
 
+form {
+  width:100%;
+}
+
+.form-validation {
+  float: right;
+}
 .canimap-menu {
   position: absolute;
   left: 50px;
@@ -12,7 +19,7 @@
   z-index: 1000;
 }
 
-canimap-location {
+app-canimap-location {
   position: absolute;
   right: 70px;
   top: 10px;

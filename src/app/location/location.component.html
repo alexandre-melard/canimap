@@ -4,11 +4,12 @@
     <span class="input-group-addon" id="btnGroupAddon"><i class="fa fa-search" aria-hidden="true"></i> </span>
   </div>
   &nbsp;
-  <button type="button" class="btn btn-default"
+  <button type="button" class="btn btn-primary"
           aria-label="Coordinates"
-          placement="bottom" ngbTooltip="Cliquez sur la carte pour obtenir la position GPS"
+          placement="bottom" ngbTooltip="Position GPS"
           i18n="GPG|Add GPS marker"
-          data-toggle="modal" data-target="#gpsMarker">
+          data-toggle="modal" data-target="#gpsMarker"
+          (click)="gpsMarker($event)">
     <i class="fa fa-map-marker" aria-hidden="true"></i>
   </button>
 </div>

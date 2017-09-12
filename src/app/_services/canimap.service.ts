@@ -1,87 +1,98 @@
 import { Injectable, OnInit, OnDestroy } from '@angular/core';
 
 import { MenuEventService } from '../_services/menuEvent.service';
-import { Subscription }   from 'rxjs/Subscription';
-import { Map, Layer, Path, Icon, LayerEvent, LeafletEvent, LocationEvent } from '@types/leaflet';
-import * as formatcoords from "formatcoords";
+import { Subscription } from 'rxjs/Subscription';
+import { Map, Layer, Path, Icon, LayerEvent, LeafletEvent, LocationEvent } from 'leaflet';
+import * as formatcoords from 'formatcoords';
 
 import * as $ from 'jquery';
 import * as L from 'leaflet';
-import { FontAwesome } from "leaflet-fa-markers";
+import { FontAwesome } from 'leaflet-fa-markers';
 
 @Injectable()
 export class CanimapService implements OnDestroy {
 
-  private _map:Map;
+  private _map: Map;
   private subscriptions = new Array<Subscription>();
 
-  constructor(private menuEventService:MenuEventService) {
+  constructor(private menuEventService: MenuEventService) {
   }
 
   get map() {
     return this._map;
   }
 
-  set map(map:Map) {
+  set map(map: Map) {
     this._map = map;
   }
 
   showError(error) {
     switch (error.code) {
       case error.PERMISSION_DENIED:
-        alert("User denied the request for Geolocation.");
+        alert('User denied the request for Geolocation.');
         break;
       case error.POSITION_UNAVAILABLE:
-        alert("Location information is unavailable.");
+        alert('Location information is unavailable.');
         break;
       case error.TIMEOUT:
-        alert("The request to get user location timed out.");
+        alert('The request to get user location timed out.');
         break;
       case error.UNKNOWN_ERROR:
-        alert("An unknown error occurred.");
+        alert('An unknown error occurred.');
         break;
     }
   }
 
   subscribe() {
-    let map = this.map;
-    this.subscriptions.push(this.menuEventService.onTrack$.subscribe(
+    const map = this.map;
+    this.subscriptions.push(this.menuEventService.getObservable('onTrack').subscribe(
         tracking => {
         if (tracking) {
           this.map.locate({setView: true, maxZoom: 16, watch: true});
-          console.log("tracking enabled");
+          console.log('tracking enabled');
         } else {
           this.map.stopLocate();
-          console.log("tracking disabled");
+          console.log('tracking disabled');
         }
       },
         e => console.log('onError: %s', e),
       () => console.log('onCompleted')
     ));
-    this.subscriptions.push(this.menuEventService.recordTrack$.subscribe(
+    this.subscriptions.push(this.menuEventService.getObservable('recordTrack').subscribe(
         tracking => {
         if (tracking) {
-          this.map.on("locationfound", (e:LocationEvent) => {
-            console.log("lat: " + e.latlng.lat + " lng: " + e.latlng.lng + " alt: " + e.altitude + " speed: " + e.speed + " time: " + e.timestamp);
+          this.map.on('locationfound', (e: LocationEvent) => {
+            console.log(
+              'lat: ' + e.latlng.lat +
+              ' lng: ' + e.latlng.lng +
+              ' alt: ' + e.altitude +
+              ' speed: ' + e.speed +
+              ' time: ' + e.timestamp
+            );
           });
-          console.log("recording started");
+          console.log('recording started');
         } else {
-          this.map.off("locationfound");
-          console.log("recording stopped");
+          this.map.off('locationfound');
+          console.log('recording stopped');
         }
       },
         e => console.log('onError: %s', e),
       () => console.log('onCompleted')
     ));
-    this.subscriptions.push(this.menuEventService.onMapMove$.subscribe(
+    this.subscriptions.push(this.menuEventService.getObservable('onMapMove').subscribe(
         location => {
         this.map.panTo({lat: location.lat, lng: location.lng});
-        console.log("pan to lat: " + location.lat + " lng: " + location.lng);
+        console.log('pan to lat: ' + location.lat + ' lng: ' + location.lng);
       },
         e => this.showError(e),
       () => console.log('onCompleted')
     ));
-    this.subscriptions.push(this.menuEventService.gpsMarker$.subscribe(
+    this.subscriptions.push(this.menuEventService.getObservable('gpsMarkerDismiss').subscribe(
+      () => {
+        this.map.off('click');
+      }
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('gpsMarker').subscribe(
       () => {
         // var bounds = map.getBounds().pad(0.25); // slightly out of screen
         // let tooltip = new L.Tooltip({
@@ -111,11 +122,11 @@ export class CanimapService implements OnDestroy {
         //
         // marker.bindTooltip(tooltip);
 
-        console.log("put marker on map");
-        this.map.on("click", (e:any) => {
-          let coords = formatcoords(e.latlng.lat, e.latlng.lng);
-          let value = coords.format('DD MM ss X', {latLonSeparator: ', ', decimalPlaces: 0});
-          let popup = new L.Popup();
+        console.log('put marker on map');
+        this.map.on('click', (e: any) => {
+          const coords = formatcoords(e.latlng.lat, e.latlng.lng);
+          const value = coords.format('DD MM ss X', {latLonSeparator: ', ', decimalPlaces: 0});
+          const popup = new L.Popup();
           popup
             .setLatLng(e.latlng)
             .setContent(value)
@@ -125,7 +136,7 @@ export class CanimapService implements OnDestroy {
         e => this.showError(e),
       () => console.log('onCompleted')
     ));
-    this.map.on("movestart", (e:LeafletEvent) => {
+    this.map.on('movestart', (e: LeafletEvent) => {
       this.map.stopLocate();
     });
 
@@ -133,8 +144,8 @@ export class CanimapService implements OnDestroy {
 
   ngOnDestroy() {
     // prevent memory leak when component destroyed
-    console.log("unsubscribing from canimap service");
-    for (let subscription of this.subscriptions) {
+    console.log('unsubscribing from canimap service');
+    for (const subscription of this.subscriptions) {
       subscription.unsubscribe();
     }
   }

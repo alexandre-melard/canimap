@@ -1,34 +1,42 @@
-﻿import {Component, Input, OnInit} from '@angular/core';
+﻿import { Component, Input } from '@angular/core';
 
-import {MenuEventService} from '../_services/index';
+import {HelperEventService, MenuEventService} from '../_services/index';
 
 @Component({
   moduleId: module.id.toString(),
-  selector: 'modal',
+  selector: 'app-modal',
   templateUrl: 'modal.component.html'
 })
 
 export class ModalComponent {
-  @Input() ok?: boolean = false;
-  @Input() cancel?: boolean = false;
-  @Input() confirm?: boolean = false;
+  @Input() ok? = false;
+  @Input() cancel? = false;
+  @Input() confirm? = false;
 
   @Input() target: string;
   @Input() title: string;
   @Input() body: string;
-  constructor(private menuEventService: MenuEventService) {
-    // this.id = this.target;
+
+  constructor(
+    private helperEventService: HelperEventService,
+    private menuEventService: MenuEventService
+  ) {}
+
+  get dismissHelp() {
+    return false;
+  }
+
+  set dismissHelp(dh: boolean) {
+    this.helperEventService.dismissHelp(this.target);
   }
 
   sendNotification(status: boolean) {
-    this.menuEventService.modalNotification({source: this.target, status: status});
   }
 
   onDismiss() {
-      this.sendNotification(true);
   }
 
   onConfirm() {
-    this.sendNotification(false);
-  }
+    this.menuEventService.proceed();
+}
 }
