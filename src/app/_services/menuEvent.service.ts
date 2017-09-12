@@ -26,8 +26,12 @@ export class MenuEventService {
     this.onEventSource.get(this.current.key).next(this.current.value);
   }
 
-  callEvent(key: string, value: any) {
+  prepareEvent(key: string, value: any) {
     this.current.key = key;
     this.current.value = value;
+  }
+
+  callEvent(key: string, value: any) {
+    this.onEventSource.get(key).next(value);
   }
 }

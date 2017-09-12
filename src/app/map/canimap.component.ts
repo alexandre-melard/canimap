@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MenuEventService } from '../_services/menuEvent.service';
 import { CanimapService } from '../_services/canimap.service';
-import { Subscription }   from 'rxjs/Subscription';
+import { Subscription } from 'rxjs/Subscription';
 
 import * as L from 'leaflet';
 import * as $ from 'jquery';

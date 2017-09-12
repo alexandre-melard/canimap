@@ -60,7 +60,7 @@ export class LocationComponent implements OnInit {
 
   gpsMarker(e: MouseEvent) {
     if (this.gpsMarkerToggle) {
-      this.menuEventService.callEvent('gpsMarker', null);
+      this.menuEventService.prepareEvent('gpsMarker', null);
       const dismissHelp: boolean = this.helperEventService.callHelper('gpsMarker');
       if (dismissHelp) {
         e.stopPropagation();
@@ -69,7 +69,6 @@ export class LocationComponent implements OnInit {
     } else {
       this.menuEventService.callEvent('gpsMarkerDismiss', null);
       e.stopPropagation();
-      this.menuEventService.proceed();
   }
     this.gpsMarkerToggle = !this.gpsMarkerToggle;
   }

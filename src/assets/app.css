@@ -49,6 +49,9 @@ app-canimap-location {
   background-size: 25px 25px;
 }
 
+.leaflet-container.crosshair-cursor-enabled {
+  cursor: crosshair;
+}
 
 .canimap-menu-mobile {
   display: none;

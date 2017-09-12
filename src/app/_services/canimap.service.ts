@@ -7,7 +7,8 @@ import * as formatcoords from 'formatcoords';
 
 import * as $ from 'jquery';
 import * as L from 'leaflet';
-import { FontAwesome } from 'leaflet-fa-markers';
+
+import { FontAwesomeOptions, FontAwesomeIcon } from 'ngx-leaflet-fa-markers/index';
 
 @Injectable()
 export class CanimapService implements OnDestroy {
@@ -46,20 +47,20 @@ export class CanimapService implements OnDestroy {
   subscribe() {
     const map = this.map;
     this.subscriptions.push(this.menuEventService.getObservable('onTrack').subscribe(
-        tracking => {
+      tracking => {
         if (tracking) {
-          this.map.locate({setView: true, maxZoom: 16, watch: true});
+          this.map.locate({ setView: true, maxZoom: 16, watch: true });
           console.log('tracking enabled');
         } else {
           this.map.stopLocate();
           console.log('tracking disabled');
         }
       },
-        e => console.log('onError: %s', e),
+      e => console.log('onError: %s', e),
       () => console.log('onCompleted')
     ));
     this.subscriptions.push(this.menuEventService.getObservable('recordTrack').subscribe(
-        tracking => {
+      tracking => {
         if (tracking) {
           this.map.on('locationfound', (e: LocationEvent) => {
             console.log(
@@ -76,56 +77,56 @@ export class CanimapService implements OnDestroy {
           console.log('recording stopped');
         }
       },
-        e => console.log('onError: %s', e),
+      e => console.log('onError: %s', e),
       () => console.log('onCompleted')
     ));
     this.subscriptions.push(this.menuEventService.getObservable('onMapMove').subscribe(
-        location => {
-        this.map.panTo({lat: location.lat, lng: location.lng});
+      location => {
+        this.map.panTo({ lat: location.lat, lng: location.lng });
         console.log('pan to lat: ' + location.lat + ' lng: ' + location.lng);
       },
-        e => this.showError(e),
+      e => this.showError(e),
       () => console.log('onCompleted')
     ));
     this.subscriptions.push(this.menuEventService.getObservable('gpsMarkerDismiss').subscribe(
       () => {
+        L.DomUtil.removeClass(map.getContainer(), 'crosshair-cursor-enabled');
         this.map.off('click');
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('gpsMarker').subscribe(
       () => {
-        // var bounds = map.getBounds().pad(0.25); // slightly out of screen
-        // let tooltip = new L.Tooltip({
-        //   direction: 'right',
-        //   permanent: false,
-        //   sticky: true,
-        //   opacity: 1
-        // });
-        // tooltip.setLatLng(new L.LatLng(bounds.getCenter().lat, bounds.getCenter().lng))
-        // tooltip.setContent('Start drawing to see tooltip change');
-        // let lat = map.getBounds().getCenter().lat;
-        // let lng = map.getBounds().getCenter().lng;
-        // let icon = new L.Icon({
-        //   iconUrl: 'assets/marker-icon.png',
-        //   shadowUrl: 'assets/marker-shadow.png'
-        // });
-        //
-        // // let icon = new L.Icon.FontAwesome({
-        // //   iconClasses: 'fa fa-info-circle', // you _could_ add other icon classes, not tested.
-        // //   markerColor: '#00a9ce',
-        // //   iconColor: '#FFF'
-        // // });
-        // let marker = new L.Marker([ lat, lng], {
-        //   icon: icon,
-        //   draggable: true});
-        // marker.addTo(map);
-        //
+      //   const bounds = map.getBounds().pad(0.25); // slightly out of screen
+      //   const tooltip = new L.Tooltip({
+      //     direction: 'right',
+      //     permanent: false,
+      //     sticky: true,
+      //     opacity: 1
+      //   });
+      //   tooltip.setLatLng(new L.LatLng(bounds.getCenter().lat, bounds.getCenter().lng))
+      //   tooltip.setContent('Start drawing to see tooltip change');
+      //   const lat = map.getBounds().getCenter().lat;
+      //   const lng = map.getBounds().getCenter().lng;
+      //   const iconOption: FontAwesomeOptions = {
+      //     iconClasses: 'fa fa-info-circle', // you _could_ add other icon classes, not tested.
+      //     // iconColor: '#F00',
+      //     iconUrl: '../assets/marker-icon.png',
+      //     shadowUrl: '../assets/marker-shadow.png'
+      // };
+
+      //   const icon = new FontAwesomeIcon(iconOption);
+      //   const marker = new L.Marker([ lat, lng], {
+      //     icon: icon,
+      //     draggable: true});
+      //   marker.addTo(map);
+
         // marker.bindTooltip(tooltip);
+        L.DomUtil.addClass(map.getContainer(), 'crosshair-cursor-enabled');
 
         console.log('put marker on map');
         this.map.on('click', (e: any) => {
           const coords = formatcoords(e.latlng.lat, e.latlng.lng);
-          const value = coords.format('DD MM ss X', {latLonSeparator: ', ', decimalPlaces: 0});
+          const value = coords.format('DD MM ss X', { latLonSeparator: ', ', decimalPlaces: 0 });
           const popup = new L.Popup();
           popup
             .setLatLng(e.latlng)
@@ -133,7 +134,7 @@ export class CanimapService implements OnDestroy {
             .openOn(this.map);
         });
       },
-        e => this.showError(e),
+      e => this.showError(e),
       () => console.log('onCompleted')
     ));
     this.map.on('movestart', (e: LeafletEvent) => {
