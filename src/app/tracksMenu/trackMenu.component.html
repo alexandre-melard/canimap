@@ -1,0 +1,18 @@
+﻿<div class="btn-group" role="toolbar" aria-label="Toolbar with button groups">
+  <button type="button" class="btn btn-success"
+          aria-label="Victim"
+          placement="bottom" ngbTooltip="Piste de la victime"
+          i18n="Victim|draw the victim path"
+          data-toggle="modal" data-target="#drawVictimPath"
+          (click)="drawVictimPath($event)">
+    <i class="fa fa-arrow-circle-up" aria-hidden="true"></i>
+  </button>
+  <button type="button" class="btn btn-warning"
+  aria-label="Tracker"
+  placement="bottom" ngbTooltip="Piste de l'&eacute;quipe"
+  i18n="Tracker|draw the tracker path"
+  data-toggle="modal" data-target="#drawTrackerPath"
+  (click)="drawTrackerPath($event)">
+    <i class="fa fa-paw" aria-hidden="true"></i>
+  </button>
+</div>

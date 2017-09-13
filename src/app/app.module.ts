@@ -24,6 +24,7 @@ import { AlertService, AuthenticationService, UserService, MenuEventService, Can
 import { HomeComponent } from './home/index';
 import { LocationComponent } from './location/index';
 import { MenuComponent } from './menu/index';
+import { TrackMenuComponent } from './tracksMenu';
 import { MenuMobileComponent } from './mobile';
 import { LoginComponent } from './login/index';
 import { CanimapComponent } from './map/index';
@@ -53,6 +54,7 @@ import { RegisterComponent } from './register/index';
     HomeComponent,
     LocationComponent,
     MenuComponent,
+    TrackMenuComponent,
     MenuMobileComponent,
     LoginComponent,
     CanimapComponent,
