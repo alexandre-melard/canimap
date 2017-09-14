@@ -5,8 +5,11 @@ import { Subscription } from 'rxjs/Subscription';
 
 import * as L from 'leaflet';
 import * as $ from 'jquery';
+import 'leaflet-polylinedecorator';
+import '../draw/canimapDraw.js';
 
-import { Map, Layer, Path, LayerEvent, LeafletEvent, LocationEvent } from '@types/leaflet';
+
+import { Map, Layer, Path, LayerEvent, LeafletEvent, LocationEvent } from 'leaflet';
 
 @Component({
   selector: 'canimap',
@@ -14,12 +17,13 @@ import { Map, Layer, Path, LayerEvent, LeafletEvent, LocationEvent } from '@type
   styleUrls: ['./canimap.component.css']
 })
 export class CanimapComponent implements OnInit {
-  map:Map;
+  map: Map;
   title = 'app';
-  color = null;
+  color = 'red';
+  savedColor: string;
   opacity = 0.5;
   currentLocation: any = null;
-  subscriptions = new Array<Subscription>();
+  private subscriptions = new Array<Subscription>();
 
   googleHybride = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
     maxZoom: 20,
@@ -47,8 +51,17 @@ export class CanimapComponent implements OnInit {
   featureGroup = new L.FeatureGroup();
   drawOptions = {
     position: 'topleft',
-    featureGroup: this.featureGroup
-  };
+//    featureGroup: this.featureGroup,
+    draw: {
+      marker: {
+      },
+      polyline: true,
+      circle: {
+        shapeOptions: {
+          color: '#aaaaaa'
+        }
+      }
+    }  };
   layersControl = {
     overlays: {
       'Google Satellite </div></label><label><div id="google_slider_container">': this.googleSatellite,
@@ -88,12 +101,34 @@ export class CanimapComponent implements OnInit {
     this.canimapService.map = map;
     this.canimapService.subscribe();
 
-    this.map.on(L.Draw.Event.CREATED, (e:LayerEvent) => {
+    this.subscriptions.push(this.menuEventService.getObservable('drawVictimPath').subscribe(
+      () => {
+        this.savedColor = this.color;
+        this.color = 'green';
+        $('.leaflet-draw-draw-polyline')[0].click();
+      },
+      e => console.log(e),
+      () => console.log('onCompleted')
+    ));
+
+
+    this.map.on(L.Draw.Event.CREATED, (e:L.DrawEvents.Created) => {
       console.log(e);
       try {
         let path:Path = <Path>e.layer;
         path.setStyle({color: this.color});
-        this.map.addLayer(<Layer>path);
+        if (e.layerType === 'polyline') {
+          const polylineDecoratorOptions = {
+            patterns: [
+                {offset: 20, repeat: 50 , symbol: L.Symbol.arrowHead({pixelSize: 10, polygon: true, pathOptions: {stroke: true, color: this.color}})}
+            ]
+          };          
+          const decorator = L.polylineDecorator(<L.Polyline>e.layer, polylineDecoratorOptions);
+          this.map.addLayer(<Layer>decorator);       
+          this.color = this.savedColor;   
+        } else {
+          this.map.addLayer(<Layer>path);          
+        }
       } catch (e) {
         console.log(e);
       }

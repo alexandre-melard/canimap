@@ -46,6 +46,7 @@ export class CanimapService implements OnDestroy {
 
   subscribe() {
     const map = this.map;
+
     this.subscriptions.push(this.menuEventService.getObservable('onTrack').subscribe(
       tracking => {
         if (tracking) {
