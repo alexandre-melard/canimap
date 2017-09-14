@@ -33,4 +33,13 @@ export class TrackMenuComponent implements OnInit {
         this.menuEventService.proceed();
       }
   }
+
+  drawK9Path(e: MouseEvent) {
+    this.menuEventService.prepareEvent('drawK9Path', null);
+    const dismissHelp: boolean = this.helperEventService.callHelper('drawK9Path');
+    if (dismissHelp) {
+      e.stopPropagation();
+      this.menuEventService.proceed();
+    }
+}
 }

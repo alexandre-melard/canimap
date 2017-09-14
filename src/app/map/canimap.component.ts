@@ -104,7 +104,17 @@ export class CanimapComponent implements OnInit {
     this.subscriptions.push(this.menuEventService.getObservable('drawVictimPath').subscribe(
       () => {
         this.savedColor = this.color;
-        this.color = 'green';
+        this.color = 'blue';
+        $('.leaflet-draw-draw-polyline')[0].click();
+      },
+      e => console.log(e),
+      () => console.log('onCompleted')
+    ));
+
+    this.subscriptions.push(this.menuEventService.getObservable('drawK9Path').subscribe(
+      () => {
+        this.savedColor = this.color;
+        this.color = 'orange';
         $('.leaflet-draw-draw-polyline')[0].click();
       },
       e => console.log(e),
