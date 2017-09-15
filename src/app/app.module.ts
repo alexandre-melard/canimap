@@ -1,6 +1,6 @@
-﻿import { NgModule }      from '@angular/core';
+﻿import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule, ReactiveFormsModule }    from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { LeafletDrawModule } from '@asymmetrik/ngx-leaflet-draw';
@@ -13,17 +13,19 @@ import { fakeBackendProvider } from './_helpers/index';
 import { MockBackend, MockConnection } from '@angular/http/testing';
 import { BaseRequestOptions } from '@angular/http';
 
-import { AppComponent }  from './app.component';
-import { routing }        from './app.routing';
+import { AppComponent } from './app.component';
+import { routing } from './app.routing';
 
 import { AlertComponent } from './_directives/index';
 import { SliderComponent } from './_directives/index';
 import { ModalComponent } from './_directives/index';
 import { AuthGuard } from './_guards/index';
-import { AlertService, AuthenticationService, UserService, MenuEventService, CanimapService, HelperEventService } from './_services/index';
+import { AlertService, AuthenticationService, UserService, MenuEventService,
+  CanimapService, HelperEventService, FileService } from './_services/index';
 import { HomeComponent } from './home/index';
 import { LocationComponent } from './location/index';
 import { MenuComponent } from './menu/index';
+import { FileMenuComponent } from './FileMenu/index';
 import { TrackMenuComponent } from './tracksMenu';
 import { MenuMobileComponent } from './mobile';
 import { LoginComponent } from './login/index';
@@ -41,8 +43,8 @@ import { RegisterComponent } from './register/index';
     ColorPickerModule,
     ReactiveFormsModule,
     AgmCoreModule.forRoot({
-      apiKey: "AIzaSyBb1BipElNZJQPhdkSUdX5DxZpPnQV_D3k",
-      libraries: ["places"]
+      apiKey: 'AIzaSyBb1BipElNZJQPhdkSUdX5DxZpPnQV_D3k',
+      libraries: ['places']
     }),
     routing
   ],
@@ -54,6 +56,7 @@ import { RegisterComponent } from './register/index';
     HomeComponent,
     LocationComponent,
     MenuComponent,
+    FileMenuComponent,
     TrackMenuComponent,
     MenuMobileComponent,
     LoginComponent,
@@ -68,6 +71,7 @@ import { RegisterComponent } from './register/index';
     MenuEventService,
     HelperEventService,
     CanimapService,
+    FileService,
 
     // providers used to create fake backend
     fakeBackendProvider,

@@ -13,6 +13,7 @@ import { FontAwesomeOptions, FontAwesomeIcon } from 'ngx-leaflet-fa-markers/inde
 @Injectable()
 export class CanimapService implements OnDestroy {
 
+  geoJSON: any[];
   private _map: Map;
   private subscriptions = new Array<Subscription>();
 

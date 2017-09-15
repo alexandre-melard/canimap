@@ -14,16 +14,20 @@ export class MenuEventService {
   onEventSource: Map<string, Subject<any>> = new Map();
 
   getObservable(key: string) {
+    return this.getEvent(key).asObservable();
+  }
+
+  proceed() {
+    this.onEventSource.get(this.current.key).next(this.current.value);
+  }
+
+  private getEvent(key: string): Subject<any> {
     let source = this.onEventSource.get(key);
     if (source === undefined) {
       source = new Subject<any>();
       this.onEventSource.set(key, source);
     }
-    return source.asObservable();
-  }
-
-  proceed() {
-    this.onEventSource.get(this.current.key).next(this.current.value);
+    return source;
   }
 
   prepareEvent(key: string, value: any) {
@@ -32,6 +36,6 @@ export class MenuEventService {
   }
 
   callEvent(key: string, value: any) {
-    this.onEventSource.get(key).next(value);
+    this.getEvent(key).next(value);
   }
 }

@@ -1,0 +1,12 @@
+﻿<div class="btn-group" role="toolbar" aria-label="Toolbar with button groups">
+  <button type="button" class="btn btn-default" aria-label="File open" placement="bottom" ngbTooltip="Ouvrir une carte" i18n="Open File|Open a saved file"
+    data-toggle="modal" data-target="#fileOpen" (click)="fileOpen($event)">
+  <i class="fa fa-folder-open" aria-hidden="true"></i>
+  </button>
+  <button type="button" class="btn btn-default" aria-label="File save" placement="bottom" ngbTooltip="Enregistrer une carte"
+    i18n="Save|Save the map to file" data-toggle="modal" data-target="#fileSave" (click)="fileSave($event)">
+    <a href='#' id='exportFile'>
+      <i class="fa fa-save" aria-hidden="true"></i>
+    </a>
+  </button>
+</div>

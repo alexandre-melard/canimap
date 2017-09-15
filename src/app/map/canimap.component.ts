@@ -1,18 +1,17 @@
 ﻿import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MenuEventService } from '../_services/menuEvent.service';
-import { CanimapService } from '../_services/canimap.service';
+import { MenuEventService, CanimapService, FileService } from '../_services/index';
 import { Subscription } from 'rxjs/Subscription';
 
- import * as L from 'leaflet';
+import * as L from 'leaflet';
 import * as $ from 'jquery';
 import 'leaflet-polylinedecorator';
-import * as N from 'leaflet-illustrate';
+// import * as N from 'leaflet-illustrate';
 
-import { Map, Layer, Path, LayerEvent, LeafletEvent, LocationEvent } from 'leaflet';
+import { Map, Polyline, Polygon, Layer, FeatureGroup, Path, LayerEvent, LeafletEvent, LocationEvent } from 'leaflet';
 import { FontAwesomeOptions, FontAwesomeIcon } from 'ngx-leaflet-fa-markers/index';
 
 @Component({
-  selector: 'canimap',
+  selector: 'app-canimap',
   templateUrl: './canimap.component.html',
   styleUrls: ['./canimap.component.css']
 })
@@ -23,6 +22,7 @@ export class CanimapComponent implements OnInit {
   savedColor: string;
   opacity = 0.5;
   currentLocation: any = null;
+  public geoJson: any[] = new Array();
   private subscriptions = new Array<Subscription>();
 
   googleHybride = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
@@ -35,9 +35,9 @@ export class CanimapComponent implements OnInit {
     subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
     opacity: 1
   });
-  ignMap = L.tileLayer("https://wxs.ign.fr/" +
-    "6i88pkdxubzayoady4upbkjg" + "/geoportail/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=" +
-    "GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR" + "&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg",
+  ignMap = L.tileLayer('https://wxs.ign.fr/' +
+    '6i88pkdxubzayoady4upbkjg' + '/geoportail/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=' +
+    'GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR' + '&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg',
     { opacity: 0.5 });
 
   options = {
@@ -59,7 +59,7 @@ export class CanimapComponent implements OnInit {
 
   drawOptions = {
     position: 'topleft',
-    //    featureGroup: this.featureGroup,
+    featureGroup: this.featureGroup,
     draw: {
       marker: {
         icon: this.icon,
@@ -83,26 +83,27 @@ export class CanimapComponent implements OnInit {
 
   constructor(
     private menuEventService: MenuEventService,
-    private canimapService: CanimapService) {
+    private canimapService: CanimapService,
+    private fileService: FileService) {
   }
 
   ngOnInit() {
   }
 
   onValueChanged(event: any) {
-    console.log("received opacity change for:" + event.target + " new value: " + event.value);
+    console.log('received opacity change for:' + event.target + ' new value: ' + event.value);
     switch (event.target) {
-      case "ign":
+      case 'ign':
         this.ignMap.setOpacity(event.value);
         break;
-      case "google":
+      case 'google':
         this.googleSatellite.setOpacity(event.value);
         break;
-      case "hybride":
+      case 'hybride':
         this.googleHybride.setOpacity(event.value);
         break;
       default:
-        console.log("no layer found: " + event.target);
+        console.log('no layer found: ' + event.target);
         break;
     }
   }
@@ -111,8 +112,11 @@ export class CanimapComponent implements OnInit {
     this.map = map;
     this.canimapService.map = map;
     this.canimapService.subscribe();
-    const textbox = N.Illustrate.textbox(L.latLng(41, -87), {}).addTo(map);
-    textbox.addTo(map);
+    this.fileService.subscribe();
+    this.canimapService.geoJSON = this.geoJson;
+
+    // const textbox = N.Illustrate.textbox(L.latLng(41, -87), {}).addTo(map);
+    // textbox.addTo(map);
 
     this.subscriptions.push(this.menuEventService.getObservable('drawVictimPath').subscribe(
       () => {
@@ -134,33 +138,40 @@ export class CanimapComponent implements OnInit {
       () => console.log('onCompleted')
     ));
 
-
     this.map.on(L.Draw.Event.CREATED, (e: L.DrawEvents.Created) => {
-      console.log(e);
       try {
-        let path: Path = <Path>e.layer;
+        const layer: Layer = e.layer;
         if (e.layerType === 'polyline') {
-          path.setStyle({ color: this.color });
-            const polylineDecoratorOptions = {
+          const polyline: Polyline = <Polyline>layer;
+          let json: any = polyline.toGeoJSON();
+          json['properties'] = {color: this.color};
+          this.geoJson.push(json);
+          polyline.setStyle({ color: this.color });
+          const polylineDecoratorOptions = {
             patterns: [
-              { offset: 20, repeat: 50, symbol: L.Symbol.arrowHead({ pixelSize: 10, polygon: true, pathOptions: { stroke: true, color: this.color } }) }
+              { offset: 20, repeat: 50,
+                symbol: L.Symbol.arrowHead({ pixelSize: 10, polygon: true, pathOptions: { stroke: true, color: this.color } }) }
             ]
           };
-          const decorator = L.polylineDecorator(<L.Polyline>e.layer, polylineDecoratorOptions);
-          
-          this.map.addLayer(<Layer>decorator);
+          const featureGroup = <FeatureGroup>L.polylineDecorator(polyline, polylineDecoratorOptions);
+          this.map.addLayer(featureGroup);
+          json = featureGroup.toGeoJSON();
+          json['properties'] = {color: this.color};
+          this.geoJson.push(json);
           this.color = this.savedColor;
-        } else {
-          this.map.addLayer(<Layer>path);
         }
-      } catch (e) {
+        this.map.addLayer(layer);
+    } catch (e) {
         console.log(e);
       }
     });
 
     setTimeout(function () {
-      $(".leaflet-draw-toolbar").first().prepend('<a class="leaflet-draw-draw-color" title="Change color"><span class="sr-only">Change color</span></a>');
-      $(".leaflet-draw-draw-color").append($(".colorpicker"))
+      $('.leaflet-draw-toolbar')
+      .first()
+      .prepend('<a class="leaflet-draw-draw-color" title="Change color"><span class="sr-only">Change color</span></a>');
+      $('.leaflet-draw-draw-color')
+      .append($('.colorpicker'));
     }, 500);
   }
 }
