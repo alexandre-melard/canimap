@@ -1,4 +1,4 @@
-﻿import { ElementRef, NgZone, ViewChild , Component, OnInit } from '@angular/core';
+﻿import { ElementRef, NgZone, ViewChild, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MapsAPILoader } from '@agm/core';
@@ -20,18 +20,18 @@ export class TrackMenuComponent implements OnInit {
     private menuEventService: MenuEventService,
     private helperEventService: HelperEventService,
     private mapsAPILoader: MapsAPILoader,
-    private ngZone: NgZone) {}
+    private ngZone: NgZone) { }
 
   ngOnInit() {
   }
 
   drawVictimPath(e: MouseEvent) {
-      this.menuEventService.prepareEvent('drawVictimPath', null);
-      const dismissHelp: boolean = this.helperEventService.callHelper('drawVictimPath');
-      if (dismissHelp) {
-        e.stopPropagation();
-        this.menuEventService.proceed();
-      }
+    this.menuEventService.prepareEvent('drawVictimPath', null);
+    const dismissHelp: boolean = this.helperEventService.callHelper('drawVictimPath');
+    if (dismissHelp) {
+      e.stopPropagation();
+      this.menuEventService.proceed();
+    }
   }
 
   drawK9Path(e: MouseEvent) {
@@ -41,5 +41,14 @@ export class TrackMenuComponent implements OnInit {
       e.stopPropagation();
       this.menuEventService.proceed();
     }
-}
+  }
+
+  parkingMarker(e: MouseEvent) {
+    this.menuEventService.prepareEvent('parkingMarker', null);
+    const dismissHelp: boolean = this.helperEventService.callHelper('parkingMarker');
+    if (dismissHelp) {
+      e.stopPropagation();
+      this.menuEventService.proceed();
+    }
+  }
 }

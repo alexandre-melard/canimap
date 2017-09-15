@@ -67,6 +67,11 @@ app-canimap-location {
   cursor: pointer;
 }
 
+.feature-icon.fa.fa-car {
+  font-size: 15px;
+  left: 7px;
+}
+
 @media (max-width : 1024px) {
   .leaflet-control-container {
     display: none;

@@ -95,31 +95,54 @@ export class CanimapService implements OnDestroy {
         this.map.off('click');
       }
     ));
-    this.subscriptions.push(this.menuEventService.getObservable('gpsMarker').subscribe(
+    this.subscriptions.push(this.menuEventService.getObservable('parkingMarker').subscribe(
       () => {
-      //   const bounds = map.getBounds().pad(0.25); // slightly out of screen
-      //   const tooltip = new L.Tooltip({
-      //     direction: 'right',
-      //     permanent: false,
-      //     sticky: true,
-      //     opacity: 1
-      //   });
-      //   tooltip.setLatLng(new L.LatLng(bounds.getCenter().lat, bounds.getCenter().lng))
-      //   tooltip.setContent('Start drawing to see tooltip change');
-      //   const lat = map.getBounds().getCenter().lat;
-      //   const lng = map.getBounds().getCenter().lng;
-      //   const iconOption: FontAwesomeOptions = {
-      //     iconClasses: 'fa fa-info-circle', // you _could_ add other icon classes, not tested.
-      //     // iconColor: '#F00',
-      //     iconUrl: '../assets/marker-icon.png',
-      //     shadowUrl: '../assets/marker-shadow.png'
-      // };
+        L.DomUtil.addClass(map.getContainer(), 'crosshair-cursor-enabled');
+        console.log('put parking marker on map');
+        this.map.on('click', (e: any) => {
+          const iconOption: FontAwesomeOptions = {
+            iconClasses: 'fa fa-car', // you _could_ add other icon classes, not tested.
+            iconUrl: '../assets/marker-icon.png',
+            shadowUrl: '../assets/marker-shadow.png'
+          };
 
-      //   const icon = new FontAwesomeIcon(iconOption);
-      //   const marker = new L.Marker([ lat, lng], {
-      //     icon: icon,
-      //     draggable: true});
-      //   marker.addTo(map);
+          const icon = new FontAwesomeIcon(iconOption);
+          const marker = new L.Marker([e.latlng.lat, e.latlng.lng], {
+            icon: icon,
+            draggable: true
+          });
+          marker.addTo(map);
+          L.DomUtil.removeClass(map.getContainer(), 'crosshair-cursor-enabled');
+          this.map.off('click');
+        });
+      },
+      e => this.showError(e),
+      () => console.log('onCompleted')
+    )); this.subscriptions.push(this.menuEventService.getObservable('gpsMarker').subscribe(
+      () => {
+        //   const bounds = map.getBounds().pad(0.25); // slightly out of screen
+        //   const tooltip = new L.Tooltip({
+        //     direction: 'right',
+        //     permanent: false,
+        //     sticky: true,
+        //     opacity: 1
+        //   });
+        //   tooltip.setLatLng(new L.LatLng(bounds.getCenter().lat, bounds.getCenter().lng))
+        //   tooltip.setContent('Start drawing to see tooltip change');
+        //   const lat = map.getBounds().getCenter().lat;
+        //   const lng = map.getBounds().getCenter().lng;
+        //   const iconOption: FontAwesomeOptions = {
+        //     iconClasses: 'fa fa-info-circle', // you _could_ add other icon classes, not tested.
+        //     // iconColor: '#F00',
+        //     iconUrl: '../assets/marker-icon.png',
+        //     shadowUrl: '../assets/marker-shadow.png'
+        // };
+
+        //   const icon = new FontAwesomeIcon(iconOption);
+        //   const marker = new L.Marker([ lat, lng], {
+        //     icon: icon,
+        //     draggable: true});
+        //   marker.addTo(map);
 
         // marker.bindTooltip(tooltip);
         L.DomUtil.addClass(map.getContainer(), 'crosshair-cursor-enabled');

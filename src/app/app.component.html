@@ -5,13 +5,9 @@
   <alert></alert>
   <router-outlet></router-outlet>
 </div>
-<app-modal target="gpsMarker"
-       title="Coordonnées GPS"
-       body="Pour obtenir les coordonnées d'un point:<ol><li>Cliquez sur la carte</li><li>Relevez la position</li><li>cliquez sur le bouton GPS du menu</li></ol>"
-       ok="true"></app-modal>
-<app-modal target="drawVictimPath"
-       title="Dessinez le parcours du poseur"
-       body="<p>
+<app-modal target="gpsMarker" title="Coordonnées GPS" body="Pour obtenir les coordonnées d'un point:<ol><li>Cliquez sur la carte</li><li>Relevez la position</li><li>cliquez sur le bouton GPS du menu</li></ol>"
+  ok="true"></app-modal>
+<app-modal target="drawVictimPath" title="Dessinez le parcours du poseur" body="<p>
          Pour dessiner le parcours du poseur:
        <ol>
          <li>Cliquez sur la carte</li>
@@ -21,10 +17,8 @@
       </ol>
     </p>
     <p><i class='fa fa-info-circle' aria-hidden='true'></i> Vous pourrez toujours modifier le parcours plus tard si vous vous êtes trompés.</p>"
-       ok="true"></app-modal>
-<app-modal target="drawK9Path"
-       title="Dessinez le parcours du K9"
-       body="<p>
+  ok="true"></app-modal>
+<app-modal target="drawK9Path" title="Dessinez le parcours du K9" body="<p>
          Pour dessiner le parcours du K9:
        <ol>
          <li>Cliquez sur la carte</li>
@@ -34,4 +28,15 @@
       </ol>
     </p>
     <p><i class='fa fa-info-circle' aria-hidden='true'></i> Vous pourrez toujours modifier le parcours plus tard si vous vous êtes trompés.</p>"
-       ok="true"></app-modal>
+  ok="true"></app-modal>
+<app-modal target="parkingMarker" title="Positionner un parking" body="<p>
+         Pour placer un parking:
+       <ol>
+         <li>Cliquez sur la carte</li>
+         <li>Un marker parking avec une voiture s'ajoute sur la carte</li>
+         <li>Vous pouvez déplacer le du parking en cliquant dessus et en faisant un glisser/déposer</li>
+         <li>N'oubliez pas de sauvegarder votre carte lorsque vous avez terminé</li>
+      </ol>
+    </p>
+    <p><i class='fa fa-info-circle' aria-hidden='true'></i> Vous pourrez toujours modifier le parcours plus tard si vous vous êtes trompés.</p>"
+  ok="true"></app-modal>
