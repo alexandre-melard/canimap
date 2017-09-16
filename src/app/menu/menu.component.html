@@ -1,15 +1,11 @@
 ﻿<div class="canimap-menu">
   <div class="btn-group">
-    <button routerLink="/map" type="button" class="btn btn-light"
-            aria-label="Carte"
-            placement="bottom" ngbTooltip="Affichez la carte"
-            i18n="Map|The mapping tools and display">
-      <i class="fa fa-map" aria-hidden="true"></i>
+    <button md-raised-button routerLink="/map" type="button" aria-label="Carte" placement="bottom" ngbTooltip="Affichez la carte"
+      i18n="Map|The mapping tools and display">
+      <i class="material-icons">photo</i>
     </button>
-    <button routerLink="/user" type="button" class="btn btn-light"
-            placement="bottom" ngbTooltip="Gérez votre compte"
-            i18n="Account|Account management">
-      <i class="fa fa-user" aria-hidden="true"></i>
+    <button md-raised-button routerLink="/user" type="button" placement="bottom" ngbTooltip="Gérez votre compte" i18n="Account|Account management">
+      <i class="material-icons">face</i>
     </button>
   </div>
   <app-canimap-track-menu></app-canimap-track-menu>

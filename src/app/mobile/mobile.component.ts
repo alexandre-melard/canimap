@@ -21,12 +21,12 @@ export class MenuMobileComponent implements OnInit {
 
   onTrack() {
     this.onTrackStatus = !this.onTrackStatus;
-    this.menuEventService.callEvent("onTrack", this.onTrackStatus);
+    this.menuEventService.prepareEvent("onTrack", this.onTrackStatus);
   }
 
   recordTrack() {
     this.recordTrackStatus = !this.recordTrackStatus;
-    this.menuEventService.callEvent("recordTrack", this.recordTrackStatus);
+    this.menuEventService.prepareEvent("recordTrack", this.recordTrackStatus);
   }
 
   ngOnInit() {

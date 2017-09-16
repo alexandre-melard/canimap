@@ -1,8 +1,10 @@
-import { Injectable, OnInit, OnDestroy } from '@angular/core';
+import { Injectable, Inject, Component, OnInit, OnDestroy } from '@angular/core';
+import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
 import { MenuEventService } from '../_services/menuEvent.service';
 import { CanimapService } from '../_services/canimap.service';
 import { Subscription } from 'rxjs/Subscription';
+import { saveAs } from 'file-saver';
 
 import * as $ from 'jquery';
 import { Map } from 'leaflet';
@@ -15,26 +17,37 @@ export class FileService implements OnDestroy {
 
   constructor(
     private menuEventService: MenuEventService,
-    private canimapService: CanimapService
-  ) {}
+    private canimapService: CanimapService,
+    public dialog: MdDialog
+  ) { }
 
   subscribe() {
     const map = this.map;
 
     this.subscriptions.push(this.menuEventService.getObservable('fileSave').subscribe(
       () => {
-        // Get geojson data
-        const geoJson = this.canimapService.geoJSON;
-        const data: any = {};
-        data['type'] = 'FeatureCollection';
-        data['features'] = geoJson;
+        let fileName = 'carte.geoJSON';
+        const dialogRef = this.dialog.open(DialogFileSaveComponent, {
+          width: '320px',
+          data: { name: fileName }
+        });
 
-        // Stringify the GeoJson
-        const convertedData = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data));
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('The dialog was closed');
+          if (result !== undefined) {
+            fileName = result;
 
-        // Create export
-        document.getElementById('exportFile').setAttribute('href', 'data:' + convertedData);
-        document.getElementById('exportFile').setAttribute('download', 'carte.geojson');
+            // Get geojson data
+            const geoJson = this.canimapService.geoJSON;
+            const data: any = {};
+            data['type'] = 'FeatureCollection';
+            data['features'] = geoJson;
+
+            // Stringify the GeoJson
+            const convertedData = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data));
+            saveAs(new Blob([JSON.stringify(data)]), fileName);
+          }
+        });
       },
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
@@ -53,6 +66,22 @@ export class FileService implements OnDestroy {
     for (const subscription of this.subscriptions) {
       subscription.unsubscribe();
     }
+  }
+
+}
+
+@Component({
+  selector: 'app-dialog-file-save',
+  templateUrl: './templates/app-dialog-file-save.html',
+})
+export class DialogFileSaveComponent {
+
+  constructor(
+    public dialogRef: MdDialogRef<FileService>,
+    @Inject(MD_DIALOG_DATA) public data: any) { }
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 
 }

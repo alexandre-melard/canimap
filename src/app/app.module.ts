@@ -2,6 +2,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MdDialogModule, MdButtonModule, MdIconModule } from '@angular/material';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { LeafletDrawModule } from '@asymmetrik/ngx-leaflet-draw';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -15,6 +17,8 @@ import { BaseRequestOptions } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
+
+import { DialogFileSaveComponent } from './_services/file.service';
 
 import { AlertComponent } from './_directives/index';
 import { SliderComponent } from './_directives/index';
@@ -35,6 +39,10 @@ import { RegisterComponent } from './register/index';
 @NgModule({
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    MdDialogModule,
+    MdButtonModule,
+    MdIconModule,
     FormsModule,
     HttpModule,
     NgbModule.forRoot(),
@@ -50,6 +58,7 @@ import { RegisterComponent } from './register/index';
   ],
   declarations: [
     AppComponent,
+    DialogFileSaveComponent,
     AlertComponent,
     SliderComponent,
     ModalComponent,
@@ -77,6 +86,9 @@ import { RegisterComponent } from './register/index';
     fakeBackendProvider,
     MockBackend,
     BaseRequestOptions
+  ],
+  entryComponents: [
+    DialogFileSaveComponent
   ],
   bootstrap: [AppComponent]
 })

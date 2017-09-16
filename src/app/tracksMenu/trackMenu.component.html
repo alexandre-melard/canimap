@@ -1,14 +1,14 @@
 ﻿<div class="btn-group" role="toolbar" aria-label="Toolbar with button groups">
-  <button type="button" class="btn btn-primary" aria-label="Victim" placement="bottom" ngbTooltip="Piste de la victime" i18n="Victim|draw the victim path"
+  <button md-raised-button type="button" color="primary" aria-label="Victim" placement="bottom" ngbTooltip="Piste de la victime" i18n="Victim|draw the victim path"
     data-toggle="modal" data-target="#drawVictimPath" (click)="drawVictimPath($event)">
-    <i class="fa fa-arrow-circle-up" aria-hidden="true"></i>
+    <i class="material-icons">directions_walk</i>
   </button>
-  <button type="button" class="btn btn-warning" aria-label="Tracker" placement="bottom" ngbTooltip="Piste de l'&eacute;quipe"
+  <button md-raised-button type="button" color="warn" aria-label="Tracker" placement="bottom" ngbTooltip="Piste de l'&eacute;quipe"
     i18n="Tracker|draw the tracker path" data-toggle="modal" data-target="#drawK9Path" (click)="drawK9Path($event)">
-    <i class="fa fa-paw" aria-hidden="true"></i>
+    <i class="material-icons">pets</i>
   </button>
-  <button type="button" class="btn btn-default" aria-label="Parking" placement="bottom" ngbTooltip="Parking"
-    i18n="Parking|Put a parking slot" data-toggle="modal" data-target="#parkingMarker" (click)="parkingMarker($event)">
-  <i class="fa fa-car" aria-hidden="true"></i>
-</button>
+  <button md-raised-button type="button" color="primary" aria-label="Parking" placement="bottom" ngbTooltip="Parking" i18n="Parking|Put a parking slot"
+    data-toggle="modal" data-target="#parkingMarker" (click)="parkingMarker($event)">
+    <i class="material-icons">local_parking</i>
+    </button>
 </div>
