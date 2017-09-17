@@ -3,7 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MdDialogModule, MdButtonModule, MdIconModule } from '@angular/material';
+import { MdDialogModule, MdButtonModule, MdIconModule, MdTooltipModule,
+  MdInputModule, MdSliderModule, MdExpansionModule, MdTableModule } from '@angular/material';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { LeafletDrawModule } from '@asymmetrik/ngx-leaflet-draw';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -21,7 +22,6 @@ import { routing } from './app.routing';
 import { DialogFileSaveComponent } from './_services/file.service';
 
 import { AlertComponent } from './_directives/index';
-import { SliderComponent } from './_directives/index';
 import { ModalComponent } from './_directives/index';
 import { AuthGuard } from './_guards/index';
 import { AlertService, AuthenticationService, UserService, MenuEventService,
@@ -30,19 +30,26 @@ import { HomeComponent } from './home/index';
 import { LocationComponent } from './location/index';
 import { MenuComponent } from './menu/index';
 import { FileMenuComponent } from './FileMenu/index';
-import { TrackMenuComponent } from './tracksMenu';
+import { TrackMenuComponent, DialogChooseLayersComponent } from './tracksMenu';
 import { MenuMobileComponent } from './mobile';
 import { LoginComponent } from './login/index';
 import { CanimapComponent } from './map/index';
 import { RegisterComponent } from './register/index';
+import {CdkTableModule} from '@angular/cdk/table';
 
 @NgModule({
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+//    CdkTableModule,
+    MdTableModule,
     MdDialogModule,
     MdButtonModule,
     MdIconModule,
+    MdTooltipModule,
+    MdInputModule,
+    MdSliderModule,
+    MdExpansionModule,
     FormsModule,
     HttpModule,
     NgbModule.forRoot(),
@@ -59,8 +66,8 @@ import { RegisterComponent } from './register/index';
   declarations: [
     AppComponent,
     DialogFileSaveComponent,
+    DialogChooseLayersComponent,
     AlertComponent,
-    SliderComponent,
     ModalComponent,
     HomeComponent,
     LocationComponent,
@@ -88,7 +95,8 @@ import { RegisterComponent } from './register/index';
     BaseRequestOptions
   ],
   entryComponents: [
-    DialogFileSaveComponent
+    DialogFileSaveComponent,
+    DialogChooseLayersComponent
   ],
   bootstrap: [AppComponent]
 })

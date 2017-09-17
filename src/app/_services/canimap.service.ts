@@ -14,6 +14,7 @@ import { FontAwesomeOptions, FontAwesomeIcon } from 'ngx-leaflet-fa-markers/inde
 export class CanimapService implements OnDestroy {
 
   geoJSON: any[];
+  layers: {name: string, layer: any}[];
   private _map: Map;
   private subscriptions = new Array<Subscription>();
 
@@ -121,31 +122,6 @@ export class CanimapService implements OnDestroy {
       () => console.log('onCompleted')
     )); this.subscriptions.push(this.menuEventService.getObservable('gpsMarker').subscribe(
       () => {
-        //   const bounds = map.getBounds().pad(0.25); // slightly out of screen
-        //   const tooltip = new L.Tooltip({
-        //     direction: 'right',
-        //     permanent: false,
-        //     sticky: true,
-        //     opacity: 1
-        //   });
-        //   tooltip.setLatLng(new L.LatLng(bounds.getCenter().lat, bounds.getCenter().lng))
-        //   tooltip.setContent('Start drawing to see tooltip change');
-        //   const lat = map.getBounds().getCenter().lat;
-        //   const lng = map.getBounds().getCenter().lng;
-        //   const iconOption: FontAwesomeOptions = {
-        //     iconClasses: 'fa fa-info-circle', // you _could_ add other icon classes, not tested.
-        //     // iconColor: '#F00',
-        //     iconUrl: '../assets/marker-icon.png',
-        //     shadowUrl: '../assets/marker-shadow.png'
-        // };
-
-        //   const icon = new FontAwesomeIcon(iconOption);
-        //   const marker = new L.Marker([ lat, lng], {
-        //     icon: icon,
-        //     draggable: true});
-        //   marker.addTo(map);
-
-        // marker.bindTooltip(tooltip);
         L.DomUtil.addClass(map.getContainer(), 'crosshair-cursor-enabled');
 
         console.log('put marker on map');

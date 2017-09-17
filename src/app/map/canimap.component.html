@@ -2,12 +2,8 @@
      leafletDraw
      [leafletOptions]="options"
      [leafletDrawOptions]="drawOptions"
-     (leafletMapReady)="onMapReady($event)"
-     [leafletLayersControl]="layersControl">
+     (leafletMapReady)="onMapReady($event)">
 </div>
 <input class="colorpicker" [(colorPicker)]="color" [style.background]="color"
        [cpPresetColors]="['#fff', '#000', '#2889e9', '#e920e9', '#fff500', 'rgb(236,64,64)']"
   />
-<slider id="ign_slider" target="ign_slider_container" layerTarget="ign" value="0.5" (valueChanged)="onValueChanged($event)"></slider>
-<slider id="google_slider" target="google_slider_container" layerTarget="google" value="1" (valueChanged)="onValueChanged($event)"></slider>
-<slider id="google_hybride_slider" target="google_hybride_slider_container" layerTarget="hybride" value="0.5" (valueChanged)="onValueChanged($event)"></slider>

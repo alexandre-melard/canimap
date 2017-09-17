@@ -1,14 +1,30 @@
-﻿<div class="btn-group" role="toolbar" aria-label="Toolbar with button groups">
-  <button md-raised-button type="button" color="primary" aria-label="Victim" placement="bottom" ngbTooltip="Piste de la victime" i18n="Victim|draw the victim path"
-    data-toggle="modal" data-target="#drawVictimPath" (click)="drawVictimPath($event)">
-    <i class="material-icons">directions_walk</i>
+﻿<div class="btn-group menu-bar" role="toolbar" aria-label="Toolbar with button groups">
+  <button md-icon-button>
+    <md-icon  class="md-24"  color="default" aria-label="Layers" mdTooltipPosition="below" mdTooltip="Choisir le fond de carte" i18n="Layers|Choose the map layers"
+    (click)="chooseLayers($event)">
+      layers
+    </md-icon>
   </button>
-  <button md-raised-button type="button" color="warn" aria-label="Tracker" placement="bottom" ngbTooltip="Piste de l'&eacute;quipe"
-    i18n="Tracker|draw the tracker path" data-toggle="modal" data-target="#drawK9Path" (click)="drawK9Path($event)">
-    <i class="material-icons">pets</i>
+  <button md-icon-button>
+    <md-icon class="md-24" color="default" aria-label="Victim" mdTooltipPosition="below" mdTooltip ="Piste de la victime" i18n="Victim|draw the victim path"
+      data-toggle="modal" data-target="#drawVictimPath" (click)="drawVictimPath($event)">
+      directions_walk
+    </md-icon>
   </button>
-  <button md-raised-button type="button" color="primary" aria-label="Parking" placement="bottom" ngbTooltip="Parking" i18n="Parking|Put a parking slot"
-    data-toggle="modal" data-target="#parkingMarker" (click)="parkingMarker($event)">
-    <i class="material-icons">local_parking</i>
-    </button>
+  <button md-icon-button>
+      <md-icon class="md-24" color="warn" aria-label="Tracker" mdTooltipPosition="below" mdTooltip="Piste de l'&eacute;quipe"
+        i18n="Tracker|draw the tracker path" data-toggle="modal" data-target="#drawK9Path" (click)="drawK9Path($event)">
+    pets</md-icon>
+  </button>
+  <button md-icon-button>
+      <md-icon class="md-24"  color="primary" aria-label="Parking" mdTooltipPosition="below" mdTooltip="Parking" i18n="Parking|Put a parking slot"
+        data-toggle="modal" data-target="#parkingMarker" (click)="parkingMarker($event)">
+    local_parking</md-icon>
+  </button>
+  <button md-icon-button>
+    <md-icon class="md-24" routerLink="/map"  aria-label="Coordinates" mdTooltipPosition="below" mdTooltip="Position GPS" i18n="GPG|Add GPS marker"
+      data-toggle="modal" data-target="#gpsMarker" (click)="gpsMarker($event)">
+      location_searching
+    </md-icon>
+  </button>
 </div>

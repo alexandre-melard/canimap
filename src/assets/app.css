@@ -6,6 +6,11 @@ html, body, app, .container {
   margin:0;
   padding:0;
 }
+.menu-bar {
+  -moz-border-radius:10px;  /* for Firefox */
+  -webkit-border-radius:10px; /* for Webkit-Browsers */
+  border-radius:10px; /* regular */
+  background:rgba(255,255,255,0.7); /* Transparent Background 50% */}
 
 form {
   width:100%;
@@ -23,7 +28,7 @@ form {
 
 app-canimap-location {
   position: absolute;
-  right: 70px;
+  right: 20px;
   top: 10px;
   z-index: 1000;
 }
@@ -63,6 +68,7 @@ app-canimap-location {
   top: 10px;
   z-index: 9999;
 }
+
 
 .canimap-menu-mobile button {
   background-color: rgba(255,255,255,0.9);

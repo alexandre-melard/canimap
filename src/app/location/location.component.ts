@@ -1,4 +1,4 @@
-﻿import { ElementRef, NgZone, ViewChild , Component, OnInit } from '@angular/core';
+﻿import { ElementRef, NgZone, ViewChild, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MapsAPILoader } from '@agm/core';
@@ -13,11 +13,8 @@ import { AlertService, AuthenticationService, MenuEventService, HelperEventServi
 })
 
 export class LocationComponent implements OnInit {
-  model: any = {};
-  loading = false;
   public searchControl: FormControl;
   autocomplete;
-  gpsMarkerToggle = true;
 
   @ViewChild('search')
   public searchElementRef: ElementRef;
@@ -26,7 +23,7 @@ export class LocationComponent implements OnInit {
     private menuEventService: MenuEventService,
     private helperEventService: HelperEventService,
     private mapsAPILoader: MapsAPILoader,
-    private ngZone: NgZone) {}
+    private ngZone: NgZone) { }
 
   ngOnInit() {
     // create search FormControl
@@ -36,7 +33,7 @@ export class LocationComponent implements OnInit {
     this.mapsAPILoader.load().then(() => {
       const autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
         type: 'address',
-        componentRestrictions: {country: 'fr'}
+        componentRestrictions: { country: 'fr' }
       });
       autocomplete.addListener('place_changed', () => {
         this.ngZone.run(() => {
@@ -52,24 +49,9 @@ export class LocationComponent implements OnInit {
           const latitude = place.geometry.location.lat();
           const longitude = place.geometry.location.lng();
 
-          this.menuEventService.callEvent('onMapMove', {lat: latitude, lng: longitude});
+          this.menuEventService.callEvent('onMapMove', { lat: latitude, lng: longitude });
         });
       });
     });
-  }
-
-  gpsMarker(e: MouseEvent) {
-    if (this.gpsMarkerToggle) {
-      this.menuEventService.prepareEvent('gpsMarker', null);
-      const dismissHelp: boolean = this.helperEventService.callHelper('gpsMarker');
-      if (dismissHelp) {
-        e.stopPropagation();
-        this.menuEventService.proceed();
-      }
-    } else {
-      this.menuEventService.callEvent('gpsMarkerDismiss', null);
-      e.stopPropagation();
-  }
-    this.gpsMarkerToggle = !this.gpsMarkerToggle;
   }
 }

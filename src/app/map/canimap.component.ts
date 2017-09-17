@@ -28,7 +28,7 @@ export class CanimapComponent implements OnInit {
   googleHybride = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
     maxZoom: 20,
     subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-    opacity: 0.5
+    opacity: 0
   });
   googleSatellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
     maxZoom: 20,
@@ -43,7 +43,8 @@ export class CanimapComponent implements OnInit {
   options = {
     layers: [
       this.googleSatellite,
-      this.ignMap
+      this.ignMap,
+      this.googleHybride
     ],
     zoom: 15,
     center: L.latLng([45.419364, 5.347022])
@@ -71,13 +72,6 @@ export class CanimapComponent implements OnInit {
           color: '#aaaaaa'
         }
       }
-    }
-  };
-  layersControl = {
-    overlays: {
-      'Google Satellite </div></label><label><div id="google_slider_container">': this.googleSatellite,
-      'IGN </div></label><label><div id="ign_slider_container">': this.ignMap,
-      'Google Hybride </div></label><label><div id="google_hybride_slider_container">': this.googleHybride
     }
   };
 
@@ -114,6 +108,11 @@ export class CanimapComponent implements OnInit {
     this.canimapService.subscribe();
     this.fileService.subscribe();
     this.canimapService.geoJSON = this.geoJson;
+    this.canimapService.layers = [
+        {name: 'ign', layer: this.ignMap},
+        {name: 'google hybride', layer: this.googleHybride},
+        {name: 'google sattelite', layer: this.googleSatellite}
+    ];
 
     // const textbox = N.Illustrate.textbox(L.latLng(41, -87), {}).addTo(map);
     // textbox.addTo(map);
