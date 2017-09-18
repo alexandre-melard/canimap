@@ -35,13 +35,11 @@ import { MenuMobileComponent } from './mobile';
 import { LoginComponent } from './login/index';
 import { CanimapComponent } from './map/index';
 import { RegisterComponent } from './register/index';
-import {CdkTableModule} from '@angular/cdk/table';
 
 @NgModule({
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-//    CdkTableModule,
     MdTableModule,
     MdDialogModule,
     MdButtonModule,

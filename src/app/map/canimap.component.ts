@@ -136,6 +136,10 @@ export class CanimapComponent implements OnInit {
       e => console.log(e),
       () => console.log('onCompleted')
     ));
+    
+    this.map.on(L.Draw.Event.EDITED, (e: L.DrawEvents.Edited) => {
+      this.map.fitBounds(this.map.getBounds());          
+    });      
 
     this.map.on(L.Draw.Event.CREATED, (e: L.DrawEvents.Created) => {
       try {
