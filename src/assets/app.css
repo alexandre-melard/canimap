@@ -6,11 +6,16 @@ html, body, app, .container {
   margin:0;
   padding:0;
 }
-.menu-bar {
+.menu-bar, .pac-container {
   -moz-border-radius:10px;  /* for Firefox */
   -webkit-border-radius:10px; /* for Webkit-Browsers */
   border-radius:10px; /* regular */
-  background:rgba(255,255,255,0.7); /* Transparent Background 50% */}
+  background:rgba(255,255,255,0.8); /* Transparent Background 50% */
+}
+
+.pac-logo, .pac-logo:after {
+  background-image: none;
+}
 
 form {
   width:100%;

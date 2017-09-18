@@ -1,20 +1,6 @@
-﻿<!-- <button md-raised-button type="button" aria-label="Coordinates" mdTooltipPosition="below" mdTooltip="Position GPS" i18n="GPG|Add GPS marker"
-data-toggle="modal" data-target="#gpsMarker" (click)="gpsMarker($event)">
-<i class="material-icons">location_searching</i>
-</button> -->
-<div class="btn-group menu-bar">
-  <md-expansion-panel>
-    <md-expansion-panel-header>
-      <md-panel-title>
-        Adresse
-      </md-panel-title>
-      <md-panel-description>
-        Localiser une adresse
-      </md-panel-description>
-    </md-expansion-panel-header>
-    <md-form-field>
-      <input mdInput placeholder="&nbsp;Rechercher une adresse" autocorrect="off" autocapitalize="off" spellcheck="off" type="text"
-      #search [formControl]="searchControl">
-    </md-form-field>
-  </md-expansion-panel>
+﻿<div class="btn-group menu-bar">
+  <form>
+    <input mdInput placeholder="&nbsp;Rechercher une adresse" autocorrect="off" autocapitalize="off" spellcheck="off" type="text"
+    #search [formControl]="searchControl">
+  </form>
 </div>

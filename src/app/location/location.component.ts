@@ -9,6 +9,7 @@ import { AlertService, AuthenticationService, MenuEventService, HelperEventServi
 @Component({
   selector: 'app-canimap-location',
   moduleId: module.id.toString(),
+  styleUrls: ['./location.component.css'],
   templateUrl: 'location.component.html'
 })
 
