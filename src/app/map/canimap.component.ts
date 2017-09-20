@@ -22,6 +22,7 @@ export class CanimapComponent implements OnInit {
   savedColor: string;
   opacity = 0.5;
   currentLocation: any = null;
+  success: Function;
   public geoJson: any[] = new Array();
   private subscriptions = new Array<Subscription>();
 
@@ -118,7 +119,8 @@ export class CanimapComponent implements OnInit {
     // textbox.addTo(map);
 
     this.subscriptions.push(this.menuEventService.getObservable('drawVictimPath').subscribe(
-      () => {
+      (value) => {
+        this.success = value.success;
         this.savedColor = this.color;
         this.color = 'blue';
         $('.leaflet-draw-draw-polyline')[0].click();
@@ -128,7 +130,8 @@ export class CanimapComponent implements OnInit {
     ));
 
     this.subscriptions.push(this.menuEventService.getObservable('drawK9Path').subscribe(
-      () => {
+      (value) => {
+        this.success = value.success;
         this.savedColor = this.color;
         this.color = 'orange';
         $('.leaflet-draw-draw-polyline')[0].click();
@@ -136,13 +139,14 @@ export class CanimapComponent implements OnInit {
       e => console.log(e),
       () => console.log('onCompleted')
     ));
-    
+
     this.map.on(L.Draw.Event.EDITED, (e: L.DrawEvents.Edited) => {
-      this.map.fitBounds(this.map.getBounds());          
-    });      
+      this.map.fitBounds(this.map.getBounds());
+    });
 
     this.map.on(L.Draw.Event.CREATED, (e: L.DrawEvents.Created) => {
       try {
+        this.success();
         const layer: Layer = e.layer;
         if (e.layerType === 'polyline') {
           const polyline: Polyline = <Polyline>layer;

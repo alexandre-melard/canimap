@@ -7,6 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import { MapsAPILoader } from '@agm/core';
 import { } from '@types/googlemaps';
 import 'rxjs/add/observable/of';
+import * as $ from 'jquery';
 
 import { AlertService, CanimapService, AuthenticationService, MenuEventService, HelperEventService } from '../_services/index';
 
@@ -18,6 +19,7 @@ import { AlertService, CanimapService, AuthenticationService, MenuEventService, 
 
 export class TrackMenuComponent implements OnInit {
   gpsMarkerToggle = true;
+  contextVisible = false;
   constructor(
     private canimapService: CanimapService,
     private menuEventService: MenuEventService,
@@ -29,8 +31,28 @@ export class TrackMenuComponent implements OnInit {
   ngOnInit() {
   }
 
+  edit(event: any) {
+    $('.leaflet-draw-edit-edit')[0].click();
+  }
+
+  finish(event: any) {
+    $('.leaflet-draw-actions a')[0].click();
+  }
+
+  undo(event: any) {
+    $('.leaflet-draw-actions a')[1].click();
+  }
+
+  cancel(event: any) {
+    $('.leaflet-draw-actions a')[2].click();
+    this.contextVisible = false;
+  }
+
   drawVictimPath(e: MouseEvent) {
-    this.menuEventService.prepareEvent('drawVictimPath', null);
+    this.contextVisible = true;
+    this.menuEventService.prepareEvent('drawVictimPath', null, ( result: any ) => {
+      this.contextVisible = false;
+    });
     const dismissHelp: boolean = this.helperEventService.callHelper('drawVictimPath');
     if (dismissHelp) {
       e.stopPropagation();
@@ -39,7 +61,10 @@ export class TrackMenuComponent implements OnInit {
   }
 
   drawK9Path(e: MouseEvent) {
-    this.menuEventService.prepareEvent('drawK9Path', null);
+    this.contextVisible = true;
+    this.menuEventService.prepareEvent('drawK9Path', null, ( result: any ) => {
+      this.contextVisible = false;
+    });
     const dismissHelp: boolean = this.helperEventService.callHelper('drawK9Path');
     if (dismissHelp) {
       e.stopPropagation();
@@ -48,7 +73,7 @@ export class TrackMenuComponent implements OnInit {
   }
 
   parkingMarker(e: MouseEvent) {
-    this.menuEventService.prepareEvent('parkingMarker', null);
+    this.menuEventService.prepareEvent('parkingMarker', null, null);
     const dismissHelp: boolean = this.helperEventService.callHelper('parkingMarker');
     if (dismissHelp) {
       e.stopPropagation();
@@ -58,7 +83,7 @@ export class TrackMenuComponent implements OnInit {
 
   gpsMarker(e: MouseEvent) {
     if (this.gpsMarkerToggle) {
-      this.menuEventService.prepareEvent('gpsMarker', null);
+      this.menuEventService.prepareEvent('gpsMarker', null, null);
       const dismissHelp: boolean = this.helperEventService.callHelper('gpsMarker');
       if (dismissHelp) {
         e.stopPropagation();

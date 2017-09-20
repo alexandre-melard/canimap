@@ -22,9 +22,49 @@
     local_parking</md-icon>
   </button>
   <button md-icon-button>
-    <md-icon class="md-24" routerLink="/map"  aria-label="Coordinates" mdTooltipPosition="below" mdTooltip="Position GPS" i18n="GPG|Add GPS marker"
+    <md-icon class="md-24" aria-label="Coordinates" mdTooltipPosition="below" mdTooltip="Position GPS" i18n="GPG|Add GPS marker"
       data-toggle="modal" data-target="#gpsMarker" (click)="gpsMarker($event)">
       location_searching
     </md-icon>
+  </button>
+  <button md-icon-button>
+    <md-icon class="md-24" aria-label="Multilignes" mdTooltipPosition="below" mdTooltip="Multilignes" i18n="Multilignes|Tracer des lignes"
+      (click)="polyligne($event)">
+      call_missed_outgoing
+    </md-icon>
+  </button>
+  <button md-icon-button>
+    <md-icon class="md-24" aria-label="Polygone" mdTooltipPosition="below" mdTooltip="Polygone" i18n="Polygone|Dessiner un polygone"
+      (click)="polygon($event)">
+      details
+    </md-icon>
+  </button>
+  <button md-icon-button>
+    <md-icon class="md-24" aria-label="Disque" mdTooltipPosition="below" mdTooltip="Disque" i18n="Disque|Dessiner un disque"
+      (click)="circle($event)">
+      fiber_manual_record
+    </md-icon>
+  </button>
+
+  <button md-icon-button>
+    <md-icon class="md-24" aria-label="Modifier" mdTooltipPosition="below" mdTooltip="Modifier" i18n="Modify|Modify the markers"
+      (click)="edit($event)">
+      edit
+    </md-icon>
+
+  </button>
+  <button md-icon-button>
+    <img src="../assets/colorwheel-30x30.png"/>
+  </button>
+</div>
+<div *ngIf="contextVisible" class="btn-group menu-bar" role="toolbar" aria-label="Toolbar with button groups">
+  <button md-button (click)="finish($event)">
+    Terminer
+  </button>
+  <button md-button (click)="undo($event)">
+    Supprimer le dernier point
+  </button>
+  <button md-button (click)="cancel($event)">
+    Annuler
   </button>
 </div>
