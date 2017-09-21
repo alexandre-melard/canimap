@@ -7,7 +7,7 @@ import * as $ from 'jquery';
 import 'leaflet-polylinedecorator';
 // import * as N from 'leaflet-illustrate';
 
-import { Map, Polyline, Polygon, Layer, FeatureGroup, Path, LayerEvent, LeafletEvent, LocationEvent } from 'leaflet';
+import { Map, Polyline, Rectangle, Circle, Polygon, Layer, FeatureGroup, Path, LayerEvent, LeafletEvent, LocationEvent } from 'leaflet';
 import { FontAwesomeOptions, FontAwesomeIcon } from 'ngx-leaflet-fa-markers/index';
 
 @Component({
@@ -119,9 +119,7 @@ export class CanimapComponent implements OnInit {
       { name: 'google hybride', layer: this.googleHybride },
       { name: 'google sattelite', layer: this.googleSatellite }
     ];
-
-    // const textbox = N.Illustrate.textbox(L.latLng(41, -87), {}).addTo(map);
-    // textbox.addTo(map);
+    this.savedColor = this.canimapService.color;
 
     this.subscriptions.push(this.menuEventService.getObservable('drawVictimPath').subscribe(
       (value) => {
@@ -148,19 +146,19 @@ export class CanimapComponent implements OnInit {
     this.map.on(L.Draw.Event.EDITED, (e: L.DrawEvents.Edited) => {
       this.map.fitBounds(this.map.getBounds());
     });
-
+    const me = this;
     this.map.on(L.Draw.Event.CREATED, (e: L.DrawEvents.Created) => {
       try {
-        if (this.success !== undefined) {
-          this.success();
+        if (me.success !== undefined) {
+          me.success();
         }
         const layer: Layer = e.layer;
         if (e.layerType === 'polyline') {
           const polyline: Polyline = <Polyline>layer;
           let json: any = polyline.toGeoJSON();
-          json['properties'] = { color: this.canimapService.color };
-          this.geoJson.push(json);
-          polyline.setStyle({ color: this.canimapService.color });
+          json['properties'] = { color: me.canimapService.color };
+          me.geoJson.push(json);
+          polyline.setStyle({ color: me.canimapService.color });
           const polylineDecoratorOptions = {
             patterns: [
               {
@@ -169,19 +167,43 @@ export class CanimapComponent implements OnInit {
                   {
                     pixelSize: 10,
                     polygon: true,
-                    pathOptions: { stroke: true, color: this.canimapService.color }
+                    pathOptions: { stroke: true, color: me.canimapService.color }
                   })
               }
             ]
           };
           const featureGroup = <FeatureGroup>L.polylineDecorator(polyline, polylineDecoratorOptions);
-          this.map.addLayer(featureGroup);
+          me.map.addLayer(featureGroup);
           json = featureGroup.toGeoJSON();
-          json['properties'] = { color: this.canimapService.color };
-          this.geoJson.push(json);
-          this.canimapService.color = this.savedColor;
+          json['properties'] = { color: me.canimapService.color };
+          me.geoJson.push(json);
+          me.canimapService.color = me.savedColor;
         }
-        this.map.addLayer(layer);
+        if (e.layerType === 'rectangle') {
+          const rectangle: Rectangle  = <Rectangle>layer;
+          const json: any = rectangle.toGeoJSON();
+          json['properties'] = { color: me.canimapService.color };
+          me.geoJson.push(json);
+          rectangle.setStyle({ color: me.canimapService.color });
+          me.canimapService.color = me.savedColor;
+        }
+        if (e.layerType === 'polygon') {
+          const polygon: Polygon  = <Polygon>layer;
+          const json: any = polygon.toGeoJSON();
+          json['properties'] = { color: me.canimapService.color };
+          me.geoJson.push(json);
+          polygon.setStyle({ fillColor: me.canimapService.color });
+          me.canimapService.color = me.savedColor;
+        }
+        if (e.layerType === 'circle') {
+          const circle: Circle  = <Circle>layer;
+          const json: any = circle.toGeoJSON();
+          json['properties'] = { color: me.canimapService.color };
+          me.geoJson.push(json);
+          circle.setStyle({ fillColor: me.canimapService.color });
+          me.canimapService.color = me.savedColor;
+        }
+        me.map.addLayer(layer);
       } catch (e) {
         console.log(e);
       }
