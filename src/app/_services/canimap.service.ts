@@ -16,7 +16,7 @@ export class CanimapService implements OnDestroy {
   geoJSON: any[];
   color = 'red';
   layers: { name: string, layer: any }[];
-  private _map: Map;  
+  private _map: Map;
   private subscriptions = new Array<Subscription>();
 
   constructor(private menuEventService: MenuEventService) {

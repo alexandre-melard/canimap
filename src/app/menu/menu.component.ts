@@ -10,14 +10,14 @@ import { AlertService, AuthenticationService } from '../_services/index';
 })
 
 export class MenuComponent implements OnInit {
-  model:any = {};
+  model: any = {};
   loading = false;
-  returnUrl:string;
+  returnUrl: string;
 
-  constructor(private route:ActivatedRoute,
-              private router:Router,
-              private authenticationService:AuthenticationService,
-              private alertService:AlertService) {
+  constructor(private route: ActivatedRoute,
+              private router: Router,
+              private authenticationService: AuthenticationService,
+              private alertService: AlertService) {
   }
 
   ngOnInit() {

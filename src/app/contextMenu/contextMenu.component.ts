@@ -23,7 +23,7 @@ export class ContextMenuComponent implements OnInit {
   }
 
   click(event: any, state: any) {
-    const link = $('.leaflet-draw-actions a')[state.id];
+    const link = $('.leaflet-draw-actions a:visible')[state.id];
     link.click();
     this.visible = !state.end;
   }
