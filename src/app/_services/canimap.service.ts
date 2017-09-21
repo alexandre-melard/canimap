@@ -14,8 +14,9 @@ import { FontAwesomeOptions, FontAwesomeIcon } from 'ngx-leaflet-fa-markers/inde
 export class CanimapService implements OnDestroy {
 
   geoJSON: any[];
+  color = 'red';
   layers: { name: string, layer: any }[];
-  private _map: Map;
+  private _map: Map;  
   private subscriptions = new Array<Subscription>();
 
   constructor(private menuEventService: MenuEventService) {
@@ -147,10 +148,6 @@ export class CanimapService implements OnDestroy {
   setOpacity(layer: any, opacity: number) {
     if (opacity === 0) {
       this.map.removeLayer(layer.layer);
-      const index = this.layers.indexOf(layer, 0);
-      if (index > -1) {
-//        this.layers.splice(index, 1);
-      }
     } else {
       if (!this.map.hasLayer(layer.layer)) {
         this.map.addLayer(layer.layer);

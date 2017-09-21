@@ -29,8 +29,9 @@ import { AlertService, AuthenticationService, UserService, MenuEventService,
 import { HomeComponent } from './home/index';
 import { LocationComponent } from './location/index';
 import { MenuComponent } from './menu/index';
+import { ContextMenuComponent } from './contextMenu/index';
 import { FileMenuComponent } from './FileMenu/index';
-import { TrackMenuComponent, DialogChooseLayersComponent } from './tracksMenu';
+import { TrackMenuComponent, DialogChooseLayersComponent, DialogChooseColorComponent } from './tracksMenu';
 import { MenuMobileComponent } from './mobile';
 import { LoginComponent } from './login/index';
 import { CanimapComponent } from './map/index';
@@ -65,11 +66,13 @@ import { RegisterComponent } from './register/index';
     AppComponent,
     DialogFileSaveComponent,
     DialogChooseLayersComponent,
+    DialogChooseColorComponent,
     AlertComponent,
     ModalComponent,
     HomeComponent,
     LocationComponent,
     MenuComponent,
+    ContextMenuComponent,
     FileMenuComponent,
     TrackMenuComponent,
     MenuMobileComponent,
@@ -94,7 +97,8 @@ import { RegisterComponent } from './register/index';
   ],
   entryComponents: [
     DialogFileSaveComponent,
-    DialogChooseLayersComponent
+    DialogChooseLayersComponent,
+    DialogChooseColorComponent
   ],
   bootstrap: [AppComponent]
 })

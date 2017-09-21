@@ -18,7 +18,6 @@ import { FontAwesomeOptions, FontAwesomeIcon } from 'ngx-leaflet-fa-markers/inde
 export class CanimapComponent implements OnInit {
   map: Map;
   title = 'app';
-  color = 'red';
   savedColor: string;
   opacity = 0.5;
   currentLocation: any = null;
@@ -116,9 +115,9 @@ export class CanimapComponent implements OnInit {
     this.fileService.subscribe();
     this.canimapService.geoJSON = this.geoJson;
     this.canimapService.layers = [
-        {name: 'ign', layer: this.ignMap},
-        {name: 'google hybride', layer: this.googleHybride},
-        {name: 'google sattelite', layer: this.googleSatellite}
+      { name: 'ign', layer: this.ignMap },
+      { name: 'google hybride', layer: this.googleHybride },
+      { name: 'google sattelite', layer: this.googleSatellite }
     ];
 
     // const textbox = N.Illustrate.textbox(L.latLng(41, -87), {}).addTo(map);
@@ -127,8 +126,8 @@ export class CanimapComponent implements OnInit {
     this.subscriptions.push(this.menuEventService.getObservable('drawVictimPath').subscribe(
       (value) => {
         this.success = value.success;
-        this.savedColor = this.color;
-        this.color = 'blue';
+        this.savedColor = this.canimapService.color;
+        this.canimapService.color = 'blue';
         $('.leaflet-draw-draw-polyline')[0].click();
       },
       e => console.log(e),
@@ -138,8 +137,8 @@ export class CanimapComponent implements OnInit {
     this.subscriptions.push(this.menuEventService.getObservable('drawK9Path').subscribe(
       (value) => {
         this.success = value.success;
-        this.savedColor = this.color;
-        this.color = 'orange';
+        this.savedColor = this.canimapService.color;
+        this.canimapService.color = 'orange';
         $('.leaflet-draw-draw-polyline')[0].click();
       },
       e => console.log(e),
@@ -152,39 +151,48 @@ export class CanimapComponent implements OnInit {
 
     this.map.on(L.Draw.Event.CREATED, (e: L.DrawEvents.Created) => {
       try {
-        this.success();
+        if (this.success !== undefined) {
+          this.success();
+        }
         const layer: Layer = e.layer;
         if (e.layerType === 'polyline') {
           const polyline: Polyline = <Polyline>layer;
           let json: any = polyline.toGeoJSON();
-          json['properties'] = {color: this.color};
+          json['properties'] = { color: this.canimapService.color };
           this.geoJson.push(json);
-          polyline.setStyle({ color: this.color });
+          polyline.setStyle({ color: this.canimapService.color });
           const polylineDecoratorOptions = {
             patterns: [
-              { offset: 20, repeat: 50,
-                symbol: L.Symbol.arrowHead({ pixelSize: 10, polygon: true, pathOptions: { stroke: true, color: this.color } }) }
+              {
+                offset: 20, repeat: 50,
+                symbol: L.Symbol.arrowHead(
+                  {
+                    pixelSize: 10,
+                    polygon: true,
+                    pathOptions: { stroke: true, color: this.canimapService.color }
+                  })
+              }
             ]
           };
           const featureGroup = <FeatureGroup>L.polylineDecorator(polyline, polylineDecoratorOptions);
           this.map.addLayer(featureGroup);
           json = featureGroup.toGeoJSON();
-          json['properties'] = {color: this.color};
+          json['properties'] = { color: this.canimapService.color };
           this.geoJson.push(json);
-          this.color = this.savedColor;
+          this.canimapService.color = this.savedColor;
         }
         this.map.addLayer(layer);
-    } catch (e) {
+      } catch (e) {
         console.log(e);
       }
     });
 
     setTimeout(function () {
       $('.leaflet-draw-toolbar')
-      .first()
-      .prepend('<a class="leaflet-draw-draw-color" title="Change color"><span class="sr-only">Change color</span></a>');
+        .first()
+        .prepend('<a class="leaflet-draw-draw-color" title="Change color"><span class="sr-only">Change color</span></a>');
       $('.leaflet-draw-draw-color')
-      .append($('.colorpicker'));
+        .append($('.colorpicker'));
     }, 500);
   }
 }

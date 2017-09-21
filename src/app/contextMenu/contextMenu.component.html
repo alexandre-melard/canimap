@@ -1,0 +1,5 @@
+﻿<div *ngIf="visible" class="btn-group menu-bar" role="toolbar" aria-label="Toolbar with button groups"> 
+  <button *ngFor="let state of states" md-button (click)="click($event, state)">
+    {{state.label}}
+  </button>
+</div>

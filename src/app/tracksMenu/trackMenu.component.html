@@ -40,6 +40,12 @@
     </md-icon>
   </button>
   <button md-icon-button>
+    <md-icon class="md-24" aria-label="Rectangle" mdTooltipPosition="below" mdTooltip="Rectangle" i18n="Rectangle|Dessiner un rectangle"
+      (click)="rectangle($event)">
+      crop_square
+    </md-icon>
+  </button>
+    <button md-icon-button>
     <md-icon class="md-24" aria-label="Disque" mdTooltipPosition="below" mdTooltip="Disque" i18n="Disque|Dessiner un disque"
       (click)="circle($event)">
       fiber_manual_record
@@ -53,18 +59,9 @@
     </md-icon>
 
   </button>
-  <button md-icon-button>
+  <button md-icon-button class="app-canimap-color-chooser" aria-label="Color" mdTooltipPosition="below" mdTooltip="Changer la couleur" i18n="Color|Change the color"
+  (click)="chooseColor($event)">
     <img src="../assets/colorwheel-30x30.png"/>
   </button>
 </div>
-<div *ngIf="contextVisible" class="btn-group menu-bar" role="toolbar" aria-label="Toolbar with button groups">
-  <button md-button (click)="finish($event)">
-    Terminer
-  </button>
-  <button md-button (click)="undo($event)">
-    Supprimer le dernier point
-  </button>
-  <button md-button (click)="cancel($event)">
-    Annuler
-  </button>
-</div>
+<app-canimap-context-menu [visible]="contextVisible" [states]="states"></app-canimap-context-menu>

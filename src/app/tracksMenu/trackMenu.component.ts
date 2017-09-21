@@ -1,4 +1,4 @@
-﻿import { ElementRef, Inject, NgZone, ViewChild, Component, OnInit } from '@angular/core';
+﻿import { ElementRef, Inject, Optional, NgZone, ViewChild, Component, OnInit } from '@angular/core';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 import { FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -27,25 +27,102 @@ export class TrackMenuComponent implements OnInit {
     private mapsAPILoader: MapsAPILoader,
     public dialog: MdDialog,
     private ngZone: NgZone) { }
+  states;
+  statesModel = {
+    edit: [
+      {
+        label: 'Terminer',
+        id: 0,
+        end: true
+      },
+      {
+        label: 'Annuler',
+        id: 1,
+        end: true
+      }
+    ],
+    polyligne: [
+      {
+        label: 'Terminer',
+        id: 0,
+        end: true
+      },
+      {
+        label: 'Annuler le dernier point',
+        id: 1,
+        end: false
+      },
+      {
+        label: 'Annuler',
+        id: 2,
+        end: true
+      }
+    ],
+    polygon: [
+      {
+        label: 'Terminer',
+        id: 0,
+        end: true
+      },
+      {
+        label: 'Annuler le dernier point',
+        id: 1,
+        end: false
+      },
+      {
+        label: 'Annuler',
+        id: 2,
+        end: true
+      }
+    ],
+    rectangle: [
+      {
+        label: 'Annuler',
+        id: 0,
+        end: true
+      }
+    ],
+    circle: [
+      {
+        label: 'Annuler',
+        id: 0,
+        end: true
+      }
+    ]
+
+  };
 
   ngOnInit() {
   }
 
   edit(event: any) {
-    $('.leaflet-draw-edit-edit')[0].click();
+    $('a.leaflet-draw-edit-edit')[0].click();
+    this.contextVisible = true;
+    this.states = this.statesModel.edit;
   }
 
-  finish(event: any) {
-    $('.leaflet-draw-actions a')[0].click();
+  polyligne(event: any) {
+    $('a.leaflet-draw-draw-polyline')[0].click();
+    this.contextVisible = true;
+    this.states = this.statesModel.polyligne;
   }
 
-  undo(event: any) {
-    $('.leaflet-draw-actions a')[1].click();
+  polygon(event: any) {
+    $('a.leaflet-draw-draw-polygon')[0].click();
+    this.contextVisible = true;
+    this.states = this.statesModel.polygon;
   }
 
-  cancel(event: any) {
-    $('.leaflet-draw-actions a')[2].click();
-    this.contextVisible = false;
+  rectangle(event: any) {
+    $('a.leaflet-draw-draw-rectangle')[0].click();
+    this.contextVisible = true;
+    this.states = this.statesModel.rectangle;
+  }
+
+  circle(event: any) {
+    $('a.leaflet-draw-draw-circle')[0].click();
+    this.contextVisible = true;
+    this.states = this.statesModel.circle;
   }
 
   drawVictimPath(e: MouseEvent) {
@@ -102,6 +179,23 @@ export class TrackMenuComponent implements OnInit {
       data: {layers: this.canimapService.layers, service: this.canimapService}
     });
   }
+
+  chooseColor() {
+    const dialogRef = this.dialog.open(DialogChooseColorComponent, {
+      width: '500px',
+      data: this.canimapService.color
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      if (result !== undefined) {
+        this.canimapService.color = result;
+        $('.app-canimap-color-chooser').css('background-color', result);
+        $('.app-canimap-color-chooser').css('border-radius', '0');
+      }
+    });
+
+  }
 }
 
 @Component({
@@ -122,5 +216,28 @@ export class DialogChooseLayersComponent {
   onInputChange(event: any, layer: any) {
     this.data.service.setOpacity(layer, event.value);
     console.log('This is emitted as the thumb slides: ' + layer.name);
+  }
+}
+
+
+@Component({
+  selector: 'app-dialog-choose-color',
+  templateUrl: './app-dialog-choose-color.html',
+})
+export class DialogChooseColorComponent {
+  dataSource;
+  constructor(
+    public dialogRef: MdDialogRef<TrackMenuComponent>,
+    @Optional() @Inject(MD_DIALOG_DATA) public data: any) {
+      this.data = data;
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close(this.data);
+  }
+
+  color(color: string): void {
+    this.data = color;
+    this.dialogRef.close(this.data);
   }
 }
