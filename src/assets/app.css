@@ -11,6 +11,7 @@ html, body, app, .container {
   -webkit-border-radius:10px; /* for Webkit-Browsers */
   border-radius:10px; /* regular */
   background:rgba(255,255,255,0.8); /* Transparent Background 50% */
+  border: 2px solid gray;
 }
 
 .pac-logo, .pac-logo:after {

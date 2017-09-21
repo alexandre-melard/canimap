@@ -99,7 +99,7 @@ export class TrackMenuComponent implements OnInit {
   chooseLayers() {
     const dialogRef = this.dialog.open(DialogChooseLayersComponent, {
       width: '350px',
-      data: this.canimapService.layers
+      data: {layers: this.canimapService.layers, service: this.canimapService}
     });
   }
 }
@@ -112,32 +112,15 @@ export class DialogChooseLayersComponent {
   dataSource;
   constructor(
     public dialogRef: MdDialogRef<TrackMenuComponent>,
-    @Inject(MD_DIALOG_DATA) public data: any[]) {
+    @Inject(MD_DIALOG_DATA) public data: any) {
       this.data = data;
-      // this.dataSource = new LayersDataSource(data);
   }
 
   onNoClick(): void {
     this.dialogRef.close();
   }
   onInputChange(event: any, layer: any) {
-    layer.layer.setOpacity(event.value);
+    this.data.service.setOpacity(layer, event.value);
     console.log('This is emitted as the thumb slides: ' + layer.name);
   }
 }
-
-// export class LayersDataSource extends DataSource<any> {
-//   /** Connect function called by the table to retrieve one stream containing the data to render. */
-//   data: any[];
-
-//   constructor(data: any[]) {
-//     super();
-//     this.data = data;
-//   }
-
-//   connect(): Observable<Element[]> {
-//     return Observable.of(this.data);
-//   }
-
-//   disconnect() {}
-// }

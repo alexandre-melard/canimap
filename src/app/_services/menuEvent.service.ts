@@ -31,7 +31,7 @@ proceed() {
     return source;
 }
 
-prepareEvent(key: string, value: any, success: Function, error ?: Function) {
+prepareEvent(key: string, value: any, success?: Function, error?: Function) {
   this.current.key = key;
   this.current.value = { data: value, success: success, error: error };
 }

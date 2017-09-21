@@ -26,6 +26,16 @@ export class CanimapComponent implements OnInit {
   public geoJson: any[] = new Array();
   private subscriptions = new Array<Subscription>();
 
+  get layers() {
+    const layers = new Array<L.TileLayer>();
+    [this.googleHybride, this.ignMap, this.googleSatellite].forEach(layer => {
+      if (layer.options.opacity > 0) {
+        layers.push(layer);
+      }
+    });
+    return layers;
+  }
+
   googleHybride = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
     maxZoom: 20,
     subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
@@ -34,19 +44,15 @@ export class CanimapComponent implements OnInit {
   googleSatellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
     maxZoom: 20,
     subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-    opacity: 1
+    opacity: 0
   });
   ignMap = L.tileLayer('https://wxs.ign.fr/' +
     '6i88pkdxubzayoady4upbkjg' + '/geoportail/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=' +
     'GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR' + '&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg',
-    { opacity: 0.5 });
+    { opacity: 1 });
 
   options = {
-    layers: [
-      this.googleSatellite,
-      this.ignMap,
-      this.googleHybride
-    ],
+    layers: this.layers,
     zoom: 15,
     center: L.latLng([45.419364, 5.347022])
   };
