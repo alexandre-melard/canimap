@@ -72,7 +72,10 @@ export class CanimapComponent implements OnInit {
         icon: this.icon,
         draggable: true
       },
-      polyline: true,
+      polyline: {
+        metric: 'metric',
+        showLength: true
+      },
       circle: {
         shapeOptions: {
           color: '#aaaaaa'
@@ -155,6 +158,20 @@ export class CanimapComponent implements OnInit {
         const layer: Layer = e.layer;
         if (e.layerType === 'polyline') {
           const polyline: Polyline = <Polyline>layer;
+          const latlngs = polyline.getLatLngs();
+          let tempLatLng = null;
+          let totalDistance = 0.00000;
+          latlngs.forEach((latlng: L.LatLng) => {
+            if (tempLatLng == null) {
+              tempLatLng = latlng;
+              return;
+            }
+            totalDistance += tempLatLng.distanceTo(latlng);
+            tempLatLng = latlng;
+          });
+          const popup = new L.Popup();
+          popup.setContent((totalDistance).toFixed(0) + ' m');
+          polyline.bindPopup(popup);
           let json: any = polyline.toGeoJSON();
           json['properties'] = { color: me.canimapService.color };
           me.geoJson.push(json);
@@ -180,7 +197,7 @@ export class CanimapComponent implements OnInit {
           me.canimapService.color = me.savedColor;
         }
         if (e.layerType === 'rectangle') {
-          const rectangle: Rectangle  = <Rectangle>layer;
+          const rectangle: Rectangle = <Rectangle>layer;
           const json: any = rectangle.toGeoJSON();
           json['properties'] = { color: me.canimapService.color };
           me.geoJson.push(json);
@@ -188,7 +205,7 @@ export class CanimapComponent implements OnInit {
           me.canimapService.color = me.savedColor;
         }
         if (e.layerType === 'polygon') {
-          const polygon: Polygon  = <Polygon>layer;
+          const polygon: Polygon = <Polygon>layer;
           const json: any = polygon.toGeoJSON();
           json['properties'] = { color: me.canimapService.color };
           me.geoJson.push(json);
@@ -196,7 +213,7 @@ export class CanimapComponent implements OnInit {
           me.canimapService.color = me.savedColor;
         }
         if (e.layerType === 'circle') {
-          const circle: Circle  = <Circle>layer;
+          const circle: Circle = <Circle>layer;
           const json: any = circle.toGeoJSON();
           json['properties'] = { color: me.canimapService.color };
           me.geoJson.push(json);
