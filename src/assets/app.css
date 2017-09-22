@@ -68,8 +68,6 @@ app-canimap-location {
 }
 
 .leaflet-popup-content-wrapper, .leaflet-popup-tip {
-  background: rgba(0,0,0,0.4)!important;
-  color: white!important;
   box-shadow: 0 3px 14px rgba(0,0,0,0)!important;
 }
 

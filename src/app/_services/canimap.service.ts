@@ -14,7 +14,7 @@ import { FontAwesomeOptions, FontAwesomeIcon } from 'ngx-leaflet-fa-markers/inde
 export class CanimapService implements OnDestroy {
 
   geoJSON: any[];
-  color = 'red';
+  color = '#F00';
   layers: { name: string, layer: any }[];
   private _map: Map;
   private subscriptions = new Array<Subscription>();

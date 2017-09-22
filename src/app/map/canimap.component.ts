@@ -16,6 +16,7 @@ import { FontAwesomeOptions, FontAwesomeIcon } from 'ngx-leaflet-fa-markers/inde
   styleUrls: ['./canimap.component.css']
 })
 export class CanimapComponent implements OnInit {
+  polyline: L.Polyline;
   map: Map;
   title = 'app';
   savedColor: string;
@@ -84,13 +85,34 @@ export class CanimapComponent implements OnInit {
     }
   };
 
+  private states = {
+    DRAWING: 'drawing',
+    PATH: 'path'
+  };
+  private previousState = this.states.DRAWING;
+  
   constructor(
     private menuEventService: MenuEventService,
     private canimapService: CanimapService,
     private fileService: FileService) {
   }
 
+  switchState(state) {
+    if (state === this.states.DRAWING) {
+      if (this.previousState === this.states.PATH) {
+        this.canimapService.color = this.savedColor;
+        this.previousState = this.states.DRAWING;
+      }
+    } else if (state === this.states.PATH) {
+      if (this.previousState === this.states.DRAWING) {
+        this.savedColor = this.canimapService.color;
+        this.previousState = this.states.PATH;
+      }
+    }
+  }
+
   ngOnInit() {
+//    (<any>L.Browser).touch = false;
   }
 
   onValueChanged(event: any) {
@@ -111,6 +133,20 @@ export class CanimapComponent implements OnInit {
     }
   }
 
+  hexToRgb(hex: string) {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function (m, r, g, b) {
+      return r + r + g + g + b + b;
+    });
+
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  }
   onMapReady(map: Map) {
     this.map = map;
     this.canimapService.map = map;
@@ -127,8 +163,8 @@ export class CanimapComponent implements OnInit {
     this.subscriptions.push(this.menuEventService.getObservable('drawVictimPath').subscribe(
       (value) => {
         this.success = value.success;
-        this.savedColor = this.canimapService.color;
-        this.canimapService.color = 'blue';
+        this.switchState(this.states.PATH);
+        this.canimapService.color = '#00F';
         $('.leaflet-draw-draw-polyline')[0].click();
       },
       e => console.log(e),
@@ -138,14 +174,13 @@ export class CanimapComponent implements OnInit {
     this.subscriptions.push(this.menuEventService.getObservable('drawK9Path').subscribe(
       (value) => {
         this.success = value.success;
-        this.savedColor = this.canimapService.color;
-        this.canimapService.color = 'orange';
+        this.switchState(this.states.PATH);
+        this.canimapService.color = '#F93';
         $('.leaflet-draw-draw-polyline')[0].click();
       },
       e => console.log(e),
       () => console.log('onCompleted')
     ));
-
     this.map.on(L.Draw.Event.EDITED, (e: L.DrawEvents.Edited) => {
       this.map.fitBounds(this.map.getBounds());
     });
@@ -157,25 +192,27 @@ export class CanimapComponent implements OnInit {
         }
         const layer: Layer = e.layer;
         if (e.layerType === 'polyline') {
-          const polyline: Polyline = <Polyline>layer;
-          const latlngs = polyline.getLatLngs();
-          let tempLatLng = null;
-          let totalDistance = 0.00000;
-          latlngs.forEach((latlng: L.LatLng) => {
-            if (tempLatLng == null) {
-              tempLatLng = latlng;
-              return;
+          me.polyline = <Polyline>layer;
+          const popup = new L.Popup({ autoClose: false, closeOnClick: false });
+          popup.setContent(me.distance(me.polyline.getLatLngs()).toFixed(0) + ' m');
+          popup.options['color'] = me.canimapService.color;
+          me.map.on('popupopen', (pop: any) => {
+            let color = pop.popup.options['color'];
+            color = me.hexToRgb(color);
+            const colorCss = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',0.6)';
+            const elements = $(pop.popup.getElement()).find('.leaflet-popup-content-wrapper, .leaflet-popup-tip');
+            elements.css('background', colorCss);
+            if (0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b > 200) {
+              elements.css('color', 'black');
+            } else {
+              elements.css('color', 'white');
             }
-            totalDistance += tempLatLng.distanceTo(latlng);
-            tempLatLng = latlng;
           });
-          const popup = new L.Popup();
-          popup.setContent((totalDistance).toFixed(0) + ' m');
-          polyline.bindPopup(popup);
-          let json: any = polyline.toGeoJSON();
+          me.polyline.bindPopup(popup);
+          let json: any = me.polyline.toGeoJSON();
           json['properties'] = { color: me.canimapService.color };
           me.geoJson.push(json);
-          polyline.setStyle({ color: me.canimapService.color });
+          me.polyline.setStyle({ color: me.canimapService.color });
           const polylineDecoratorOptions = {
             patterns: [
               {
@@ -189,12 +226,11 @@ export class CanimapComponent implements OnInit {
               }
             ]
           };
-          const featureGroup = <FeatureGroup>L.polylineDecorator(polyline, polylineDecoratorOptions);
+          const featureGroup = <FeatureGroup>L.polylineDecorator(me.polyline, polylineDecoratorOptions);
           me.map.addLayer(featureGroup);
           json = featureGroup.toGeoJSON();
           json['properties'] = { color: me.canimapService.color };
           me.geoJson.push(json);
-          me.canimapService.color = me.savedColor;
         }
         if (e.layerType === 'rectangle') {
           const rectangle: Rectangle = <Rectangle>layer;
@@ -202,7 +238,6 @@ export class CanimapComponent implements OnInit {
           json['properties'] = { color: me.canimapService.color };
           me.geoJson.push(json);
           rectangle.setStyle({ color: me.canimapService.color });
-          me.canimapService.color = me.savedColor;
         }
         if (e.layerType === 'polygon') {
           const polygon: Polygon = <Polygon>layer;
@@ -210,7 +245,6 @@ export class CanimapComponent implements OnInit {
           json['properties'] = { color: me.canimapService.color };
           me.geoJson.push(json);
           polygon.setStyle({ fillColor: me.canimapService.color });
-          me.canimapService.color = me.savedColor;
         }
         if (e.layerType === 'circle') {
           const circle: Circle = <Circle>layer;
@@ -218,20 +252,26 @@ export class CanimapComponent implements OnInit {
           json['properties'] = { color: me.canimapService.color };
           me.geoJson.push(json);
           circle.setStyle({ fillColor: me.canimapService.color });
-          me.canimapService.color = me.savedColor;
         }
         me.map.addLayer(layer);
+        me.switchState(me.states.DRAWING);
       } catch (e) {
         console.log(e);
       }
     });
+  }
 
-    setTimeout(function () {
-      $('.leaflet-draw-toolbar')
-        .first()
-        .prepend('<a class="leaflet-draw-draw-color" title="Change color"><span class="sr-only">Change color</span></a>');
-      $('.leaflet-draw-draw-color')
-        .append($('.colorpicker'));
-    }, 500);
+  distance(latlngs: L.LatLng[]): number {
+    let tempLatLng = null;
+    let totalDistance = 0.00000;
+    latlngs.forEach((latlng: L.LatLng) => {
+      if (tempLatLng == null) {
+        tempLatLng = latlng;
+        return;
+      }
+      totalDistance += tempLatLng.distanceTo(latlng);
+      tempLatLng = latlng;
+    });
+    return totalDistance;
   }
 }
