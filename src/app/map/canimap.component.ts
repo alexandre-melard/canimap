@@ -7,7 +7,8 @@ import * as $ from 'jquery';
 import 'leaflet-polylinedecorator';
 // import * as N from 'leaflet-illustrate';
 
-import { Map, Polyline, Rectangle, Circle, Polygon, Layer, FeatureGroup, Path, LayerEvent, LeafletEvent, LocationEvent } from 'leaflet';
+import { Map, Polyline, Point, Rectangle, Circle, Polygon, Layer,
+  FeatureGroup, Path, LayerEvent, LeafletEvent, LocationEvent } from 'leaflet';
 import { FontAwesomeOptions, FontAwesomeIcon } from 'ngx-leaflet-fa-markers/index';
 
 @Component({
@@ -67,7 +68,9 @@ export class CanimapComponent implements OnInit {
 
   drawOptions = {
     position: 'topleft',
-    featureGroup: this.featureGroup,
+    edit: {
+      featureGroup: this.featureGroup
+    },
     draw: {
       marker: {
         icon: this.icon,
@@ -90,7 +93,7 @@ export class CanimapComponent implements OnInit {
     PATH: 'path'
   };
   private previousState = this.states.DRAWING;
-  
+
   constructor(
     private menuEventService: MenuEventService,
     private canimapService: CanimapService,
@@ -147,7 +150,82 @@ export class CanimapComponent implements OnInit {
       b: parseInt(result[3], 16)
     } : null;
   }
+
+  drawPolyline(me, layer: Layer, options?: any): Layer[] {
+    me.polyline = <Polyline>layer;
+    const popup = new L.Popup({ autoClose: false, closeOnClick: false });
+    popup.setContent(me.distance(me.polyline.getLatLngs()).toFixed(0) + ' m');
+    popup.options['color'] = me.canimapService.color;
+    me.map.on('popupopen', (pop: any) => {
+      let color = pop.popup.options['color'];
+      color = me.hexToRgb(color);
+      const colorCss = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',0.6)';
+      const elements = $(pop.popup.getElement()).find('.leaflet-popup-content-wrapper, .leaflet-popup-tip');
+      elements.css('background', colorCss);
+      if (0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b > 200) {
+        elements.css('color', 'black');
+      } else {
+        elements.css('color', 'white');
+      }
+    });
+    me.polyline.bindPopup(popup);
+    const json: any = me.polyline.toGeoJSON();
+    json['properties'] = { color: me.canimapService.color };
+    me.geoJson.push(json);
+    me.polyline.setStyle({ color: me.canimapService.color });
+    const polylineDecoratorOptions = {
+      patterns: [
+        {
+          offset: 20, repeat: 50,
+          symbol: L.Symbol.arrowHead(
+            {
+              pixelSize: 10,
+              polygon: true,
+              pathOptions: { stroke: true, color: me.canimapService.color }
+            })
+        }
+      ]
+    };
+    const featureGroup = <FeatureGroup>L.polylineDecorator(me.polyline, polylineDecoratorOptions);
+    return [me.polyline, featureGroup];
+  }
+
+  drawRectangle(me, layer: Layer, options?: any): Layer[] {
+    const rectangle: Rectangle = <Rectangle>layer;
+    const json: any = rectangle.toGeoJSON();
+    json['properties'] = { type: 'rectangle', color: me.canimapService.color };
+    me.geoJson.push(json);
+    rectangle.setStyle({ color: me.canimapService.color });
+    return [rectangle];
+  }
+
+  drawPolygon(me, layer: Layer, options?: any): Layer[] {
+    const polygon: Polygon = <Polygon>layer;
+    if (options !== undefined && options.fillColor !== undefined) {
+      me.canimapService.color = options.fillColor;
+    }
+    const json: any = polygon.toGeoJSON();
+    json['properties'] = { type: 'polygon', fillColor: me.canimapService.color };
+    me.geoJson.push(json);
+    polygon.setStyle({ fillColor: me.canimapService.color });
+    return [polygon];
+  }
+
+  drawCircle(me, layer: Layer, options?: any): Layer[] {
+    let circle: Circle = <Circle> layer;
+    if (options !== undefined && options.radius !== undefined) {
+      circle = new L.Circle(circle.getBounds().getCenter(), options.radius);
+      me.canimapService.color = options.fillColor;
+    }
+    const json: any = circle.toGeoJSON();
+    json['properties'] = { type: 'circle', fillColor: me.canimapService.color, radius: circle.getRadius() };
+    me.geoJson.push(json);
+    circle.setStyle({ fillColor: me.canimapService.color });
+    return [circle];
+  }
+
   onMapReady(map: Map) {
+    const me = this;
     this.map = map;
     this.canimapService.map = map;
     this.canimapService.subscribe();
@@ -159,6 +237,39 @@ export class CanimapComponent implements OnInit {
       { name: 'google sattelite', layer: this.googleSatellite }
     ];
     this.savedColor = this.canimapService.color;
+
+    this.subscriptions.push(this.menuEventService.getObservable('addLayersFromJson').subscribe(
+      (json) => {
+        this.switchState(this.states.PATH);
+        json.features.forEach(feature => {
+          let layers: Layer[] = new Array();
+          let layer: Layer;
+          me.canimapService.color = feature.properties.color;
+          layer = L.geoJSON(feature);
+          switch (feature.properties.type) {
+            case 'polyline':
+              layers = me.drawPolyline(me, layer, feature.properties);
+              break;
+            case 'rectangle':
+              layers = me.drawRectangle(me, layer, feature.properties);
+              break;
+            case 'polygon':
+              layers = me.drawPolygon(me, layer, feature.properties);
+              break;
+            case 'circle':
+              layers = me.drawCircle(me, layer, feature.properties);
+              break;
+            default:
+              break;
+          }
+          layers.forEach(l => {
+            me.map.addLayer(l);
+          });
+    });
+    },
+      e => console.log(e),
+      () => console.log('onCompleted')
+    ));
 
     this.subscriptions.push(this.menuEventService.getObservable('drawVictimPath').subscribe(
       (value) => {
@@ -184,76 +295,25 @@ export class CanimapComponent implements OnInit {
     this.map.on(L.Draw.Event.EDITED, (e: L.DrawEvents.Edited) => {
       this.map.fitBounds(this.map.getBounds());
     });
-    const me = this;
     this.map.on(L.Draw.Event.CREATED, (e: L.DrawEvents.Created) => {
       try {
         if (me.success !== undefined) {
           me.success();
         }
         const layer: Layer = e.layer;
+        let layers: Layer[];
         if (e.layerType === 'polyline') {
-          me.polyline = <Polyline>layer;
-          const popup = new L.Popup({ autoClose: false, closeOnClick: false });
-          popup.setContent(me.distance(me.polyline.getLatLngs()).toFixed(0) + ' m');
-          popup.options['color'] = me.canimapService.color;
-          me.map.on('popupopen', (pop: any) => {
-            let color = pop.popup.options['color'];
-            color = me.hexToRgb(color);
-            const colorCss = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',0.6)';
-            const elements = $(pop.popup.getElement()).find('.leaflet-popup-content-wrapper, .leaflet-popup-tip');
-            elements.css('background', colorCss);
-            if (0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b > 200) {
-              elements.css('color', 'black');
-            } else {
-              elements.css('color', 'white');
-            }
-          });
-          me.polyline.bindPopup(popup);
-          let json: any = me.polyline.toGeoJSON();
-          json['properties'] = { color: me.canimapService.color };
-          me.geoJson.push(json);
-          me.polyline.setStyle({ color: me.canimapService.color });
-          const polylineDecoratorOptions = {
-            patterns: [
-              {
-                offset: 20, repeat: 50,
-                symbol: L.Symbol.arrowHead(
-                  {
-                    pixelSize: 10,
-                    polygon: true,
-                    pathOptions: { stroke: true, color: me.canimapService.color }
-                  })
-              }
-            ]
-          };
-          const featureGroup = <FeatureGroup>L.polylineDecorator(me.polyline, polylineDecoratorOptions);
-          me.map.addLayer(featureGroup);
-          json = featureGroup.toGeoJSON();
-          json['properties'] = { color: me.canimapService.color };
-          me.geoJson.push(json);
+          layers = me.drawPolyline(me, e.layer);
+        } else if (e.layerType === 'rectangle') {
+          layers = me.drawRectangle(me, layer);
+        } else if (e.layerType === 'polygon') {
+          layers = me.drawPolygon(me, layer);
+        }else if (e.layerType === 'circle') {
+          layers = me.drawCircle(me, layer);
         }
-        if (e.layerType === 'rectangle') {
-          const rectangle: Rectangle = <Rectangle>layer;
-          const json: any = rectangle.toGeoJSON();
-          json['properties'] = { color: me.canimapService.color };
-          me.geoJson.push(json);
-          rectangle.setStyle({ color: me.canimapService.color });
-        }
-        if (e.layerType === 'polygon') {
-          const polygon: Polygon = <Polygon>layer;
-          const json: any = polygon.toGeoJSON();
-          json['properties'] = { color: me.canimapService.color };
-          me.geoJson.push(json);
-          polygon.setStyle({ fillColor: me.canimapService.color });
-        }
-        if (e.layerType === 'circle') {
-          const circle: Circle = <Circle>layer;
-          const json: any = circle.toGeoJSON();
-          json['properties'] = { color: me.canimapService.color };
-          me.geoJson.push(json);
-          circle.setStyle({ fillColor: me.canimapService.color });
-        }
-        me.map.addLayer(layer);
+        layers.forEach(l => {
+          me.map.addLayer(l);
+        });
         me.switchState(me.states.DRAWING);
       } catch (e) {
         console.log(e);

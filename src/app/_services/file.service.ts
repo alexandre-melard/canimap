@@ -12,7 +12,6 @@ import * as L from 'leaflet';
 
 @Injectable()
 export class FileService implements OnDestroy {
-  private map: Map;
   private subscriptions = new Array<Subscription>();
 
   constructor(
@@ -22,7 +21,7 @@ export class FileService implements OnDestroy {
   ) { }
 
   subscribe() {
-    const map = this.map;
+    const me = this;
 
     this.subscriptions.push(this.menuEventService.getObservable('fileSave').subscribe(
       () => {
@@ -54,6 +53,26 @@ export class FileService implements OnDestroy {
     ));
     this.subscriptions.push(this.menuEventService.getObservable('fileOpen').subscribe(
       () => {
+        console.log('open file');
+        $('#file').click();
+      },
+      e => console.log('onError: %s', e),
+      () => console.log('onCompleted')
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('fileReceived').subscribe(
+      (file: File) => {
+        console.log(file.size);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          console.log(e);
+        };
+        reader.onloadend = (f) => {
+          console.log(f);
+          console.log(reader.result);
+          const json = JSON.parse(reader.result);
+          me.menuEventService.callEvent('addLayersFromJson', json);
+        };
+        reader.readAsText(file);
       },
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')

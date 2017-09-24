@@ -36,4 +36,10 @@ export class FileMenuComponent implements OnInit {
       this.menuEventService.proceed();
     }
   }
+
+  fileReceived(event: any) {
+    const file = event.target.files[0];
+    this.menuEventService.callEvent('fileReceived', file);
+  }
+
 }

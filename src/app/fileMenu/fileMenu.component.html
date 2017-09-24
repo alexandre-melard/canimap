@@ -11,7 +11,7 @@
   <button md-icon-button>
     <md-icon class="md-24" routerLink="/map" aria-label="File open" mdTooltipPosition="below" mdTooltip="Ouvrir une carte" i18n="Open File|Open a saved file"
     data-toggle="modal" data-target="#fileOpen" (click)="fileOpen($event)">
-    folder_open
+      insert_drive_file
     </md-icon>
   </button>
   <button md-icon-button>
@@ -20,4 +20,5 @@
       file_download
     </md-icon>
   </button>
+  <input (change)="fileReceived($event)" type="file" id="file" name="file" style="display: none" />
 </div>
