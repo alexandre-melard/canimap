@@ -250,16 +250,16 @@ export class CanimapComponent implements OnInit {
           layer = L.geoJSON(feature);
           switch (feature.properties.type) {
             case 'polyline':
-              layers = me.drawPolyline(me, layer, feature.properties);
+              layers.concat(me.drawPolyline(me, layer, feature.properties));
               break;
             case 'rectangle':
-              layers = me.drawRectangle(me, layer, feature.properties);
+              layers.concat(me.drawRectangle(me, layer, feature.properties));
               break;
             case 'polygon':
-              layers = me.drawPolygon(me, layer, feature.properties);
+              layers.concat(me.drawPolygon(me, layer, feature.properties));
               break;
             case 'circle':
-              layers = me.drawCircle(me, layer, feature.properties);
+              layers.concat(me.drawCircle(me, layer, feature.properties));
               break;
             default:
               break;
