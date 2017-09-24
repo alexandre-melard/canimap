@@ -7,8 +7,10 @@ import * as $ from 'jquery';
 import 'leaflet-polylinedecorator';
 // import * as N from 'leaflet-illustrate';
 
-import { Map, Polyline, Point, Rectangle, Circle, Polygon, Layer,
-  FeatureGroup, Path, LayerEvent, LeafletEvent, LocationEvent } from 'leaflet';
+import {
+  Map, Polyline, Point, Rectangle, Circle, Polygon, Layer,
+  FeatureGroup, Path, LayerEvent, LeafletEvent, LocationEvent
+} from 'leaflet';
 import { FontAwesomeOptions, FontAwesomeIcon } from 'ngx-leaflet-fa-markers/index';
 
 @Component({
@@ -115,7 +117,7 @@ export class CanimapComponent implements OnInit {
   }
 
   ngOnInit() {
-//    (<any>L.Browser).touch = false;
+    //    (<any>L.Browser).touch = false;
   }
 
   onValueChanged(event: any) {
@@ -212,7 +214,7 @@ export class CanimapComponent implements OnInit {
   }
 
   drawCircle(me, layer: Layer, options?: any): Layer[] {
-    let circle: Circle = <Circle> layer;
+    let circle: Circle = <Circle>layer;
     if (options !== undefined && options.radius !== undefined) {
       circle = new L.Circle(circle.getBounds().getCenter(), options.radius);
       me.canimapService.color = options.fillColor;
@@ -263,10 +265,12 @@ export class CanimapComponent implements OnInit {
               break;
           }
           layers.forEach(l => {
+            me.featureGroup.addLayer(l);
             me.map.addLayer(l);
           });
-    });
-    },
+        });
+        me.map.fitBounds(me.featureGroup.getBounds());
+      },
       e => console.log(e),
       () => console.log('onCompleted')
     ));
@@ -308,7 +312,7 @@ export class CanimapComponent implements OnInit {
           layers = me.drawRectangle(me, layer);
         } else if (e.layerType === 'polygon') {
           layers = me.drawPolygon(me, layer);
-        }else if (e.layerType === 'circle') {
+        } else if (e.layerType === 'circle') {
           layers = me.drawCircle(me, layer);
         }
         layers.forEach(l => {
