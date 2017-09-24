@@ -243,33 +243,33 @@ export class CanimapComponent implements OnInit {
     this.subscriptions.push(this.menuEventService.getObservable('addLayersFromJson').subscribe(
       (json) => {
         this.switchState(this.states.PATH);
+        let layers: Layer[] = new Array();
         json.features.forEach(feature => {
-          let layers: Layer[] = new Array();
           let layer: Layer;
           me.canimapService.color = feature.properties.color;
           layer = L.geoJSON(feature);
           switch (feature.properties.type) {
             case 'polyline':
-              layers.concat(me.drawPolyline(me, layer, feature.properties));
+              layers = layers.concat(me.drawPolyline(me, layer, feature.properties));
               break;
             case 'rectangle':
-              layers.concat(me.drawRectangle(me, layer, feature.properties));
+              layers = layers.concat(me.drawRectangle(me, layer, feature.properties));
               break;
             case 'polygon':
-              layers.concat(me.drawPolygon(me, layer, feature.properties));
+              layers = layers.concat(me.drawPolygon(me, layer, feature.properties));
               break;
             case 'circle':
-              layers.concat(me.drawCircle(me, layer, feature.properties));
+              layers = layers.concat(me.drawCircle(me, layer, feature.properties));
               break;
             default:
               break;
           }
-          layers.forEach(l => {
-            me.featureGroup.addLayer(l);
-            me.map.addLayer(l);
-          });
         });
-        me.map.fitBounds(me.featureGroup.getBounds());
+        layers.forEach(l => {
+          me.featureGroup.addLayer(l);
+          me.map.addLayer(l);
+        });
+      me.map.fitBounds(me.featureGroup.getBounds());
       },
       e => console.log(e),
       () => console.log('onCompleted')
