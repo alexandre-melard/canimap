@@ -45,6 +45,7 @@
     "jquery": "^3.2.1",
     "leaflet": "^1.2.0",
     "leaflet-draw": "^0.4.12",
+    "leaflet-gpx": "^1.0.0",
     "leaflet-illustrate": "0.0.3",
     "leaflet-polylinedecorator": "^1.4.1",
     "ngx-color-picker": "^4.3.3",

@@ -5,6 +5,8 @@ import { Subscription } from 'rxjs/Subscription';
 import * as L from 'leaflet';
 import * as $ from 'jquery';
 import 'leaflet-polylinedecorator';
+import 'leaflet-gpx';
+
 // import * as N from 'leaflet-illustrate';
 
 import {
@@ -31,7 +33,7 @@ export class CanimapComponent implements OnInit {
 
   get layers() {
     const layers = new Array<L.TileLayer>();
-    [this.googleHybride, this.ignMap, this.googleSatellite].forEach(layer => {
+    [this.googleHybride, this.ignPlan, this.googleSatellite].forEach(layer => {
       if (layer.options.opacity > 0) {
         layers.push(layer);
       }
@@ -49,9 +51,9 @@ export class CanimapComponent implements OnInit {
     subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
     opacity: 0
   });
-  ignMap = L.tileLayer('https://wxs.ign.fr/' +
+  ignPlan = L.tileLayer('https://wxs.ign.fr/' +
     '6i88pkdxubzayoady4upbkjg' + '/geoportail/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=' +
-    'GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR' + '&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg',
+    'GEOGRAPHICALGRIDSYSTEMS.MAPS' + '&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg',
     { opacity: 1 });
 
   options = {
@@ -124,7 +126,7 @@ export class CanimapComponent implements OnInit {
     console.log('received opacity change for:' + event.target + ' new value: ' + event.value);
     switch (event.target) {
       case 'ign':
-        this.ignMap.setOpacity(event.value);
+        this.ignPlan.setOpacity(event.value);
         break;
       case 'google':
         this.googleSatellite.setOpacity(event.value);
@@ -244,7 +246,7 @@ export class CanimapComponent implements OnInit {
     this.fileService.subscribe();
     this.canimapService.geoJSON = this.geoJson;
     this.canimapService.layers = [
-      { name: 'ign', layer: this.ignMap },
+      { name: 'ign plan', layer: this.ignPlan },
       { name: 'google hybride', layer: this.googleHybride },
       { name: 'google sattelite', layer: this.googleSatellite }
     ];
@@ -274,6 +276,19 @@ export class CanimapComponent implements OnInit {
             default:
               break;
           }
+        });
+        me.map.fitBounds(me.featureGroup.getBounds());
+      },
+      e => console.log(e),
+      () => console.log('onCompleted')
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('loadGPX').subscribe(
+      (gpx) => {
+        this.switchState(this.states.DRAWING);
+        gpx.features.forEach(feature => {
+          let layer: L.GPX;
+          layer = new L.GPX(feature);
+          me.drawPolyline(me, layer.getLayers()[0], feature.properties);
         });
         me.map.fitBounds(me.featureGroup.getBounds());
       },

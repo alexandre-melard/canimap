@@ -3,14 +3,14 @@
     <input (change)="fileReceived($event)" type="file" id="files" name="files[]" multiple />      
     <div id="drop_zone" (dragover)="dragover($event)" (drop)="drop($event)">Déposer les fichiers ici</div>
     <br/>
-    <output id="list" *ngIf="files">
+    <output id="list" *ngIf="data">
       <table width="100%" class="table table-sm table-striped table-hover table-responsive">
         <tr>
           <th>Nom</th>
           <th>Taille</th>
           <th>Dernière modification</th>
         </tr>
-        <tr *ngFor="let f of files">
+        <tr *ngFor="let f of data">
           <td>{{f.name}}</td>
           <td>{{f.size}}</td>
           <td>{{f.lastModifiedDate.toLocaleDateString()}}</td>
@@ -20,5 +20,5 @@
   </div>
   <div md-dialog-actions>
     <button md-button [md-dialog-close]="data" tabindex="2">Ok</button>
-    <button md-button (click)="onNoClick()" tabindex="-1">No Thanks</button>
+    <button md-button (click)="onNoClick()" tabindex="-1">Non merci!</button>
   </div>

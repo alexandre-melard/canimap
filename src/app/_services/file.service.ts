@@ -53,16 +53,19 @@ export class FileService implements OnDestroy {
     ));
     this.subscriptions.push(this.menuEventService.getObservable('fileOpen').subscribe(
       () => {
-        let files: File[] = new Array<File>();
         const dialogRef = this.dialog.open(DialogFilesOpenComponent, {
-          width: '700px',
-          data: files
+          width: '700px'
         });
 
         dialogRef.afterClosed().subscribe(result => {
           console.log('The dialog was closed');
           if (result !== undefined) {
-            files = result;
+            const fileList: FileList = result;
+            // loop through files
+            for (let i = 0; i < fileList.length; i++) {
+              const file = fileList.item(i);
+              me.parseFile(file);
+            }
           }
         });
       },
@@ -124,13 +127,11 @@ export class DialogFileSaveComponent {
   templateUrl: './templates/app-dialog-files-open.html',
 })
 export class DialogFilesOpenComponent {
-  files: File[];
-  constructor(
-    public dialogRef: MdDialogRef<FileService>,
-    @Inject(MD_DIALOG_DATA) public data: File[]) { }
+  public data: File[];
+  constructor(public dialogRef: MdDialogRef<FileService>) { }
 
   fileReceived(evt: any) {
-    this.files = evt.dataTransfer.files; // FileList object.
+    this.data = evt.target.files; // FileList object.
   }
 
   onNoClick(): void {
@@ -140,7 +141,7 @@ export class DialogFilesOpenComponent {
   drop(evt) {
     evt.stopPropagation();
     evt.preventDefault();
-    this.files = evt.dataTransfer.files; // FileList object.
+    this.data = evt.dataTransfer.files; // FileList object.
   }
 
   dragover(evt) {
