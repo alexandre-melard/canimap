@@ -1,4 +1,4 @@
-﻿<div class="btn-group menu-bar">
+﻿<div *ngIf="visible" class="btn-group menu-bar">
   <form>
     <input mdInput placeholder="&nbsp;Rechercher une adresse" autocorrect="off" autocapitalize="off" spellcheck="off" type="text"
     #search [formControl]="searchControl">

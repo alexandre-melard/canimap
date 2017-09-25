@@ -53,30 +53,45 @@ export class FileService implements OnDestroy {
     ));
     this.subscriptions.push(this.menuEventService.getObservable('fileOpen').subscribe(
       () => {
-        console.log('open file');
-        $('#file').click();
+        let files: File[] = new Array<File>();
+        const dialogRef = this.dialog.open(DialogFilesOpenComponent, {
+          width: '700px',
+          data: files
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('The dialog was closed');
+          if (result !== undefined) {
+            files = result;
+          }
+        });
       },
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
     ));
     this.subscriptions.push(this.menuEventService.getObservable('fileReceived').subscribe(
       (file: File) => {
-        console.log(file.size);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          console.log(e);
-        };
-        reader.onloadend = (f) => {
-          console.log(f);
-          console.log(reader.result);
-          const json = JSON.parse(reader.result);
-          me.menuEventService.callEvent('addLayersFromJson', json);
-        };
-        reader.readAsText(file);
+        me.parseFile(file);
       },
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
     ));
+  }
+
+  parseFile(file: File) {
+    const me = this;
+    console.log(file.size);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      console.log(e);
+    };
+    reader.onloadend = (f) => {
+      console.log(f);
+      console.log(reader.result);
+      const json = JSON.parse(reader.result);
+      me.menuEventService.callEvent('addLayersFromJson', json);
+    };
+    reader.readAsText(file);
   }
 
   ngOnDestroy() {
@@ -94,7 +109,6 @@ export class FileService implements OnDestroy {
   templateUrl: './templates/app-dialog-file-save.html',
 })
 export class DialogFileSaveComponent {
-
   constructor(
     public dialogRef: MdDialogRef<FileService>,
     @Inject(MD_DIALOG_DATA) public data: any) { }
@@ -102,5 +116,36 @@ export class DialogFileSaveComponent {
   onNoClick(): void {
     this.dialogRef.close();
   }
+}
 
+
+@Component({
+  selector: 'app-dialog-files-open',
+  templateUrl: './templates/app-dialog-files-open.html',
+})
+export class DialogFilesOpenComponent {
+  files: File[];
+  constructor(
+    public dialogRef: MdDialogRef<FileService>,
+    @Inject(MD_DIALOG_DATA) public data: File[]) { }
+
+  fileReceived(evt: any) {
+    this.files = evt.dataTransfer.files; // FileList object.
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+  drop(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    this.files = evt.dataTransfer.files; // FileList object.
+  }
+
+  dragover(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+  }
 }

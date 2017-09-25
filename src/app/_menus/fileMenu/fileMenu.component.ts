@@ -1,5 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { MenuEventService, HelperEventService } from '../_services/index';
+import { Router } from '@angular/router';
+import { MenuEventService, HelperEventService } from '../../_services/index';
 
 @Component({
   selector: 'app-canimap-file-menu',
@@ -13,8 +14,13 @@ export class FileMenuComponent implements OnInit {
 
   constructor(
     private menuEventService: MenuEventService,
-    private helperEventService: HelperEventService
+    private helperEventService: HelperEventService,
+    private router: Router
   ) { }
+
+  get visible(): boolean {
+    return this.router.url === '/map';
+  }
 
   ngOnInit() {
   }
@@ -36,10 +42,4 @@ export class FileMenuComponent implements OnInit {
       this.menuEventService.proceed();
     }
   }
-
-  fileReceived(event: any) {
-    const file = event.target.files[0];
-    this.menuEventService.callEvent('fileReceived', file);
-  }
-
 }

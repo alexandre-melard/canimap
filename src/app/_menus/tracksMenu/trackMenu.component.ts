@@ -6,10 +6,10 @@ import { DataSource } from '@angular/cdk/collections';
 import { Observable } from 'rxjs/Observable';
 import { MapsAPILoader } from '@agm/core';
 import { } from '@types/googlemaps';
+import { AlertService, CanimapService, AuthenticationService, MenuEventService, HelperEventService } from '../../_services/index';
+
 import 'rxjs/add/observable/of';
 import * as $ from 'jquery';
-
-import { AlertService, CanimapService, AuthenticationService, MenuEventService, HelperEventService } from '../_services/index';
 
 @Component({
   selector: 'app-canimap-track-menu',
@@ -21,6 +21,7 @@ export class TrackMenuComponent implements OnInit {
   gpsMarkerToggle = true;
   contextVisible = false;
   constructor(
+    private router: Router,
     private canimapService: CanimapService,
     private menuEventService: MenuEventService,
     private helperEventService: HelperEventService,
@@ -91,6 +92,10 @@ export class TrackMenuComponent implements OnInit {
     ]
 
   };
+
+  get visible(): boolean {
+    return this.router.url === '/map';
+  }
 
   ngOnInit() {
   }

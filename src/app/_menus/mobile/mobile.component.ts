@@ -1,8 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { AlertService, AuthenticationService } from '../_services/index';
-import { MenuEventService } from '../_services/menuEvent.service';
+import { AlertService, AuthenticationService, MenuEventService } from '../../_services/index';
 
 @Component({
   selector: 'canimap-menu-mobile',
@@ -11,12 +10,12 @@ import { MenuEventService } from '../_services/menuEvent.service';
 })
 
 export class MenuMobileComponent implements OnInit {
-  model:any = {};
+  model: any = {};
   loading = false;
-  onTrackStatus:boolean = false;
-  recordTrackStatus:boolean = false;
+  onTrackStatus = false;
+  recordTrackStatus = false;
 
-  constructor(private menuEventService:MenuEventService) {
+  constructor(private menuEventService: MenuEventService) {
   }
 
   onTrack() {

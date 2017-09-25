@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MapsAPILoader } from '@agm/core';
 import { } from '@types/googlemaps';
 
-import { AlertService, AuthenticationService, MenuEventService, HelperEventService } from '../_services/index';
+import { AlertService, AuthenticationService, MenuEventService, HelperEventService } from '../../_services/index';
 
 @Component({
   selector: 'app-canimap-location',
@@ -21,10 +21,15 @@ export class LocationComponent implements OnInit {
   public searchElementRef: ElementRef;
 
   constructor(
+    private router: Router,
     private menuEventService: MenuEventService,
     private helperEventService: HelperEventService,
     private mapsAPILoader: MapsAPILoader,
     private ngZone: NgZone) { }
+
+  get visible(): boolean {
+    return this.router.url === '/map';
+  }
 
   ngOnInit() {
     // create search FormControl

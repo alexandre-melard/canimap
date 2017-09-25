@@ -1,0 +1,21 @@
+input[type=text] {
+  display:block;
+  margin: 0 0 0 auto;
+  width: 140px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  -moz-border-radius:10px;  /* for Firefox */
+  -webkit-border-radius:10px; /* for Webkit-Browsers */
+  border-radius:10px; /* regular */
+  font-size: 14px;
+  background-color: transparent;
+  background-image: url('https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png');
+  background-position: 15px 15px;
+  background-repeat: no-repeat;
+  padding: 12px 20px 12px 40px;
+  -webkit-transition: width 0.4s ease-in-out;
+  transition: width 0.4s ease-in-out;
+}
+input[type=text]:focus {
+  width: 100%;
+}

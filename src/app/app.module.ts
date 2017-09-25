@@ -19,7 +19,7 @@ import { BaseRequestOptions } from '@angular/http';
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
 
-import { DialogFileSaveComponent } from './_services/file.service';
+import { DialogFileSaveComponent, DialogFilesOpenComponent } from './_services/file.service';
 
 import { AlertComponent } from './_directives/index';
 import { ModalComponent } from './_directives/index';
@@ -27,12 +27,12 @@ import { AuthGuard } from './_guards/index';
 import { AlertService, AuthenticationService, UserService, MenuEventService,
   CanimapService, HelperEventService, FileService } from './_services/index';
 import { HomeComponent } from './home/index';
-import { LocationComponent } from './location/index';
-import { MenuComponent } from './menu/index';
-import { ContextMenuComponent } from './contextMenu/index';
-import { FileMenuComponent } from './FileMenu/index';
-import { TrackMenuComponent, DialogChooseLayersComponent, DialogChooseColorComponent } from './tracksMenu';
-import { MenuMobileComponent } from './mobile';
+import { LocationComponent } from './_menus/location/index';
+import { MenuComponent } from './_menus/menu/index';
+import { ContextMenuComponent } from './_menus/contextMenu/index';
+import { FileMenuComponent } from './_menus/fileMenu/index';
+import { TrackMenuComponent, DialogChooseLayersComponent, DialogChooseColorComponent } from './_menus/tracksMenu';
+import { MenuMobileComponent } from './_menus/mobile';
 import { LoginComponent } from './login/index';
 import { CanimapComponent } from './map/index';
 import { RegisterComponent } from './register/index';
@@ -65,6 +65,7 @@ import { RegisterComponent } from './register/index';
   declarations: [
     AppComponent,
     DialogFileSaveComponent,
+    DialogFilesOpenComponent,
     DialogChooseLayersComponent,
     DialogChooseColorComponent,
     AlertComponent,
@@ -97,6 +98,7 @@ import { RegisterComponent } from './register/index';
   ],
   entryComponents: [
     DialogFileSaveComponent,
+    DialogFilesOpenComponent,
     DialogChooseLayersComponent,
     DialogChooseColorComponent
   ],

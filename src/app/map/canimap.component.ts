@@ -172,7 +172,7 @@ export class CanimapComponent implements OnInit {
     });
     me.polyline.bindPopup(popup);
     const json: any = me.polyline.toGeoJSON();
-    json['properties'] = { color: me.canimapService.color };
+    json['properties'] = { type: 'polyline', color: me.canimapService.color };
     me.geoJson.push(json);
     me.polyline.setStyle({ color: me.canimapService.color });
     const polylineDecoratorOptions = {
@@ -188,7 +188,11 @@ export class CanimapComponent implements OnInit {
         }
       ]
     };
+    me.map.addLayer(me.polyline);
     const featureGroup = <FeatureGroup>L.polylineDecorator(me.polyline, polylineDecoratorOptions);
+    me.map.addLayer(featureGroup);
+    me.featureGroup.addLayer(me.polyline);
+
     return [me.polyline, featureGroup];
   }
 
@@ -198,6 +202,8 @@ export class CanimapComponent implements OnInit {
     json['properties'] = { type: 'rectangle', color: me.canimapService.color };
     me.geoJson.push(json);
     rectangle.setStyle({ color: me.canimapService.color });
+    me.map.addLayer(rectangle);
+    me.featureGroup.addLayer(rectangle);
     return [rectangle];
   }
 
@@ -210,6 +216,8 @@ export class CanimapComponent implements OnInit {
     json['properties'] = { type: 'polygon', fillColor: me.canimapService.color };
     me.geoJson.push(json);
     polygon.setStyle({ fillColor: me.canimapService.color });
+    me.map.addLayer(polygon);
+    me.featureGroup.addLayer(polygon);
     return [polygon];
   }
 
@@ -223,6 +231,8 @@ export class CanimapComponent implements OnInit {
     json['properties'] = { type: 'circle', fillColor: me.canimapService.color, radius: circle.getRadius() };
     me.geoJson.push(json);
     circle.setStyle({ fillColor: me.canimapService.color });
+    me.map.addLayer(circle);
+    me.featureGroup.addLayer(circle);
     return [circle];
   }
 
@@ -245,12 +255,12 @@ export class CanimapComponent implements OnInit {
         this.switchState(this.states.PATH);
         let layers: Layer[] = new Array();
         json.features.forEach(feature => {
-          let layer: Layer;
+          let layer: L.GeoJSON;
           me.canimapService.color = feature.properties.color;
           layer = L.geoJSON(feature);
           switch (feature.properties.type) {
             case 'polyline':
-              layers = layers.concat(me.drawPolyline(me, layer, feature.properties));
+              layers = layers.concat(me.drawPolyline(me, layer.getLayers()[0], feature.properties));
               break;
             case 'rectangle':
               layers = layers.concat(me.drawRectangle(me, layer, feature.properties));
@@ -265,11 +275,7 @@ export class CanimapComponent implements OnInit {
               break;
           }
         });
-        layers.forEach(l => {
-          me.featureGroup.addLayer(l);
-          me.map.addLayer(l);
-        });
-      me.map.fitBounds(me.featureGroup.getBounds());
+        me.map.fitBounds(me.featureGroup.getBounds());
       },
       e => console.log(e),
       () => console.log('onCompleted')
