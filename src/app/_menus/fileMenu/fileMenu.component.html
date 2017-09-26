@@ -1,14 +1,20 @@
 ﻿<div *ngIf="visible" class="btn-group menu-bar" role="toolbar" aria-label="Toolbar with button groups">
   <button md-icon-button>
-    <md-icon class="md-24" routerLink="/map" aria-label="Files open" mdTooltipPosition="below" mdTooltip="Ouvrir des cartes" i18n="Open File|Open saved files"
-    data-toggle="modal" data-target="#fileOpen" (click)="fileOpen($event)">
+    <md-icon class="md-24" aria-label="Files open" mdTooltipPosition="below" mdTooltip="Ouvrir une ou des carte(s)" i18n="Open Files|Open saved files"
+    data-toggle="modal" data-target="#filesOpen" (click)="filesOpen($event)">
       folder
     </md-icon>
   </button>
   <button md-icon-button>
-    <md-icon class="md-24" routerLink="/map" aria-label="File save" mdTooltipPosition="below" mdTooltip="Enregistrer une carte"
+    <md-icon class="md-24" aria-label="File save" mdTooltipPosition="below" mdTooltip="Enregistrer une carte"
       i18n="Save|Save the map to file" data-toggle="modal" data-target="#fileSave" (click)="fileSave($event)">
       file_download
+    </md-icon>
+  </button>
+  <button md-icon-button>
+    <md-icon class="md-24" aria-label="Load GPX" mdTooltipPosition="below" mdTooltip="Charger une trace GPX"
+      i18n="Gpx|load GPX file" data-toggle="modal" data-target="#loadGPX" (click)="gpx($event)">
+      gps_fixed
     </md-icon>
   </button>
 </div>

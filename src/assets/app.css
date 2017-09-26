@@ -95,6 +95,11 @@ app-canimap-location {
   left: -1000px;
 }
 
+.leaflet-editing-icon {
+  width: 12px!important;
+  height: 12px!important;
+}
+
 .mat-form-field {
   width: 100%;
 }

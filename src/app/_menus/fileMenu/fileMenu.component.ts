@@ -34,7 +34,16 @@ export class FileMenuComponent implements OnInit {
     }
   }
 
-  fileOpen(e: MouseEvent) {
+  filesOpen(e: MouseEvent) {
+    this.menuEventService.prepareEvent('filesOpen', null);
+    const dismissHelp: boolean = this.helperEventService.callHelper('filesOpen');
+    if (dismissHelp) {
+      e.stopPropagation();
+      this.menuEventService.proceed();
+    }
+  }
+
+  gpx(e: MouseEvent) {
     this.menuEventService.prepareEvent('fileOpen', null);
     const dismissHelp: boolean = this.helperEventService.callHelper('fileOpen');
     if (dismissHelp) {

@@ -285,12 +285,10 @@ export class CanimapComponent implements OnInit {
     this.subscriptions.push(this.menuEventService.getObservable('loadGPX').subscribe(
       (gpx) => {
         this.switchState(this.states.DRAWING);
-        gpx.features.forEach(feature => {
-          let layer: L.GPX;
-          layer = new L.GPX(feature);
-          me.drawPolyline(me, layer.getLayers()[0], feature.properties);
+        new L.GPX(gpx, { async: true }).on('loaded', function (e) {
+          me.drawPolyline(me, e.target.getLayers()[0].getLayers()[0]);
+          me.map.fitBounds(me.featureGroup.getBounds());
         });
-        me.map.fitBounds(me.featureGroup.getBounds());
       },
       e => console.log(e),
       () => console.log('onCompleted')

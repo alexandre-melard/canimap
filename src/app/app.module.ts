@@ -19,7 +19,7 @@ import { BaseRequestOptions } from '@angular/http';
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
 
-import { DialogFileSaveComponent, DialogFilesOpenComponent } from './_services/file.service';
+import { DialogFileSaveComponent, DialogFilesOpenComponent, DialogFileOpenComponent } from './_services/file.service';
 
 import { AlertComponent } from './_directives/index';
 import { ModalComponent } from './_directives/index';
@@ -65,6 +65,7 @@ import { RegisterComponent } from './register/index';
   declarations: [
     AppComponent,
     DialogFileSaveComponent,
+    DialogFileOpenComponent,
     DialogFilesOpenComponent,
     DialogChooseLayersComponent,
     DialogChooseColorComponent,
@@ -98,6 +99,7 @@ import { RegisterComponent } from './register/index';
   ],
   entryComponents: [
     DialogFileSaveComponent,
+    DialogFileOpenComponent,
     DialogFilesOpenComponent,
     DialogChooseLayersComponent,
     DialogChooseColorComponent

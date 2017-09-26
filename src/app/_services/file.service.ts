@@ -51,7 +51,7 @@ export class FileService implements OnDestroy {
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
     ));
-    this.subscriptions.push(this.menuEventService.getObservable('fileOpen').subscribe(
+    this.subscriptions.push(this.menuEventService.getObservable('filesOpen').subscribe(
       () => {
         const dialogRef = this.dialog.open(DialogFilesOpenComponent, {
           width: '700px'
@@ -64,8 +64,30 @@ export class FileService implements OnDestroy {
             // loop through files
             for (let i = 0; i < fileList.length; i++) {
               const file = fileList.item(i);
-              me.parseFile(file);
+              me.parseFile(file, (content: string) => {
+                me.menuEventService.callEvent('addLayersFromJson', JSON.parse(content));
+              }
+            );
             }
+          }
+        });
+      },
+      e => console.log('onError: %s', e),
+      () => console.log('onCompleted')
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('fileOpen').subscribe(
+      () => {
+        const dialogRef = this.dialog.open(DialogFileOpenComponent, {
+          width: '700px'
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('The dialog was closed');
+          if (result !== undefined) {
+            const file: File = result;
+            me.parseFile(file, (content: string) => {
+              me.menuEventService.callEvent('loadGPX', content);
+            });
           }
         });
       },
@@ -74,14 +96,16 @@ export class FileService implements OnDestroy {
     ));
     this.subscriptions.push(this.menuEventService.getObservable('fileReceived').subscribe(
       (file: File) => {
-        me.parseFile(file);
+        me.parseFile(file, (content) => {
+          me.menuEventService.callEvent('addLayersFromJson', JSON.parse(content));
+        });
       },
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
     ));
   }
 
-  parseFile(file: File) {
+  parseFile(file: File, success: Function): void {
     const me = this;
     console.log(file.size);
     const reader = new FileReader();
@@ -89,10 +113,7 @@ export class FileService implements OnDestroy {
       console.log(e);
     };
     reader.onloadend = (f) => {
-      console.log(f);
-      console.log(reader.result);
-      const json = JSON.parse(reader.result);
-      me.menuEventService.callEvent('addLayersFromJson', json);
+      success(reader.result);
     };
     reader.readAsText(file);
   }
@@ -142,6 +163,40 @@ export class DialogFilesOpenComponent {
     evt.stopPropagation();
     evt.preventDefault();
     this.data = evt.dataTransfer.files; // FileList object.
+  }
+
+  dragover(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+  }
+}
+
+
+@Component({
+  selector: 'app-dialog-file-open',
+  templateUrl: './templates/app-dialog-file-open.html',
+})
+export class DialogFileOpenComponent {
+  public data: File;
+  constructor(public dialogRef: MdDialogRef<FileService>) { }
+
+  fileReceived(evt: any) {
+    this.data = evt.target.file;
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+  drop(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    const files = evt.dataTransfer.files;
+    if (files.length > 1) {
+      alert("vous ne pouvez charger qu'un fichier gpx à la fois");
+    }
+    this.data = files[0]; // FileList object.
   }
 
   dragover(evt) {
