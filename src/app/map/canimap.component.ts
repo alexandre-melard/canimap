@@ -13,7 +13,7 @@ import {
   Map, Polyline, Point, Rectangle, Circle, Polygon, Layer,
   FeatureGroup, Path, LayerEvent, LeafletEvent, LocationEvent
 } from 'leaflet';
-import { FontAwesomeOptions, FontAwesomeIcon } from 'ngx-leaflet-fa-markers/index';
+import { MaterialIconOptions, MaterialIcon } from 'ngx-leaflet-material-icons-markers/index';
 
 @Component({
   selector: 'app-canimap',
@@ -62,13 +62,13 @@ export class CanimapComponent implements OnInit {
     center: L.latLng([45.419364, 5.347022])
   };
   featureGroup = new L.FeatureGroup();
-  iconOption: FontAwesomeOptions = {
-    iconClasses: 'fa fa-info-circle', // you _could_ add other icon classes, not tested.
+  iconOption: MaterialIconOptions = {
+    iconName: 'info', // you _could_ add other icon classes, not tested.
     // iconColor: '#F00',
     iconUrl: '../assets/marker-icon.png',
     shadowUrl: '../assets/marker-shadow.png'
   };
-  icon = new FontAwesomeIcon(this.iconOption);
+  icon = new MaterialIcon(this.iconOption);
 
   drawOptions = {
     position: 'topleft',
@@ -191,9 +191,10 @@ export class CanimapComponent implements OnInit {
       ]
     };
     me.map.addLayer(me.polyline);
+    me.featureGroup.addLayer(me.polyline);
     const featureGroup = <FeatureGroup>L.polylineDecorator(me.polyline, polylineDecoratorOptions);
     me.map.addLayer(featureGroup);
-    me.featureGroup.addLayer(me.polyline);
+    me.featureGroup.addLayer(featureGroup);
 
     return [me.polyline, featureGroup];
   }

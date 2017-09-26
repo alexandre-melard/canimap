@@ -7,23 +7,23 @@
   </button>
   <button md-icon-button>
     <md-icon class="md-24" color="default" aria-label="Victim" mdTooltipPosition="below" mdTooltip ="Piste de la victime" i18n="Victim|draw the victim path"
-      data-toggle="modal" data-target="#drawVictimPath" (click)="drawVictimPath($event)">
+      (click)="drawVictimPath($event)">
       directions_walk
     </md-icon>
   </button>
   <button md-icon-button>
       <md-icon class="md-24" color="warn" aria-label="Tracker" mdTooltipPosition="below" mdTooltip="Piste de l'&eacute;quipe"
-        i18n="Tracker|draw the tracker path" data-toggle="modal" data-target="#drawK9Path" (click)="drawK9Path($event)">
+        i18n="Tracker|draw the tracker path" (click)="drawK9Path($event)">
     pets</md-icon>
   </button>
   <button md-icon-button>
       <md-icon class="md-24"  color="primary" aria-label="Parking" mdTooltipPosition="below" mdTooltip="Parking" i18n="Parking|Put a parking slot"
-        data-toggle="modal" data-target="#parkingMarker" (click)="parkingMarker($event)">
+        (click)="parkingMarker($event)">
     local_parking</md-icon>
   </button>
   <button md-icon-button>
     <md-icon class="md-24" aria-label="Coordinates" mdTooltipPosition="below" mdTooltip="Position GPS" i18n="GPG|Add GPS marker"
-      data-toggle="modal" data-target="#gpsMarker" (click)="gpsMarker($event)">
+      (click)="gpsMarker($event)">
       location_searching
     </md-icon>
   </button>

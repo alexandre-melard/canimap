@@ -8,7 +8,7 @@ import * as formatcoords from 'formatcoords';
 import * as $ from 'jquery';
 import * as L from 'leaflet';
 
-import { FontAwesomeOptions, FontAwesomeIcon } from 'ngx-leaflet-fa-markers/index';
+import { MaterialIconOptions, MaterialIcon } from 'ngx-leaflet-material-icons-markers/index';
 
 @Injectable()
 export class CanimapService implements OnDestroy {
@@ -103,13 +103,13 @@ export class CanimapService implements OnDestroy {
         L.DomUtil.addClass(map.getContainer(), 'crosshair-cursor-enabled');
         console.log('put parking marker on map');
         this.map.on('click', (e: any) => {
-          const iconOption: FontAwesomeOptions = {
-            iconClasses: 'fa fa-car', // you _could_ add other icon classes, not tested.
+          const iconOption: MaterialIconOptions = {
+            iconName: 'local_parking', // you _could_ add other icon classes, not tested.
             iconUrl: '../assets/marker-icon.png',
             shadowUrl: '../assets/marker-shadow.png'
           };
 
-          const icon = new FontAwesomeIcon(iconOption);
+          const icon = new MaterialIcon(iconOption);
           const marker = new L.Marker([e.latlng.lat, e.latlng.lng], {
             icon: icon,
             draggable: true

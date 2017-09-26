@@ -7,7 +7,6 @@ import { MdDialogModule, MdButtonModule, MdIconModule, MdTooltipModule,
   MdInputModule, MdSliderModule, MdExpansionModule, MdTableModule } from '@angular/material';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { LeafletDrawModule } from '@asymmetrik/ngx-leaflet-draw';
-import { ColorPickerModule } from 'ngx-color-picker';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AgmCoreModule } from '@agm/core';
 
@@ -19,10 +18,13 @@ import { BaseRequestOptions } from '@angular/http';
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
 
-import { DialogFileSaveComponent, DialogFilesOpenComponent, DialogFileOpenComponent } from './_services/file.service';
-
+import { DialogFileSaveComponent } from './_dialogs/fileSave.component';
+import { DialogFileOpenComponent } from './_dialogs/fileOpen.component';
+import { DialogFilesOpenComponent } from './_dialogs/filesOpen.component';
+import { DialogChooseColorComponent } from './_dialogs/chooseColor.component';
+import { DialogChooseLayersComponent } from './_dialogs/chooseLayer.component';
+import { DialogHelperComponent } from './_dialogs/helper.component';
 import { AlertComponent } from './_directives/index';
-import { ModalComponent } from './_directives/index';
 import { AuthGuard } from './_guards/index';
 import { AlertService, AuthenticationService, UserService, MenuEventService,
   CanimapService, HelperEventService, FileService } from './_services/index';
@@ -31,7 +33,7 @@ import { LocationComponent } from './_menus/location/index';
 import { MenuComponent } from './_menus/menu/index';
 import { ContextMenuComponent } from './_menus/contextMenu/index';
 import { FileMenuComponent } from './_menus/fileMenu/index';
-import { TrackMenuComponent, DialogChooseLayersComponent, DialogChooseColorComponent } from './_menus/tracksMenu';
+import { TrackMenuComponent } from './_menus/tracksMenu';
 import { MenuMobileComponent } from './_menus/mobile';
 import { LoginComponent } from './login/index';
 import { CanimapComponent } from './map/index';
@@ -54,7 +56,6 @@ import { RegisterComponent } from './register/index';
     NgbModule.forRoot(),
     LeafletModule.forRoot(),
     LeafletDrawModule.forRoot(),
-    ColorPickerModule,
     ReactiveFormsModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyBb1BipElNZJQPhdkSUdX5DxZpPnQV_D3k',
@@ -69,8 +70,8 @@ import { RegisterComponent } from './register/index';
     DialogFilesOpenComponent,
     DialogChooseLayersComponent,
     DialogChooseColorComponent,
+    DialogHelperComponent,
     AlertComponent,
-    ModalComponent,
     HomeComponent,
     LocationComponent,
     MenuComponent,
@@ -102,7 +103,8 @@ import { RegisterComponent } from './register/index';
     DialogFileOpenComponent,
     DialogFilesOpenComponent,
     DialogChooseLayersComponent,
-    DialogChooseColorComponent
+    DialogChooseColorComponent,
+    DialogHelperComponent
   ],
   bootstrap: [AppComponent]
 })

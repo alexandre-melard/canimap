@@ -27,28 +27,22 @@ export class FileMenuComponent implements OnInit {
 
   fileSave(e: MouseEvent) {
     this.menuEventService.prepareEvent('fileSave', null);
-    const dismissHelp: boolean = this.helperEventService.callHelper('fileSave');
-    if (dismissHelp) {
-      e.stopPropagation();
+    this.helperEventService.showHelper('fileSave', () => {
       this.menuEventService.proceed();
-    }
+    });
   }
 
   filesOpen(e: MouseEvent) {
     this.menuEventService.prepareEvent('filesOpen', null);
-    const dismissHelp: boolean = this.helperEventService.callHelper('filesOpen');
-    if (dismissHelp) {
-      e.stopPropagation();
+    this.helperEventService.showHelper('filesOpen', () => {
       this.menuEventService.proceed();
-    }
+    });
   }
 
   gpx(e: MouseEvent) {
     this.menuEventService.prepareEvent('fileOpen', null);
-    const dismissHelp: boolean = this.helperEventService.callHelper('fileOpen');
-    if (dismissHelp) {
-      e.stopPropagation();
+    this.helperEventService.showHelper('loadGPX', () => {
       this.menuEventService.proceed();
-    }
+    });
   }
 }

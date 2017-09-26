@@ -7,6 +7,8 @@ import { Observable } from 'rxjs/Observable';
 import { MapsAPILoader } from '@agm/core';
 import { } from '@types/googlemaps';
 import { AlertService, CanimapService, AuthenticationService, MenuEventService, HelperEventService } from '../../_services/index';
+import { DialogChooseColorComponent } from '../../_dialogs/chooseColor.component';
+import { DialogChooseLayersComponent } from '../../_dialogs/chooseLayer.component';
 
 import 'rxjs/add/observable/of';
 import * as $ from 'jquery';
@@ -132,48 +134,41 @@ export class TrackMenuComponent implements OnInit {
 
   drawVictimPath(e: MouseEvent) {
     this.contextVisible = true;
+    this.states = this.statesModel.polyligne;
     this.menuEventService.prepareEvent('drawVictimPath', null, ( result: any ) => {
       this.contextVisible = false;
     });
-    const dismissHelp: boolean = this.helperEventService.callHelper('drawVictimPath');
-    if (dismissHelp) {
-      e.stopPropagation();
+    this.helperEventService.showHelper('drawPath', () => {
       this.menuEventService.proceed();
-    }
+    });
   }
 
   drawK9Path(e: MouseEvent) {
     this.contextVisible = true;
+    this.states = this.statesModel.polyligne;
     this.menuEventService.prepareEvent('drawK9Path', null, ( result: any ) => {
       this.contextVisible = false;
     });
-    const dismissHelp: boolean = this.helperEventService.callHelper('drawK9Path');
-    if (dismissHelp) {
-      e.stopPropagation();
+    this.helperEventService.showHelper('drawPath', () => {
       this.menuEventService.proceed();
-    }
+    });
   }
 
   parkingMarker(e: MouseEvent) {
     this.menuEventService.prepareEvent('parkingMarker', null, null);
-    const dismissHelp: boolean = this.helperEventService.callHelper('parkingMarker');
-    if (dismissHelp) {
-      e.stopPropagation();
+    this.helperEventService.showHelper('marker', () => {
       this.menuEventService.proceed();
-    }
+    });
   }
 
   gpsMarker(e: MouseEvent) {
     if (this.gpsMarkerToggle) {
       this.menuEventService.prepareEvent('gpsMarker', null, null);
-      const dismissHelp: boolean = this.helperEventService.callHelper('gpsMarker');
-      if (dismissHelp) {
-        e.stopPropagation();
+      this.helperEventService.showHelper('gps', () => {
         this.menuEventService.proceed();
-      }
+      });
     } else {
       this.menuEventService.callEvent('gpsMarkerDismiss', null);
-      e.stopPropagation();
     }
     this.gpsMarkerToggle = !this.gpsMarkerToggle;
   }
@@ -200,49 +195,5 @@ export class TrackMenuComponent implements OnInit {
       }
     });
 
-  }
-}
-
-@Component({
-  selector: 'app-dialog-choose-layers',
-  templateUrl: './app-dialog-choose-layers.html',
-})
-export class DialogChooseLayersComponent {
-  dataSource;
-  constructor(
-    public dialogRef: MdDialogRef<TrackMenuComponent>,
-    @Inject(MD_DIALOG_DATA) public data: any) {
-      this.data = data;
-  }
-
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-  onInputChange(event: any, layer: any) {
-    this.data.service.setOpacity(layer, event.value);
-    console.log('This is emitted as the thumb slides: ' + layer.name);
-  }
-}
-
-
-@Component({
-  selector: 'app-dialog-choose-color',
-  templateUrl: './app-dialog-choose-color.html',
-})
-export class DialogChooseColorComponent {
-  dataSource;
-  constructor(
-    public dialogRef: MdDialogRef<TrackMenuComponent>,
-    @Optional() @Inject(MD_DIALOG_DATA) public data: any) {
-      this.data = data;
-  }
-
-  onNoClick(): void {
-    this.dialogRef.close(this.data);
-  }
-
-  color(color: string): void {
-    this.data = color;
-    this.dialogRef.close(this.data);
   }
 }

@@ -1,10 +1,13 @@
 import { Injectable, Inject, Component, OnInit, OnDestroy } from '@angular/core';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MdDialog } from '@angular/material';
 
 import { MenuEventService } from '../_services/menuEvent.service';
 import { CanimapService } from '../_services/canimap.service';
 import { Subscription } from 'rxjs/Subscription';
 import { saveAs } from 'file-saver';
+import { DialogFileOpenComponent } from '../_dialogs/fileOpen.component';
+import { DialogFilesOpenComponent } from '../_dialogs/filesOpen.component';
+import { DialogFileSaveComponent } from '../_dialogs/fileSave.component';
 
 import * as $ from 'jquery';
 import { Map } from 'leaflet';
@@ -128,80 +131,4 @@ export class FileService implements OnDestroy {
 
 }
 
-@Component({
-  selector: 'app-dialog-file-save',
-  templateUrl: './templates/app-dialog-file-save.html',
-})
-export class DialogFileSaveComponent {
-  constructor(
-    public dialogRef: MdDialogRef<FileService>,
-    @Inject(MD_DIALOG_DATA) public data: any) { }
 
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-}
-
-
-@Component({
-  selector: 'app-dialog-files-open',
-  templateUrl: './templates/app-dialog-files-open.html',
-})
-export class DialogFilesOpenComponent {
-  public data: File[];
-  constructor(public dialogRef: MdDialogRef<FileService>) { }
-
-  fileReceived(evt: any) {
-    this.data = evt.target.files; // FileList object.
-  }
-
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-
-  drop(evt) {
-    evt.stopPropagation();
-    evt.preventDefault();
-    this.data = evt.dataTransfer.files; // FileList object.
-  }
-
-  dragover(evt) {
-    evt.stopPropagation();
-    evt.preventDefault();
-    evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
-  }
-}
-
-
-@Component({
-  selector: 'app-dialog-file-open',
-  templateUrl: './templates/app-dialog-file-open.html',
-})
-export class DialogFileOpenComponent {
-  public data: File;
-  constructor(public dialogRef: MdDialogRef<FileService>) { }
-
-  fileReceived(evt: any) {
-    this.data = evt.target.file;
-  }
-
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-
-  drop(evt) {
-    evt.stopPropagation();
-    evt.preventDefault();
-    const files = evt.dataTransfer.files;
-    if (files.length > 1) {
-      alert("vous ne pouvez charger qu'un fichier gpx à la fois");
-    }
-    this.data = files[0]; // FileList object.
-  }
-
-  dragover(evt) {
-    evt.stopPropagation();
-    evt.preventDefault();
-    evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
-  }
-}

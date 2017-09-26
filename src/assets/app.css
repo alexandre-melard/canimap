@@ -6,6 +6,11 @@ html, body, app, .container {
   margin:0;
   padding:0;
 }
+
+.canimap-main {
+  margin-top: 100px;
+}
+
 .menu-bar, .pac-container {
   -moz-border-radius:10px;  /* for Firefox */
   -webkit-border-radius:10px; /* for Webkit-Browsers */
@@ -83,11 +88,6 @@ app-canimap-location {
 .canimap-menu-mobile button {
   background-color: rgba(255,255,255,0.9);
   cursor: pointer;
-}
-
-.feature-icon.fa.fa-car {
-  font-size: 15px;
-  left: 7px;
 }
 
 .leaflet-draw {
