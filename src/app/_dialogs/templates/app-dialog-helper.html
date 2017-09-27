@@ -1,15 +1,16 @@
 <h2 md-dialog-title [innerHTML]="data.title"></h2>
+<hr/>
 <div md-dialog-content [innerHTML]="data.body"></div>
+<hr/>
+<div class="form-check">
+  <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="help" [checked]="dismissHelp" (change)="dismissHelp = !dismissHelp">
+        J'ai compris, ne plus afficher cette aide.
+  </label>
+</div>
+<hr/>
 <div md-dialog-actions>
-  <form>
-    <div class="form-check">
-      <label class="form-check-label">
-            <input type="checkbox" class="form-check-input" name="help" [checked]="dismissHelp" (change)="dismissHelp = !dismissHelp">
-            J'ai compris, ne plus afficher cette aide.
-      </label>
-    </div>
-    <div class="form-group form-validation">
-      <button md-button #dismiss (click)="close()">OK</button>
-    </div>
-  </form>
+  <div class="row">
+    <button md-button #dismiss (click)="close()">OK</button>
+  </div>
 </div>

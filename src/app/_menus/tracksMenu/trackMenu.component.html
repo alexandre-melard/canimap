@@ -22,7 +22,7 @@
     local_parking</md-icon>
   </button>
   <button md-icon-button>
-    <md-icon class="md-24" aria-label="Coordinates" mdTooltipPosition="below" mdTooltip="Position GPS" i18n="GPG|Add GPS marker"
+    <md-icon class="md-24" [style.color]="gpsColor()" aria-label="Coordinates" mdTooltipPosition="below" mdTooltip="Position GPS" i18n="GPG|Add GPS marker"
       (click)="gpsMarker($event)">
       location_searching
     </md-icon>

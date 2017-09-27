@@ -160,6 +160,10 @@ export class TrackMenuComponent implements OnInit {
       this.menuEventService.proceed();
     });
   }
+  
+  gpsColor() {
+    return this.gpsMarkerToggle ? 'black' : 'red';
+  }
 
   gpsMarker(e: MouseEvent) {
     if (this.gpsMarkerToggle) {
