@@ -1,6 +1,6 @@
 <div md-dialog-content>
     <p>Sélectionner le fichier à ouvrir : </p>
-    <input (change)="fileReceived($event)" type="file" id="file" name="file" />
+    <input (change)="fileReceived($event)" type="file" id="file" name="file" accept=".geojson" />
     <div id="drop_zone" (dragover)="dragover($event)" (drop)="drop($event)">Déposer le fichier ici</div>
     <table *ngIf="data" width="100%" class="table table-sm table-striped table-hover table-responsive">
       <tr>

@@ -28,7 +28,7 @@ export class FileService implements OnDestroy {
 
     this.subscriptions.push(this.menuEventService.getObservable('fileSave').subscribe(
       () => {
-        let fileName = 'carte.geoJSON';
+        let fileName = 'carte.geojson';
         const dialogRef = this.dialog.open(DialogFileSaveComponent, {
           width: '320px',
           data: { name: fileName }

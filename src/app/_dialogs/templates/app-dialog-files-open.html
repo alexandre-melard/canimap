@@ -1,6 +1,6 @@
 <div md-dialog-content>
     <p>Sélectionner les cartes à ouvrir : </p>
-    <input (change)="fileReceived($event)" type="file" id="files" name="files[]" multiple />      
+    <input (change)="fileReceived($event)" type="file" id="files" name="files[]" multiple accept=".geojson" />
     <div id="drop_zone" (dragover)="dragover($event)" (drop)="drop($event)">Déposer les fichiers ici</div>
     <br/>
     <output id="list" *ngIf="data">
