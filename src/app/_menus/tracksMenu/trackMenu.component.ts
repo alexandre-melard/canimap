@@ -32,30 +32,6 @@ export class TrackMenuComponent implements OnInit {
     private ngZone: NgZone) { }
   states;
   statesModel = {
-    edit: [
-      {
-        label: 'Terminer',
-        id: 0,
-        end: true
-      },
-      {
-        label: 'Annuler',
-        id: 1,
-        end: true
-      }
-    ],
-    delete: [
-      {
-        label: 'Terminer',
-        id: 0,
-        end: true
-      },
-      {
-        label: 'Annuler',
-        id: 1,
-        end: true
-      }
-    ],
     polyligne: [
       {
         label: 'Terminer',
@@ -114,16 +90,36 @@ export class TrackMenuComponent implements OnInit {
   ngOnInit() {
   }
 
+  get editColor(): string {
+    return this.canimapService.editing ? 'red' : 'black';
+  }
+
+  get deleteColor(): string {
+    return this.canimapService.deleting ? 'red' : 'black';
+  }
+
   edit(event: any) {
-    this.canimapService.editing = true;
-    this.contextVisible = true;
-    this.states = this.statesModel.edit;
+    this.canimapService.editing = !this.canimapService.editing;
+    if (this.canimapService.editing) {
+      this.menuEventService.prepareEvent('editing', null, null);
+      this.helperEventService.showHelper('editing', () => {
+        this.menuEventService.proceed();
+      });
+    } else {
+      this.menuEventService.callEvent('editing', null);
+    }
   }
 
   delete(event: any) {
-    this.canimapService.deleting = true;
-    this.contextVisible = true;
-    this.states = this.statesModel.delete;
+    this.canimapService.deleting = !this.canimapService.deleting;
+    if (this.canimapService.deleting) {
+      this.menuEventService.prepareEvent('deleting', null, null);
+      this.helperEventService.showHelper('deleting', () => {
+        this.menuEventService.proceed();
+      });
+    } else {
+      this.menuEventService.callEvent('deleting', null);
+    }
   }
 
   polyligne(event: any) {

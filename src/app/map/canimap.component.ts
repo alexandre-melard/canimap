@@ -155,6 +155,37 @@ export class CanimapComponent implements OnInit {
     } : null;
   }
 
+  editing(layer: Layer) {
+    const me = this;
+    let eventId;
+    this.subscriptions.push(this.menuEventService.getObservable('editing').subscribe(
+      (value) => {
+        if (me.canimapService.editing) {
+          eventId = layer.once('click', (e) => {
+            (<any>layer).editing.enable();
+          });
+        } else {
+          (<any>layer).editing.disable();
+        }
+      })
+    );
+  }
+
+  deleting(layer: Layer, featureGroup?: FeatureGroup) {
+    const me = this;
+    this.subscriptions.push(this.menuEventService.getObservable('deleting').subscribe(
+      (value) => {
+        if (me.canimapService.deleting) {
+          layer.once('click', (e) => {
+            me.featureGroup.removeLayer(layer);
+            me.map.removeLayer(layer);
+            me.map.removeLayer(featureGroup);
+          });
+        }
+      })
+    );
+  }
+
   drawPolyline(me, layer: Layer, options?: any): Layer[] {
     const polyline = <Polyline>layer;
     const popup = new L.Popup({ autoClose: false, closeOnClick: false });
@@ -194,16 +225,8 @@ export class CanimapComponent implements OnInit {
     me.featureGroup.addLayer(polyline);
     const featureGroup = <FeatureGroup>L.polylineDecorator(polyline, polylineDecoratorOptions);
     me.map.addLayer(featureGroup);
-    polyline.on('click', (e) => {
-      if (me.canimapService.editing) {
-        (<any>polyline).editing.enable();
-      } else if (me.canimapService.deleting) {
-        me.featureGroup.removeLayer(polyline);
-        me.map.removeLayer(polyline);
-        me.map.removeLayer(featureGroup);
-      }
-    });
-
+    this.editing(polyline);
+    this.deleting(polyline, featureGroup);
     return [polyline, featureGroup];
   }
 

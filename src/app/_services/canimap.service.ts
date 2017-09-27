@@ -12,8 +12,8 @@ import { MaterialIconOptions, MaterialIcon } from 'ngx-leaflet-material-icons-ma
 
 @Injectable()
 export class CanimapService implements OnDestroy {
-  editing: boolean;
-  deleting: boolean;
+  editing = false;
+  deleting = false;
   geoJSON: any[];
   color = '#F00';
   layers: { name: string, layer: any }[];

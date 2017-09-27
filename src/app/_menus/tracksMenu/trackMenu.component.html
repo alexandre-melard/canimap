@@ -52,13 +52,13 @@
     </md-icon>
   </button>
   <button md-icon-button>
-    <md-icon class="md-24" aria-label="Modifier" mdTooltipPosition="below" mdTooltip="Modifier" i18n="Modify|Modify the markers"
+    <md-icon class="md-24" [style.color]="editColor" aria-label="Modifier" mdTooltipPosition="below" mdTooltip="Modifier" i18n="Modify|Modify the markers"
       (click)="edit($event)">
       edit
     </md-icon>
   </button>
   <button md-icon-button>
-    <md-icon class="md-24" aria-label="Effacer" mdTooltipPosition="below" mdTooltip="Effacer un élément" i18n="Delete|Delete a feature"
+    <md-icon class="md-24" [style.color]="deleteColor" aria-label="Effacer" mdTooltipPosition="below" mdTooltip="Effacer un élément" i18n="Delete|Delete a feature"
       (click)="delete($event)">
       delete
     </md-icon>
