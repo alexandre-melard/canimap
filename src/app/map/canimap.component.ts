@@ -156,9 +156,9 @@ export class CanimapComponent implements OnInit {
   }
 
   drawPolyline(me, layer: Layer, options?: any): Layer[] {
-    me.polyline = <Polyline>layer;
+    const polyline = <Polyline>layer;
     const popup = new L.Popup({ autoClose: false, closeOnClick: false });
-    popup.setContent(me.distance(me.polyline.getLatLngs()).toFixed(0) + ' m');
+    popup.setContent(me.distance(polyline.getLatLngs()).toFixed(0) + ' m');
     popup.options['color'] = me.canimapService.color;
     me.map.on('popupopen', (pop: any) => {
       let color = pop.popup.options['color'];
@@ -172,11 +172,11 @@ export class CanimapComponent implements OnInit {
         elements.css('color', 'white');
       }
     });
-    me.polyline.bindPopup(popup);
-    const json: any = me.polyline.toGeoJSON();
+    polyline.bindPopup(popup);
+    const json: any = polyline.toGeoJSON();
     json['properties'] = { type: 'polyline', color: me.canimapService.color };
     me.geoJson.push(json);
-    me.polyline.setStyle({ color: me.canimapService.color });
+    polyline.setStyle({ color: me.canimapService.color });
     const polylineDecoratorOptions = {
       patterns: [
         {
@@ -190,13 +190,21 @@ export class CanimapComponent implements OnInit {
         }
       ]
     };
-    me.map.addLayer(me.polyline);
-    me.featureGroup.addLayer(me.polyline);
-    const featureGroup = <FeatureGroup>L.polylineDecorator(me.polyline, polylineDecoratorOptions);
+    me.map.addLayer(polyline);
+    me.featureGroup.addLayer(polyline);
+    const featureGroup = <FeatureGroup>L.polylineDecorator(polyline, polylineDecoratorOptions);
     me.map.addLayer(featureGroup);
-    me.featureGroup.addLayer(featureGroup);
+    polyline.on('click', (e) => {
+      if (me.canimapService.editing) {
+        (<any>polyline).editing.enable();
+      } else if (me.canimapService.deleting) {
+        me.featureGroup.removeLayer(polyline);
+        me.map.removeLayer(polyline);
+        me.map.removeLayer(featureGroup);
+      }
+    });
 
-    return [me.polyline, featureGroup];
+    return [polyline, featureGroup];
   }
 
   drawRectangle(me, layer: Layer, options?: any): Layer[] {
@@ -255,7 +263,7 @@ export class CanimapComponent implements OnInit {
 
     this.subscriptions.push(this.menuEventService.getObservable('addLayersFromJson').subscribe(
       (json) => {
-        this.switchState(this.states.PATH);
+        me.switchState(me.states.PATH);
         let layers: Layer[] = new Array();
         json.features.forEach(feature => {
           let layer: L.GeoJSON;
@@ -278,7 +286,13 @@ export class CanimapComponent implements OnInit {
               break;
           }
         });
-        me.map.fitBounds(me.featureGroup.getBounds());
+        const fitLayers = new FeatureGroup();
+        me.featureGroup.getLayers().forEach((layer: any) => {
+          if (layer.getLatLngs !== undefined) {
+            fitLayers.addLayer(layer);
+          }
+        });
+        me.map.fitBounds(fitLayers.getBounds());
       },
       e => console.log(e),
       () => console.log('onCompleted')

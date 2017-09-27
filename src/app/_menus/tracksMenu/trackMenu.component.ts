@@ -44,6 +44,18 @@ export class TrackMenuComponent implements OnInit {
         end: true
       }
     ],
+    delete: [
+      {
+        label: 'Terminer',
+        id: 0,
+        end: true
+      },
+      {
+        label: 'Annuler',
+        id: 1,
+        end: true
+      }
+    ],
     polyligne: [
       {
         label: 'Terminer',
@@ -103,9 +115,15 @@ export class TrackMenuComponent implements OnInit {
   }
 
   edit(event: any) {
-    $('a.leaflet-draw-edit-edit')[0].click();
+    this.canimapService.editing = true;
     this.contextVisible = true;
     this.states = this.statesModel.edit;
+  }
+
+  delete(event: any) {
+    this.canimapService.deleting = true;
+    this.contextVisible = true;
+    this.states = this.statesModel.delete;
   }
 
   polyligne(event: any) {
@@ -160,7 +178,7 @@ export class TrackMenuComponent implements OnInit {
       this.menuEventService.proceed();
     });
   }
-  
+
   gpsColor() {
     return this.gpsMarkerToggle ? 'black' : 'red';
   }

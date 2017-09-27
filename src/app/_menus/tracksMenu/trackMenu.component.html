@@ -51,13 +51,17 @@
       fiber_manual_record
     </md-icon>
   </button>
-
   <button md-icon-button>
     <md-icon class="md-24" aria-label="Modifier" mdTooltipPosition="below" mdTooltip="Modifier" i18n="Modify|Modify the markers"
       (click)="edit($event)">
       edit
     </md-icon>
-
+  </button>
+  <button md-icon-button>
+    <md-icon class="md-24" aria-label="Effacer" mdTooltipPosition="below" mdTooltip="Effacer un élément" i18n="Delete|Delete a feature"
+      (click)="delete($event)">
+      delete
+    </md-icon>
   </button>
   <button md-icon-button class="app-canimap-color-chooser" aria-label="Color" mdTooltipPosition="below" mdTooltip="Changer la couleur" i18n="Color|Change the color"
   (click)="chooseColor($event)">
