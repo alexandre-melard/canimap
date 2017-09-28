@@ -1,3 +1,4 @@
+require("leaflet-draw");
 
 L.drawLocal.draw.handlers.circle.tooltip.start = 'cliquez et déplacez la sourie pour déssiner le disque';
 L.drawLocal.draw.handlers.circle.radius = 'rayon';
