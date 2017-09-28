@@ -19,13 +19,6 @@ html, body, app, .container {
   border: 2px solid gray;
 }
 
-.mat-dialog-container {
-  background-image: url("../assets/pluto-est-sur-une-piste.png");
-  background-repeat: no-repeat;
-  background-position: bottom right;
-  background-size: 120px;
-}
-
 .pac-logo, .pac-logo:after {
   background-image: none;
 }
