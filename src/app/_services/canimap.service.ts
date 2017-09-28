@@ -4,6 +4,8 @@ import { MenuEventService } from '../_services/menuEvent.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Map, Layer, Path, Icon, LayerEvent, LeafletEvent, LocationEvent } from 'leaflet';
 import * as formatcoords from 'formatcoords';
+import { User } from '../_models/user';
+import { UserService } from './user.service';
 
 import * as $ from 'jquery';
 import * as L from 'leaflet';
@@ -12,15 +14,16 @@ import { MaterialIconOptions, MaterialIcon } from 'ngx-leaflet-material-icons-ma
 
 @Injectable()
 export class CanimapService implements OnDestroy {
+  user: User;
   editing = false;
   deleting = false;
   geoJSON: any[];
   color = '#F00';
-  layers: { name: string, layer: any }[];
+  layers: { key: string, name: string, layer: any }[];
   private _map: Map;
   private subscriptions = new Array<Subscription>();
 
-  constructor(private menuEventService: MenuEventService) {
+  constructor(private menuEventService: MenuEventService, private userService: UserService) {
   }
 
   get map() {
@@ -50,6 +53,7 @@ export class CanimapService implements OnDestroy {
 
   subscribe() {
     const map = this.map;
+    this.user = this.userService.currentUser();
 
     this.subscriptions.push(this.menuEventService.getObservable('onTrack').subscribe(
       tracking => {
@@ -144,6 +148,22 @@ export class CanimapService implements OnDestroy {
       this.map.stopLocate();
     });
 
+  }
+
+  saveOpacity() {
+    this.layers.forEach(container => {
+      let map = this.user.maps.find(m => container.key === m.key);
+      if (map === undefined) {
+        map = {
+          key: container.key,
+          opacity: container.layer.options.opacity,
+          visible: container.layer.options.opacity !== 0
+        };
+        this.user.maps.push(map);
+      }
+      map.opacity = container.layer.options.opacity;
+    });
+    this.userService.update(this.user);
   }
 
   setOpacity(layer: any, opacity: number) {

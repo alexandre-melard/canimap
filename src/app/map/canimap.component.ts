@@ -1,6 +1,8 @@
 ﻿import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MenuEventService, CanimapService, FileService } from '../_services/index';
 import { Subscription } from 'rxjs/Subscription';
+import { User } from '../_models/user';
+import { UserService } from '../_services/user.service';
 
 import * as L from 'leaflet';
 import * as $ from 'jquery';
@@ -22,6 +24,7 @@ import { MaterialIconOptions, MaterialIcon } from 'ngx-leaflet-material-icons-ma
   styleUrls: ['./canimap.component.css']
 })
 export class CanimapComponent implements OnInit {
+  user: User;
   polyline: L.Polyline;
   map: Map;
   title = 'app';
@@ -33,32 +36,30 @@ export class CanimapComponent implements OnInit {
   private subscriptions = new Array<Subscription>();
 
   get layers() {
-    const layers = new Array<L.TileLayer>();
-    [this.googleHybride, this.ignPlan, this.googleSatellite].forEach(layer => {
-      if (layer.options.opacity > 0) {
-        layers.push(layer);
-      }
-    });
-    return layers;
+    return [this.ignPlan, this.googleSatellite, this.googleHybride];
   }
 
-  googleHybride = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
-    maxZoom: 20,
-    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-    opacity: 0
-  });
-  googleSatellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-    maxZoom: 20,
-    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-    opacity: 0
-  });
-  ignPlan = L.tileLayer('https://wxs.ign.fr/' +
-    '6i88pkdxubzayoady4upbkjg' + '/geoportail/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=' +
-    'GEOGRAPHICALGRIDSYSTEMS.MAPS' + '&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg',
-    { opacity: 1 });
+  googleHybride = {
+    key: 'googleHybride', name: 'Google Hybride', layer: L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    })
+  };
+  googleSatellite = {
+    key: 'googleSatellite', name: 'Google Satellite', layer: L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    })
+  };
+  ignPlan = {
+    key: 'ignPlan', name: 'IGN Topo', layer: L.tileLayer('https://wxs.ign.fr/' +
+      '6i88pkdxubzayoady4upbkjg' + '/geoportail/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=' +
+      'GEOGRAPHICALGRIDSYSTEMS.MAPS' + '&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg',
+    )
+  };
 
   options = {
-    layers: this.layers,
+    layers: this.layers.filter(l => l.layer.options.opacity !== 0).map(l => l.layer),
     zoom: 15,
     center: L.latLng([45.419364, 5.347022])
   };
@@ -102,6 +103,7 @@ export class CanimapComponent implements OnInit {
   constructor(
     private menuEventService: MenuEventService,
     private canimapService: CanimapService,
+    private userService: UserService,
     private fileService: FileService) {
   }
 
@@ -120,20 +122,27 @@ export class CanimapComponent implements OnInit {
   }
 
   ngOnInit() {
-    //    (<any>L.Browser).touch = false;
   }
 
   onValueChanged(event: any) {
     console.log('received opacity change for:' + event.target + ' new value: ' + event.value);
+    let map = this.user.maps.find(m => m.key === event.target);
+    if (map === undefined) {
+      map = { key: event.target, opacity: event.value, visible: event.value !== 0 };
+      this.user.maps.push(map);
+    } else {
+      map.opacity = event.value;
+      map.visible = event.value !== 0;
+    }
     switch (event.target) {
       case 'ign':
-        this.ignPlan.setOpacity(event.value);
+        this.ignPlan.layer.setOpacity(event.value);
         break;
       case 'google':
-        this.googleSatellite.setOpacity(event.value);
+        this.googleSatellite.layer.setOpacity(event.value);
         break;
       case 'hybride':
-        this.googleHybride.setOpacity(event.value);
+        this.googleHybride.layer.setOpacity(event.value);
         break;
       default:
         console.log('no layer found: ' + event.target);
@@ -278,12 +287,16 @@ export class CanimapComponent implements OnInit {
     this.canimapService.subscribe();
     this.fileService.subscribe();
     this.canimapService.geoJSON = this.geoJson;
-    this.canimapService.layers = [
-      { name: 'ign plan', layer: this.ignPlan },
-      { name: 'google hybride', layer: this.googleHybride },
-      { name: 'google sattelite', layer: this.googleSatellite }
-    ];
+    this.canimapService.layers = this.layers;
     this.savedColor = this.canimapService.color;
+
+    this.user = this.userService.currentUser();
+    if (this.user.maps !== undefined) {
+      this.user.maps.forEach(m => {
+        const container = this.layers.find(l => m.key === l.key);
+        container.layer.setOpacity(m.opacity);
+      });
+    }
 
     this.subscriptions.push(this.menuEventService.getObservable('addLayersFromJson').subscribe(
       (json) => {

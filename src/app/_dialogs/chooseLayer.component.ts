@@ -13,11 +13,12 @@ export class DialogChooseLayersComponent {
       this.data = data;
   }
 
-  onNoClick(): void {
+  confirm(): void {
     this.dialogRef.close();
+    this.data.service.saveOpacity();
   }
+
   onInputChange(event: any, layer: any) {
     this.data.service.setOpacity(layer, event.value);
-    console.log('This is emitted as the thumb slides: ' + layer.name);
   }
 }
