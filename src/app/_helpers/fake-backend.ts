@@ -24,6 +24,12 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
                 if (filteredUsers.length) {
                     // if login details are valid return 200 OK with user details and fake jwt token
                     const user = filteredUsers[0];
+                    if (user.maps === undefined) {
+                      user.maps = new Array();
+                    }
+                    if (user.helpers === undefined) {
+                      user.helpers = new Array();
+                    }
                     connection.mockRespond(new Response(new ResponseOptions({
                         status: 200,
                         body: {

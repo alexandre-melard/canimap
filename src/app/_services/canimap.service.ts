@@ -152,6 +152,9 @@ export class CanimapService implements OnDestroy {
 
   saveOpacity() {
     this.layers.forEach(container => {
+      if (this.user.maps === undefined) {
+        this.user.maps = new Array();
+      }
       let map = this.user.maps.find(m => container.key === m.key);
       if (map === undefined) {
         map = {
