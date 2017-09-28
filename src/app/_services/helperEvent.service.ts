@@ -25,7 +25,7 @@ export class HelperEventService {
           });
           dialogRef.afterClosed().subscribe(result => {
             console.log('The dialog was closed: ' + key);
-            if (result.dismissHelp) {
+            if (result !== undefined && result.dismissHelp) {
               this.dismissHelp(key);
             }
             proceed();
