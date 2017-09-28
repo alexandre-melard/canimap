@@ -6,6 +6,7 @@ import * as L from 'leaflet';
 import * as $ from 'jquery';
 import 'leaflet-polylinedecorator';
 import 'leaflet-gpx';
+import './canimap.locale.js';
 
 // import * as N from 'leaflet-illustrate';
 
