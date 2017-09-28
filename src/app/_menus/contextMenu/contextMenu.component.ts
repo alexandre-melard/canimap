@@ -17,7 +17,7 @@ export class ContextMenuComponent implements OnInit {
   ngOnInit() {
     const me = this;
     $(document).on( 'mouseup click', () => {
-      const actions = $('.leaflet-draw-actions a:visible').length;
+      const actions = $('.leaflet-draw-actions a').filter(':visible').length;
       me.visible = (actions !== 0);
   });
   }
