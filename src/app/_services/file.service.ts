@@ -25,7 +25,6 @@ export class FileService implements OnDestroy {
 
   subscribe() {
     const me = this;
-
     this.subscriptions.push(this.menuEventService.getObservable('fileSave').subscribe(
       () => {
         let fileName = 'carte.geojson';
@@ -70,7 +69,7 @@ export class FileService implements OnDestroy {
               me.parseFile(file, (content: string) => {
                 me.menuEventService.callEvent('addLayersFromJson', JSON.parse(content));
               }
-            );
+              );
             }
           }
         });

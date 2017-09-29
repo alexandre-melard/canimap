@@ -14,8 +14,9 @@ import * as L from 'leaflet';
 import { MaterialIconOptions, MaterialIcon } from 'ngx-leaflet-material-icons-markers/index';
 
 @Injectable()
-export class CanimapService implements OnDestroy {
+export class CanimapService implements OnInit, OnDestroy {
   user: User;
+  private map: Map;
   editing = false;
   deleting = false;
   geoJSON: any[];
@@ -27,12 +28,106 @@ export class CanimapService implements OnDestroy {
   constructor(private menuEventService: MenuEventService, private userService: UserService) {
   }
 
-  get map() {
-    return this._map;
-  }
+  ngOnInit() {
+    this.subscriptions.push(this.menuEventService.getObservable('mapLoaded').subscribe(
+      (map) => {
+        this.map = map;
+        this.user = this.userService.currentUser();
 
-  set map(map: Map) {
-    this._map = map;
+        this.subscriptions.push(this.menuEventService.getObservable('onTrack').subscribe(
+          tracking => {
+            if (tracking) {
+              map.locate({ setView: true, maxZoom: 16, watch: true });
+              console.log('tracking enabled');
+            } else {
+              map.stopLocate();
+              console.log('tracking disabled');
+            }
+          },
+          e => console.log('onError: %s', e),
+          () => console.log('onCompleted')
+        ));
+        this.subscriptions.push(this.menuEventService.getObservable('recordTrack').subscribe(
+          tracking => {
+            if (tracking) {
+              map.on('locationfound', (e: LocationEvent) => {
+                console.log(
+                  'lat: ' + e.latlng.lat +
+                  ' lng: ' + e.latlng.lng +
+                  ' alt: ' + e.altitude +
+                  ' speed: ' + e.speed +
+                  ' time: ' + e.timestamp
+                );
+              });
+              console.log('recording started');
+            } else {
+              map.off('locationfound');
+              console.log('recording stopped');
+            }
+          },
+          e => console.log('onError: %s', e),
+          () => console.log('onCompleted')
+        ));
+        this.subscriptions.push(this.menuEventService.getObservable('onMapMove').subscribe(
+          location => {
+            map.panTo({ lat: location.lat, lng: location.lng });
+            console.log('pan to lat: ' + location.lat + ' lng: ' + location.lng);
+          },
+          e => this.showError(e),
+          () => console.log('onCompleted')
+        ));
+        this.subscriptions.push(this.menuEventService.getObservable('gpsMarkerDismiss').subscribe(
+          () => {
+            L.DomUtil.removeClass(map.getContainer(), 'crosshair-cursor-enabled');
+            map.off('click');
+          }
+        ));
+        this.subscriptions.push(this.menuEventService.getObservable('parkingMarker').subscribe(
+          () => {
+            L.DomUtil.addClass(map.getContainer(), 'crosshair-cursor-enabled');
+            console.log('put parking marker on map');
+            map.on('click', (e: any) => {
+              const iconOption: MaterialIconOptions = {
+                iconName: 'local_parking', // you _could_ add other icon classes, not tested.
+                iconUrl: '../assets/marker-icon.png',
+                shadowUrl: '../assets/marker-shadow.png'
+              };
+
+              const icon = new MaterialIcon(iconOption);
+              const marker = new L.Marker([e.latlng.lat, e.latlng.lng], {
+                icon: icon,
+                draggable: true
+              });
+              marker.addTo(map);
+              L.DomUtil.removeClass(map.getContainer(), 'crosshair-cursor-enabled');
+              map.off('click');
+            });
+          },
+          e => this.showError(e),
+          () => console.log('onCompleted')
+        )); this.subscriptions.push(this.menuEventService.getObservable('gpsMarker').subscribe(
+          () => {
+            L.DomUtil.addClass(map.getContainer(), 'crosshair-cursor-enabled');
+
+            console.log('put marker on map');
+            map.on('click', (e: any) => {
+              const coords = formatcoords(e.latlng.lat, e.latlng.lng);
+              const value = coords.format('DD MM ss X', { latLonSeparator: ', ', decimalPlaces: 0 });
+              const popup = new L.Popup();
+              popup
+                .setLatLng(e.latlng)
+                .setContent(value)
+                .openOn(map);
+            });
+          },
+          e => this.showError(e),
+          () => console.log('onCompleted')
+        ));
+        map.on('movestart', (e: LeafletEvent) => {
+          map.stopLocate();
+        });
+      })
+    );
   }
 
   showError(error) {
@@ -52,110 +147,8 @@ export class CanimapService implements OnDestroy {
     }
   }
 
-  subscribe() {
-    const map = this.map;
-    this.user = this.userService.currentUser();
-
-    this.subscriptions.push(this.menuEventService.getObservable('onTrack').subscribe(
-      tracking => {
-        if (tracking) {
-          this.map.locate({ setView: true, maxZoom: 16, watch: true });
-          console.log('tracking enabled');
-        } else {
-          this.map.stopLocate();
-          console.log('tracking disabled');
-        }
-      },
-      e => console.log('onError: %s', e),
-      () => console.log('onCompleted')
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('recordTrack').subscribe(
-      tracking => {
-        if (tracking) {
-          this.map.on('locationfound', (e: LocationEvent) => {
-            console.log(
-              'lat: ' + e.latlng.lat +
-              ' lng: ' + e.latlng.lng +
-              ' alt: ' + e.altitude +
-              ' speed: ' + e.speed +
-              ' time: ' + e.timestamp
-            );
-          });
-          console.log('recording started');
-        } else {
-          this.map.off('locationfound');
-          console.log('recording stopped');
-        }
-      },
-      e => console.log('onError: %s', e),
-      () => console.log('onCompleted')
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('onMapMove').subscribe(
-      location => {
-        this.map.panTo({ lat: location.lat, lng: location.lng });
-        console.log('pan to lat: ' + location.lat + ' lng: ' + location.lng);
-      },
-      e => this.showError(e),
-      () => console.log('onCompleted')
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('gpsMarkerDismiss').subscribe(
-      () => {
-        L.DomUtil.removeClass(map.getContainer(), 'crosshair-cursor-enabled');
-        this.map.off('click');
-      }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('parkingMarker').subscribe(
-      () => {
-        L.DomUtil.addClass(map.getContainer(), 'crosshair-cursor-enabled');
-        console.log('put parking marker on map');
-        this.map.on('click', (e: any) => {
-          const iconOption: MaterialIconOptions = {
-            iconName: 'local_parking', // you _could_ add other icon classes, not tested.
-            iconUrl: '../assets/marker-icon.png',
-            shadowUrl: '../assets/marker-shadow.png'
-          };
-
-          const icon = new MaterialIcon(iconOption);
-          const marker = new L.Marker([e.latlng.lat, e.latlng.lng], {
-            icon: icon,
-            draggable: true
-          });
-          marker.addTo(map);
-          L.DomUtil.removeClass(map.getContainer(), 'crosshair-cursor-enabled');
-          this.map.off('click');
-        });
-      },
-      e => this.showError(e),
-      () => console.log('onCompleted')
-    )); this.subscriptions.push(this.menuEventService.getObservable('gpsMarker').subscribe(
-      () => {
-        L.DomUtil.addClass(map.getContainer(), 'crosshair-cursor-enabled');
-
-        console.log('put marker on map');
-        this.map.on('click', (e: any) => {
-          const coords = formatcoords(e.latlng.lat, e.latlng.lng);
-          const value = coords.format('DD MM ss X', { latLonSeparator: ', ', decimalPlaces: 0 });
-          const popup = new L.Popup();
-          popup
-            .setLatLng(e.latlng)
-            .setContent(value)
-            .openOn(this.map);
-        });
-      },
-      e => this.showError(e),
-      () => console.log('onCompleted')
-    ));
-    this.map.on('movestart', (e: LeafletEvent) => {
-      this.map.stopLocate();
-    });
-
-  }
-
   saveOpacity() {
     this.layers.forEach(container => {
-      if (this.user.mapBoxes === undefined) {
-        this.user.mapBoxes = new Array<MapBox>();
-      }
       let map = this.user.mapBoxes.find(m => container.key === m.key);
       if (map === undefined) {
         map = new MapBox(container.key, container.layer.options.opacity, container.layer.options.opacity !== 0);

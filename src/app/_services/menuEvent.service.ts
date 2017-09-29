@@ -7,36 +7,37 @@ import { HelperEventService } from './helperEvent.service';
 @Injectable()
 export class MenuEventService {
   current: { key: string, value: { data: any, success: Function, error: Function } } = {
-    key: '', value: { data: {}, success: null, error: null }};
+    key: '', value: { data: {}, success: null, error: null }
+  };
 
-    constructor(private helperEventService: HelperEventService) { }
+  constructor(private helperEventService: HelperEventService) { }
 
   // Observable string sources
-  onEventSource: Map < string, Subject<any>> = new Map();
+  onEventSource: Map<string, Subject<any>> = new Map();
 
-getObservable(key: string) {
-  return this.getEvent(key).asObservable();
-}
-
-proceed() {
-  this.onEventSource.get(this.current.key).next(this.current.value);
-}
-
-  private getEvent(key: string): Subject < any > {
-  let source = this.onEventSource.get(key);
-  if (source === undefined) {
-    source = new Subject<any>();
-    this.onEventSource.set(key, source);
+  getObservable(key: string) {
+    return this.getEvent(key).asObservable();
   }
+
+  proceed() {
+    this.onEventSource.get(this.current.key).next(this.current.value);
+  }
+
+  private getEvent(key: string): Subject<any> {
+    let source = this.onEventSource.get(key);
+    if (source === undefined) {
+      source = new Subject<any>();
+      this.onEventSource.set(key, source);
+    }
     return source;
-}
+  }
 
-prepareEvent(key: string, value: any, success?: Function, error?: Function) {
-  this.current.key = key;
-  this.current.value = { data: value, success: success, error: error };
-}
+  prepareEvent(key: string, value: any, success?: Function, error?: Function) {
+    this.current.key = key;
+    this.current.value = { data: value, success: success, error: error };
+  }
 
-callEvent(key: string, value: any) {
-  this.getEvent(key).next(value);
-}
+  callEvent(key: string, value: any) {
+    this.getEvent(key).next(value);
+  }
 }

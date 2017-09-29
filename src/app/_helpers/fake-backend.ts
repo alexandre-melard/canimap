@@ -2,6 +2,7 @@
 import { MockBackend, MockConnection } from '@angular/http/testing';
 import { User } from '../_models/user';
 import { MapBox } from '../_models/mapBox';
+import { Helper } from '../_models/helper';
 
 export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOptions, realBackend: XHRBackend) {
     // array in local storage for registered users
@@ -25,12 +26,6 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
                 if (filteredUsers.length) {
                     // if login details are valid return 200 OK with user details and fake jwt token
                     const user = filteredUsers[0];
-                    if (user.mapBoxes === undefined) {
-                      user.mapBoxes = new Array();
-                    }
-                    if (user.helpers === undefined) {
-                      user.helpers = new Array();
-                    }
                     connection.mockRespond(new Response(new ResponseOptions({
                         status: 200,
                         body: {
@@ -126,10 +121,7 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
                 // save new user
                 newUser.id = users.length + 1;
                 newUser.mapBoxes = new Array<MapBox>();
-                newUser.helpers = new Array<{
-                  key: string;
-                  visible: boolean;
-                }>();
+                newUser.helpers = new Array<Helper>();
                 users.push(newUser);
                 localStorage.setItem('users', JSON.stringify(users));
 

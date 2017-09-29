@@ -18,6 +18,7 @@ import {
   FeatureGroup, Path, LayerEvent, LeafletEvent, LocationEvent
 } from 'leaflet';
 import { MaterialIconOptions, MaterialIcon } from 'ngx-leaflet-material-icons-markers/index';
+import { LayerBox } from '../_models/layerBox';
 
 @Component({
   selector: 'app-canimap',
@@ -36,31 +37,36 @@ export class CanimapComponent implements OnInit {
   public geoJson: any[] = new Array();
   private subscriptions = new Array<Subscription>();
 
-  get layers() {
+  get layerBoxes(): LayerBox[] {
     return [this.ignPlan, this.googleSatellite, this.googleHybride];
   }
 
-  googleHybride = {
-    key: 'googleHybride', name: 'Google Hybride', layer: L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+  googleHybride = new LayerBox(
+    'googleHybride',
+    'Google Hybride',
+    L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',
+      {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+      })
+  );
+  googleSatellite = new LayerBox(
+    'googleSatellite',
+    'Google Satellite', L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
       maxZoom: 20,
       subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
     })
-  };
-  googleSatellite = {
-    key: 'googleSatellite', name: 'Google Satellite', layer: L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-      maxZoom: 20,
-      subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-    })
-  };
-  ignPlan = {
-    key: 'ignPlan', name: 'IGN Topo', layer: L.tileLayer('https://wxs.ign.fr/' +
+  );
+  ignPlan = new LayerBox(
+    'ignPlan',
+    'IGN Topo', L.tileLayer('https://wxs.ign.fr/' +
       '6i88pkdxubzayoady4upbkjg' + '/geoportail/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=' +
-      'GEOGRAPHICALGRIDSYSTEMS.MAPS' + '&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg',
+      'GEOGRAPHICALGRIDSYSTEMS.MAPS' + '&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg'
     )
-  };
+  );
 
   options = {
-    layers: this.layers.filter(l => l.layer.options.opacity !== 0).map(l => l.layer),
+    layers: this.layerBoxes.filter(l => l.layer.options.opacity !== 0).map(l => l.layer),
     zoom: 15,
     center: L.latLng([45.419364, 5.347022])
   };
@@ -284,18 +290,23 @@ export class CanimapComponent implements OnInit {
   onMapReady(map: Map) {
     const me = this;
     this.map = map;
-    this.canimapService.map = map;
-    this.canimapService.subscribe();
-    this.fileService.subscribe();
     this.canimapService.geoJSON = this.geoJson;
-    this.canimapService.layers = this.layers;
+    this.canimapService.layers = this.layerBoxes;
     this.savedColor = this.canimapService.color;
+
+    this.menuEventService.callEvent('mapLoaded', map);
+    this.fileService.subscribe();
 
     this.user = this.userService.currentUser();
     if (this.user.mapBoxes !== undefined) {
       this.user.mapBoxes.forEach(m => {
-        const container = this.layers.find(l => m.key === l.key);
+        const container = this.layerBoxes.find(l => m.key === l.key);
         container.layer.setOpacity(m.opacity);
+      });
+    } else {
+      this.user.mapBoxes = new Array<MapBox>();
+      this.layerBoxes.forEach(layerBox => {
+        this.user.mapBoxes.push(new MapBox(layerBox.key, layerBox.layer.options.opacity, layerBox.layer.options.opacity !== 0));
       });
     }
 
