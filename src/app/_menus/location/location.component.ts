@@ -32,17 +32,17 @@ export class LocationComponent implements OnInit {
   }
 
   ngOnInit() {
+    const me = this;
     // create search FormControl
     this.searchControl = new FormControl();
-
     // load Places Autocomplete
     this.mapsAPILoader.load().then(() => {
-      const autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
+      const autocomplete = new google.maps.places.Autocomplete(me.searchElementRef.nativeElement, {
         type: 'address',
         componentRestrictions: { country: 'fr' }
       });
       autocomplete.addListener('place_changed', () => {
-        this.ngZone.run(() => {
+        me.ngZone.run(() => {
           // get the place result
           const place: google.maps.places.PlaceResult = autocomplete.getPlace();
 
@@ -55,7 +55,7 @@ export class LocationComponent implements OnInit {
           const latitude = place.geometry.location.lat();
           const longitude = place.geometry.location.lng();
 
-          this.menuEventService.callEvent('onMapMove', { lat: latitude, lng: longitude });
+          me.menuEventService.callEvent('onMapMove', { lat: latitude, lng: longitude });
         });
       });
     });
