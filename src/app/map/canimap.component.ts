@@ -2,6 +2,7 @@
 import { MenuEventService, CanimapService, FileService } from '../_services/index';
 import { Subscription } from 'rxjs/Subscription';
 import { User } from '../_models/user';
+import { MapBox } from '../_models/mapBox';
 import { UserService } from '../_services/user.service';
 
 import * as L from 'leaflet';
@@ -126,10 +127,10 @@ export class CanimapComponent implements OnInit {
 
   onValueChanged(event: any) {
     console.log('received opacity change for:' + event.target + ' new value: ' + event.value);
-    let map = this.user.maps.find(m => m.key === event.target);
+    let map = this.user.mapBoxes.find(m => m.key === event.target);
     if (map === undefined) {
       map = { key: event.target, opacity: event.value, visible: event.value !== 0 };
-      this.user.maps.push(map);
+      this.user.mapBoxes.push(map);
     } else {
       map.opacity = event.value;
       map.visible = event.value !== 0;
@@ -291,8 +292,8 @@ export class CanimapComponent implements OnInit {
     this.savedColor = this.canimapService.color;
 
     this.user = this.userService.currentUser();
-    if (this.user.maps !== undefined) {
-      this.user.maps.forEach(m => {
+    if (this.user.mapBoxes !== undefined) {
+      this.user.mapBoxes.forEach(m => {
         const container = this.layers.find(l => m.key === l.key);
         container.layer.setOpacity(m.opacity);
       });

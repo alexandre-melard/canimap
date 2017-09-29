@@ -1,16 +1,12 @@
-﻿export class User {
+﻿import { MapBox } from './mapBox';
+import { Helper } from './helper';
+
+export class User {
     id: number;
     username: string;
     password: string;
     firstName: string;
     lastName: string;
-    helpers: {
-      key: string;
-      visible: boolean;
-    }[];
-    maps: {
-      key: string;
-      opacity: number;
-      visible: boolean;
-    }[];
+    helpers: Helper[];
+    mapBoxes: MapBox[];
 }

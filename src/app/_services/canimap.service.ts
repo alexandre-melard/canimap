@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Map, Layer, Path, Icon, LayerEvent, LeafletEvent, LocationEvent } from 'leaflet';
 import * as formatcoords from 'formatcoords';
 import { User } from '../_models/user';
+import { MapBox } from '../_models/mapBox';
 import { UserService } from './user.service';
 
 import * as $ from 'jquery';
@@ -152,17 +153,13 @@ export class CanimapService implements OnDestroy {
 
   saveOpacity() {
     this.layers.forEach(container => {
-      if (this.user.maps === undefined) {
-        this.user.maps = new Array();
+      if (this.user.mapBoxes === undefined) {
+        this.user.mapBoxes = new Array<MapBox>();
       }
-      let map = this.user.maps.find(m => container.key === m.key);
+      let map = this.user.mapBoxes.find(m => container.key === m.key);
       if (map === undefined) {
-        map = {
-          key: container.key,
-          opacity: container.layer.options.opacity,
-          visible: container.layer.options.opacity !== 0
-        };
-        this.user.maps.push(map);
+        map = new MapBox(container.key, container.layer.options.opacity, container.layer.options.opacity !== 0);
+        this.user.mapBoxes.push(map);
       }
       map.opacity = container.layer.options.opacity;
     });
