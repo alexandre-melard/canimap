@@ -290,14 +290,13 @@ export class CanimapComponent implements OnInit {
   onMapReady(map: Map) {
     const me = this;
     this.map = map;
+    this.user = this.userService.currentUser();
     this.canimapService.geoJSON = this.geoJson;
     this.canimapService.layers = this.layerBoxes;
-    this.savedColor = this.canimapService.color;
-
-    this.menuEventService.callEvent('mapLoaded', map);
     this.fileService.subscribe();
+    this.savedColor = this.canimapService.color;
+    this.menuEventService.callEvent('mapLoaded', map);
 
-    this.user = this.userService.currentUser();
     if (this.user.mapBoxes !== undefined) {
       this.user.mapBoxes.forEach(m => {
         const container = this.layerBoxes.find(l => m.key === l.key);

@@ -14,7 +14,7 @@ import * as L from 'leaflet';
 import { MaterialIconOptions, MaterialIcon } from 'ngx-leaflet-material-icons-markers/index';
 
 @Injectable()
-export class CanimapService implements OnInit, OnDestroy {
+export class CanimapService implements OnDestroy {
   user: User;
   private map: Map;
   editing = false;
@@ -26,12 +26,11 @@ export class CanimapService implements OnInit, OnDestroy {
   private subscriptions = new Array<Subscription>();
 
   constructor(private menuEventService: MenuEventService, private userService: UserService) {
-  }
-
-  ngOnInit() {
     this.subscriptions.push(this.menuEventService.getObservable('mapLoaded').subscribe(
       (map) => {
         this.map = map;
+        console.log('canimap service loaded: ');
+
         this.user = this.userService.currentUser();
 
         this.subscriptions.push(this.menuEventService.getObservable('onTrack').subscribe(
@@ -126,8 +125,8 @@ export class CanimapService implements OnInit, OnDestroy {
         map.on('movestart', (e: LeafletEvent) => {
           map.stopLocate();
         });
-      })
-    );
+      }
+    ));
   }
 
   showError(error) {
