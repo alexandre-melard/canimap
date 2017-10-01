@@ -1,0 +1,17 @@
+﻿<div class="container-fluid">
+    <div class="row">
+      <div class="col-3"></div>
+      <div class="canimap-main col-6">
+        <h1>bonjour {{currentUser.firstName}}!</h1>
+        <p>Vous êtes bien connectés à l'application Canimap, vous pouvez aller sur <a [routerLink]="['/map']">la carte</a></p>
+        <h3>Liste des comptes que vous avez sur la machine:</h3>
+        <ul>
+            <li *ngFor="let user of users">
+                {{user.username}} ({{user.firstName}} {{user.lastName}})
+                - <a (click)="deleteUser(user.id)">Effacer</a>
+            </li>
+        </ul>
+        <p><a [routerLink]="['/login']">Deconnexion</a></p>
+      </div>
+  </div>
+</div>

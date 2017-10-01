@@ -1,0 +1,4 @@
+{
+  "title": "Dessinez un ligne multiple",
+  "body": "<p>Pour dessiner une ligne multiple:<ol><li>Cliquez sur la carte</li><li>A chaque fois que vous cliquez, un point s'ajoute et le tracé s'allonge</li><li>Lorsque vous avez terminé, cliquez sur le dernier point du tracé</li><li>N'oubliez pas de sauvegarder votre carte lorsque vous avez terminé</li></ol></p><p><i class='material-icons'>info_outline</i> Vous pourrez toujours modifier le tracé plus tard si vous vous êtes trompés.</p>"
+}

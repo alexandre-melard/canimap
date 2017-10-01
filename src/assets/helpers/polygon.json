@@ -1,0 +1,4 @@
+{
+  "title": "Dessinez un polygone",
+  "body": "<p>Pour dessiner un polygon:<ol><li>Cliquez sur la carte</li><li>A chaque fois que vous cliquez, un point s'ajoute et un segment s'ajoute</li><li>Lorsque vous avez terminé, cliquez sur le premier point du polygone</li><li>N'oubliez pas de sauvegarder votre carte lorsque vous avez terminé</li></ol></p><p><i class='material-icons'>info_outline</i> Vous pourrez toujours modifier le polygone plus tard si vous vous êtes trompés.</p>"
+}

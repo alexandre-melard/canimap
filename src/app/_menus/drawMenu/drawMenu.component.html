@@ -1,0 +1,42 @@
+﻿<div class="btn-group menu-bar" role="toolbar" aria-label="Toolbar with button groups">
+  <button md-icon-button aria-label="Multilignes" mdTooltipPosition="below" mdTooltip="Multilignes" i18n="Multilignes|Tracer des lignes"
+    (click)="polyligne($event)">
+    <md-icon class="md-24">
+      call_missed_outgoing
+    </md-icon>
+  </button>
+  <button md-icon-button aria-label="Polygone" mdTooltipPosition="below" mdTooltip="Polygone" i18n="Polygone|Dessiner un polygone"
+    (click)="polygon($event)">
+    <md-icon class="md-24">
+      details
+    </md-icon>
+  </button>
+  <button md-icon-button aria-label="Rectangle" mdTooltipPosition="below" mdTooltip="Rectangle" i18n="Rectangle|Dessiner un rectangle"
+    (click)="rectangle($event)">
+    <md-icon class="md-24">
+      crop_square
+    </md-icon>
+  </button>
+  <button md-icon-button aria-label="Disque" mdTooltipPosition="below" mdTooltip="Disque" i18n="Disque|Dessiner un disque"
+    (click)="circle($event)">
+    <md-icon class="md-24">
+      fiber_manual_record
+    </md-icon>
+  </button>
+  <button md-icon-button aria-label="Modifier" mdTooltipPosition="below" mdTooltip="Modifier" i18n="Modify|Modify the markers"
+    (click)="edit($event)">
+    <md-icon class="md-24" [style.color]="editColor">
+      edit
+    </md-icon>
+  </button>
+  <button md-icon-button aria-label="Effacer" mdTooltipPosition="below" mdTooltip="Effacer un élément" i18n="Delete|Delete a feature"
+    (click)="delete($event)">
+    <md-icon class="md-24" [style.color]="deleteColor">
+      delete
+    </md-icon>
+  </button>
+  <button md-icon-button class="app-canimap-color-chooser" aria-label="Color" mdTooltipPosition="below" mdTooltip="Changer la couleur"
+    i18n="Color|Change the color" (click)="chooseColor($event)">
+    <img src="../assets/colorwheel-30x30.png"/>
+  </button>
+</div>

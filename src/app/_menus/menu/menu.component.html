@@ -1,0 +1,21 @@
+﻿<div class="canimap-menu">
+  <div class="btn-group menu-bar">
+    <button *ngIf="router.url !== '/map'" md-icon-button>
+      <md-icon class="md-24" routerLink="/map" aria-label="Carte" mdTooltipPosition="below" mdTooltip="Affichez la carte"
+        i18n="Map|The mapping tools and display">
+        photo
+      </md-icon>
+    </button>
+    <button *ngIf="router.url === '/map'" md-icon-button>
+      <md-icon class="md-24" routerLink="/user" mdTooltipPosition="below" mdTooltip="Gérez votre compte" i18n="Account|Account management">
+        face
+      </md-icon>
+    </button>
+  </div>
+<!-- <div class="canimap-menu">
+  <app-canimap-file-menu></app-canimap-file-menu>
+</div> -->
+  <app-canimap-track-menu *ngIf="router.url === '/map'"></app-canimap-track-menu>
+  <app-canimap-draw-menu *ngIf="router.url === '/map'"></app-canimap-draw-menu>
+  <app-canimap-location *ngIf="router.url === '/map'"></app-canimap-location>
+</div>
