@@ -20,6 +20,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/index';
 import { LocationComponent } from './_menus/location/index';
 import { MenuComponent } from './_menus/menu/index';
+import { FileMenuComponent } from './_menus/fileMenu/index';
 import { LoginComponent } from './login/index';
 import { CanimapComponent } from './map/index';
 import { RegisterComponent } from './register/index';
@@ -29,6 +30,9 @@ import { DrawMenuComponent } from './_menus/drawMenu';
 import { DialogChooseLayersComponent } from './_dialogs/chooseLayer.component';
 import { DialogChooseColorComponent } from './_dialogs/chooseColor.component';
 import { DialogHelperComponent } from './_dialogs/helper.component';
+import { DialogFileOpenComponent } from './_dialogs/fileOpen.component';
+import { DialogFileSaveComponent } from './_dialogs/fileSave.component';
+import { DialogFilesOpenComponent } from './_dialogs/filesOpen.component';
 
 import { AuthGuard } from './_guards/index';
 import { AlertService, AuthenticationService, UserService } from './_services/index';
@@ -36,12 +40,14 @@ import { MenuEventService } from './_services/menuEvent.service';
 import { MapService } from './_services/map.service';
 import { DrawService } from './_services/draw.service';
 import { HelperEventService } from './_services/helperEvent.service';
+import { FileService } from './_services/file.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     MenuComponent,
+    FileMenuComponent,
     LocationComponent,
     TrackMenuComponent,
     DrawMenuComponent,
@@ -50,6 +56,9 @@ import { HelperEventService } from './_services/helperEvent.service';
     DialogChooseLayersComponent,
     DialogChooseColorComponent,
     DialogHelperComponent,
+    DialogFileOpenComponent,
+    DialogFilesOpenComponent,
+    DialogFileSaveComponent,
     RegisterComponent
   ],
   imports: [
@@ -80,6 +89,7 @@ import { HelperEventService } from './_services/helperEvent.service';
     MapService,
     DrawService,
     HelperEventService,
+    FileService,
 
     // providers used to create fake backend
     fakeBackendProvider,
@@ -87,9 +97,9 @@ import { HelperEventService } from './_services/helperEvent.service';
     BaseRequestOptions
   ],
   entryComponents: [
-    // DialogFileSaveComponent,
-    // DialogFileOpenComponent,
-    // DialogFilesOpenComponent,
+    DialogFileSaveComponent,
+    DialogFileOpenComponent,
+    DialogFilesOpenComponent,
     DialogChooseLayersComponent,
     DialogChooseColorComponent,
     DialogHelperComponent

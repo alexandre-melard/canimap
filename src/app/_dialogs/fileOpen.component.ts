@@ -10,7 +10,7 @@ export class DialogFileOpenComponent {
   constructor(public dialogRef: MdDialogRef<DialogFileOpenComponent>) { }
 
   fileReceived(evt: any) {
-    this.data = evt.target.file;
+    this.data = evt.target.files[0];
   }
 
   onNoClick(): void {
@@ -22,7 +22,7 @@ export class DialogFileOpenComponent {
     evt.preventDefault();
     const files = evt.dataTransfer.files;
     if (files.length > 1) {
-      alert("vous ne pouvez charger qu'un fichier gpx à la fois");
+      alert("Vous ne pouvez charger qu'un fichier gpx à la fois!'");
     }
     this.data = files[0]; // FileList object.
   }

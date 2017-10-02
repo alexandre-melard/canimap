@@ -65,8 +65,13 @@ export class MapService implements OnDestroy {
     if (this.user.mapBoxes !== undefined) {
       this.user.mapBoxes.forEach(m => {
         const layerBox = this.layerBoxes.find(l => m.key === l.key);
-        layerBox.layer.setOpacity(m.opacity);
-        layerBox.layer.setVisible(m.visible);
+        if (layerBox !== undefined) {
+          layerBox.layer.setOpacity(m.opacity);
+          layerBox.layer.setVisible(m.visible);
+        } else {
+          // there is a problem with the saved data, removed corrupted entry
+          this.user.mapBoxes.slice(this.user.mapBoxes.lastIndexOf( m ), 1);
+        }
       });
     } else {
       this.user.mapBoxes = new Array<MapBox>();

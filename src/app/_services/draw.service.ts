@@ -6,13 +6,14 @@ import { MenuEventService } from './menuEvent.service';
 import { UserService } from './user.service';
 import { MapService } from './map.service';
 import {
-  Attribution, Feature, Map, style, StyleFunction, View,
+  Attribution, Feature, Map, style, StyleFunction, View, format,
   tilegrid, proj, extent, control, interaction, source, layer
 } from 'openlayers';
 
 import { MapBox } from '../_models/mapBox';
 import { LayerBox } from '../_models/layerBox';
 import { User } from '../_models/user';
+import * as $ from 'jquery';
 
 @Injectable()
 export class DrawService implements OnDestroy {
@@ -90,6 +91,46 @@ export class DrawService implements OnDestroy {
         this.addInteraction('LineString', '#F93');
       }
     ));
+    this.subscriptions.push(this.menuEventService.getObservable('addLayersFromJson').subscribe(
+      (json) => {
+        console.log('importing json as draw');
+        const geojsonFormat = new format.GeoJSON();
+        const features = geojsonFormat.readFeatures(json);
+        features.forEach((feature) => {
+          feature.setStyle(new style.Style({
+            fill: new style.Fill({
+              color: feature.get('fill.color')
+            }),
+            stroke: new style.Stroke({
+              color: feature.get('stroke.color'),
+              width: feature.get('stroke.width')
+            })
+          }));
+        });
+        this.source.addFeatures(features);
+      }
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('loadGPX').subscribe(
+      (gpx) => {
+        console.log('importing json as draw');
+        const gpxFormat = new format.GPX();
+        const features = gpxFormat.readFeatures(gpx, {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'});
+        const rgb = this.hexToRgb(this.color);
+        features.forEach((feature) => {
+          feature.setStyle(new style.Style({
+            fill: new style.Fill({
+              color: 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)'
+            }),
+            stroke: new style.Stroke({
+              color: this.color,
+              width: 3
+            })
+          }));
+        });
+        this.source.addFeatures(features);
+        this.map.getView().fit(this.source.getExtent());
+      }
+    ));
   }
 
   // lineStringStyle(feature): style.Style {
@@ -117,17 +158,29 @@ export class DrawService implements OnDestroy {
         color = this.color;
       }
       const rgb = this.hexToRgb(this.color);
-        // const func: StyleFunction = (feature: Feature, resolution: number) => {
-        //   return this.lineStringStyle(feature);
-        // };
-        event.feature.setStyle(new style.Style({
+      // const func: StyleFunction = (feature: Feature, resolution: number) => {
+      //   return this.lineStringStyle(feature);
+      // };
+      event.feature.set('fill.color', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)');
+      event.feature.set('stroke.color', color);
+      event.feature.set('stroke.width', 3);
+      event.feature.setStyle(new style.Style({
         fill: new style.Fill({
           color: 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)'
         }),
         stroke: new style.Stroke({
           color: color,
           width: 3
-        })}));
+        })
+      }));
+    });
+    $(document).keydown((e) => {
+      if (e.which === 27) {
+        this.draw.removeLastPoint();
+      } else if (e.which === 46) {
+        this.map.removeInteraction(this.draw);
+      }
+
     });
     this.map.addInteraction(this.draw);
   }
@@ -145,6 +198,12 @@ export class DrawService implements OnDestroy {
       g: parseInt(result[2], 16),
       b: parseInt(result[3], 16)
     } : null;
+  }
+
+  getGeoJson(): any {
+    const geojsonFormat = new format.GeoJSON();
+    const json = geojsonFormat.writeFeatures(this.source.getFeatures());
+    return json;
   }
 
   ngOnDestroy() {

@@ -1,0 +1,5 @@
+---
+0.1.10 shoulda:>= 0,trollop:>= 0|checksum:f7b02514684e87bd022cf77f6a94996cbf9ce8fd03453acca4ad73b57ef5bbb4
+0.1.11 shoulda:>= 0,trollop:>= 0|checksum:f8d95809ecb0cff27a558ab16e7ca81d58b4e8cad780dd8d9f2d96bc695ade33
+0.2.0 shoulda:>= 0,trollop:>= 0|checksum:1ca3b310c459086f4a443ef2124779e8e5b33ee2fb1c6868c6b6fa2f1cc3c919
+0.2.1 shoulda:>= 0,trollop:>= 0|checksum:5f6898ed1d9d3dd6812ab4b6d1b20846dc462bfb0f4c704dcaf4060b80e4ac73

@@ -1,0 +1,21 @@
+<div class="btn-group menu-bar" role="toolbar" aria-label="Toolbar with button groups">
+    <button md-icon-button aria-label="Files open" mdTooltipPosition="below" mdTooltip="Ouvrir une ou des carte(s)" i18n="Open Files|Open saved files"
+    (click)="filesOpen($event)">
+      <md-icon class="md-24">
+        folder
+      </md-icon>
+    </button>
+    <button md-icon-button aria-label="File save" mdTooltipPosition="below" mdTooltip="Enregistrer une carte"
+    i18n="Save|Save the map to file" (click)="fileSave($event)">
+      <md-icon class="md-24">
+        file_download
+      </md-icon>
+    </button>
+    <button md-icon-button aria-label="Load GPX" mdTooltipPosition="below" mdTooltip="Charger une trace GPX"
+    i18n="Gpx|load GPX file" (click)="gpx($event)">
+      <md-icon class="md-24">
+        gps_fixed
+      </md-icon>
+    </button>
+  </div>
+  
