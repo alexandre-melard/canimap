@@ -20,7 +20,6 @@ import * as $ from 'jquery';
 })
 
 export class DrawMenuComponent implements OnInit {
-  gpsMarkerToggle = true;
   constructor(
     private mapService: MapService,
     private drawService: DrawService,
