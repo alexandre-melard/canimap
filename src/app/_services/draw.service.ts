@@ -22,6 +22,8 @@ export class DrawService implements OnDestroy {
   vector: layer.Vector;
   source: source.Vector;
   draw: interaction.Draw;
+  modify: interaction.Modify;
+
   private subscriptions = new Array<Subscription>();
   public color = '#F00';
 
@@ -89,6 +91,13 @@ export class DrawService implements OnDestroy {
       () => {
         console.log('drawing drawVictimPath start');
         this.addInteraction('LineString', '#F93');
+      }
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('edit').subscribe(
+      () => {
+        console.log('editing features start');
+        this.modify = new interaction.Modify({ features: this.source.getFeaturesCollection() });
+        this.map.addInteraction(this.modify);
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('addLayersFromJson').subscribe(

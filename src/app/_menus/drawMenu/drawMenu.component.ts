@@ -32,6 +32,9 @@ export class DrawMenuComponent implements OnInit {
     move: {
       label: 'move'
     },
+    edit: {
+      label: 'edit'
+    },
     polyligne:
     {
       label: 'polyligne'
@@ -65,6 +68,14 @@ export class DrawMenuComponent implements OnInit {
   move(event: any) {
     this.menuEventService.callEvent('drawEnd', null);
     this.states = this.statesModel.move;
+  }
+
+  edit(event: any) {
+    this.menuEventService.prepareEvent('edit', null);
+    this.helperEventService.showHelper('edit', () => {
+      this.menuEventService.proceed();
+    });
+    this.states = this.statesModel.edit;
   }
 
   polyligne(event: any) {
