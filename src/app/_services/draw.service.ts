@@ -108,13 +108,14 @@ export class DrawService implements OnDestroy {
           }));
         });
         this.source.addFeatures(features);
+        this.map.getView().fit(this.source.getExtent());
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('loadGPX').subscribe(
       (gpx) => {
         console.log('importing json as draw');
         const gpxFormat = new format.GPX();
-        const features = gpxFormat.readFeatures(gpx, {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'});
+        const features = gpxFormat.readFeatures(gpx, { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' });
         const rgb = this.hexToRgb(this.color);
         features.forEach((feature) => {
           feature.setStyle(new style.Style({
@@ -126,6 +127,9 @@ export class DrawService implements OnDestroy {
               width: 3
             })
           }));
+          feature.set('fill.color', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)');
+          feature.set('stroke.color', this.color);
+          feature.set('stroke.width', 3);
         });
         this.source.addFeatures(features);
         this.map.getView().fit(this.source.getExtent());

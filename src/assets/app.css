@@ -5,6 +5,10 @@ html, body, app-canimap, app-canimap-map, .map {
   height: 100%;
 }
 
+button.mat-icon-button {
+  font-weight: bold!important;
+}
+
 .menu-bar, .pac-container {
   -moz-border-radius:10px;  /* for Firefox */
   -webkit-border-radius:10px; /* for Webkit-Browsers */
@@ -34,3 +38,45 @@ app-canimap-location {
   right: 20px;
 }
 
+.loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+}
+
+#drop_zone {
+  border: 2px dashed #bbb;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  padding: 25px;
+  margin: 10px;
+  text-align: center;
+  font: 20pt bold 'Vollkorn';
+  color: #bbb;
+}
+
+.canimap-menu-mobile {
+  display: none;
+  position: absolute;
+  left: 50px;
+  top: 10px;
+  z-index: 9999;
+}
+
+
+.canimap-menu-mobile button {
+  background-color: rgba(255,255,255,0.9);
+  cursor: pointer;
+}
+
+@media (max-width : 1024px) {
+  .canimap-menu {
+    display: none;
+  }
+  .canimap-menu-mobile {
+    display: block;
+  }
+}

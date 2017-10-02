@@ -20,6 +20,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/index';
 import { LocationComponent } from './_menus/location/index';
 import { MenuComponent } from './_menus/menu/index';
+import { MenuMobileComponent } from './_menus/mobileMenu/index';
 import { FileMenuComponent } from './_menus/fileMenu/index';
 import { LoginComponent } from './login/index';
 import { CanimapComponent } from './map/index';
@@ -47,6 +48,7 @@ import { FileService } from './_services/file.service';
     AppComponent,
     HomeComponent,
     MenuComponent,
+    MenuMobileComponent,
     FileMenuComponent,
     LocationComponent,
     TrackMenuComponent,
