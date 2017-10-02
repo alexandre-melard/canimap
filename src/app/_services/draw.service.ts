@@ -41,43 +41,66 @@ export class DrawService implements OnDestroy {
   public color = '#F00';
   private predefinedColor;
 
-  formatLength(line: geom.Geometry) {
-    const length = Sphere.getLength(line);
-    let output;
-    if (length > 100) {
-      output = (Math.round(length / 1000 * 100) / 100) +
-        ' ' + 'km';
-    } else {
-      output = (Math.round(length * 100) / 100) +
-        ' ' + 'm';
-    }
-    return output;
-  }
 
-  styleFunction(feature: Feature, color: string, icon?: string) {
+  styleFunction(feature: Feature) {
+    const colorGetBrightness = (rgb) => {
+      return Math.sqrt(
+        rgb.r * rgb.r * 0.299 +
+        rgb.g * rgb.g * 0.587 +
+        rgb.b * rgb.b * 0.114);
+    };
+
+    const formatLength = (line: geom.Geometry) => {
+      const length = Sphere.getLength(line);
+      let output;
+      if (length > 100) {
+        output = (Math.round(length / 1000 * 100) / 100) +
+          ' ' + 'km';
+      } else {
+        output = (Math.round(length * 100) / 100) +
+          ' ' + 'm';
+      }
+      return output;
+    };
+    const hexToRgb = (hex: string) => {
+      // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+      const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+      hex = hex.replace(shorthandRegex, function (m, r, g, b) {
+        return r + r + g + g + b + b;
+      });
+
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    };
+
     const geometry: geom.LineString = <geom.LineString>feature.getGeometry();
-    const rgb = this.hexToRgb(color);
+    const color = feature.get('stroke.color');
+    const rgb = hexToRgb(color);
+    const icon = undefined;
+    const styles = new Array<style.Style>();
     if (geometry.getType() === 'LineString') {
-      const styles = [
-        // linestring
-        new style.Style({
-          stroke: new style.Stroke({
-            color: color,
-            width: 3
+      styles.push(new style.Style({
+        stroke: new style.Stroke({
+          color: color,
+          width: 3
+        }),
+        text: new style.Text({
+          text: formatLength(geometry),
+          font: '18px Calibri,sans-serif',
+          fill: new style.Fill({
+            color: color
           }),
-          text: new style.Text({
-            text: this.formatLength(geometry),
-            font: '18px Calibri,sans-serif',
-            fill: new style.Fill({
-              color: color
-            }),
-            stroke: new style.Stroke({
-              color: (this.colorGetBrightness(rgb) < 220) ? 'white' : 'black',
-              width: 3
-            })
+          stroke: new style.Stroke({
+            color: (colorGetBrightness(rgb) < 220) ? 'white' : 'black',
+            width: 3
           })
         })
-      ];
+      })
+      );
 
       geometry.forEachSegment(function (start, end) {
         const dx = end[0] - start[0];
@@ -98,9 +121,8 @@ export class DrawService implements OnDestroy {
           })
         }));
       });
-      return styles;
     } else {
-      return new style.Style({
+      styles.push(new style.Style({
         fill: new style.Fill({
           color: 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)'
         }),
@@ -108,10 +130,9 @@ export class DrawService implements OnDestroy {
           color: color,
           width: 3
         })
-      });
+      }));
     }
-
-
+    return styles;
   }
 
   configureFeature(drawingType: DrawingType) {
@@ -125,7 +146,7 @@ export class DrawService implements OnDestroy {
       feature.set('fill.color', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)');
       feature.set('stroke.color', color);
       feature.set('stroke.width', 3);
-      feature.setStyle(this.styleFunction(feature, color, undefined));
+      //      feature.setStyle(this.styleFunction(feature, color, undefined));
       this.predefinedColor = undefined;
     });
     $(document).keydown((e) => {
@@ -141,6 +162,7 @@ export class DrawService implements OnDestroy {
     this.source = new source.Vector({ wrapX: false });
     this.vector = new layer.Vector({
       source: this.source,
+      style: this.styleFunction,
       map: map
     });
     this.drawInteractions.forEach((drawInteraction) => {
@@ -163,21 +185,7 @@ export class DrawService implements OnDestroy {
       drawInteraction.draw.setActive(false);
     });
 
-    this.select = new interaction.Select({
-      style: new style.Style({
-        image: new style.Circle({
-          radius: 3 * 2,
-          fill: new style.Fill({
-            color: [0, 153, 255, 1]
-          }),
-          stroke: new style.Stroke({
-            color: 'white',
-            width: 3 / 2
-          })
-        }),
-        zIndex: Infinity
-      })
-    });
+    this.select = new interaction.Select();
     map.addInteraction(this.select);
     this.select.setActive(false);
     const selectedFeatures = this.select.getFeatures();
@@ -333,7 +341,7 @@ export class DrawService implements OnDestroy {
           if (feature.getGeometry().getType() === 'MultiLineString') {
             (<geom.MultiLineString>feature.getGeometry()).getLineStrings().forEach((lineStringGeom: geom.LineString) => {
               const feat = new Feature(lineStringGeom);
-              feat.setStyle(this.styleFunction(feat, this.color, 'arrow_16.png'));
+              //              feat.setStyle(this.styleFunction(feat, this.color, 'arrow_16.png'));
               feat.set('fill.color', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)');
               feat.set('stroke.color', this.color);
               feat.set('stroke.width', 3);
@@ -344,12 +352,6 @@ export class DrawService implements OnDestroy {
         this.map.getView().fit(this.source.getExtent());
       }
     ));
-  }
-  colorGetBrightness(rgb) {
-    return Math.sqrt(
-      rgb.r * rgb.r * 0.299 +
-      rgb.g * rgb.g * 0.587 +
-      rgb.b * rgb.b * 0.114);
   }
 
   hexToRgb(hex: string) {
