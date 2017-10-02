@@ -28,61 +28,44 @@ export class DrawMenuComponent implements OnInit {
     private helperEventService: HelperEventService,
     public dialog: MdDialog
   ) { }
-  states;
   statesModel = {
-    polyligne: [
-      {
-        label: 'Terminer',
-        id: 0,
-        end: true
-      },
-      {
-        label: 'Annuler le dernier point',
-        id: 1,
-        end: false
-      },
-      {
-        label: 'Annuler',
-        id: 2,
-        end: true
-      }
-    ],
-    polygon: [
-      {
-        label: 'Terminer',
-        id: 0,
-        end: true
-      },
-      {
-        label: 'Annuler le dernier point',
-        id: 1,
-        end: false
-      },
-      {
-        label: 'Annuler',
-        id: 2,
-        end: true
-      }
-    ],
-    rectangle: [
-      {
-        label: 'Annuler',
-        id: 0,
-        end: true
-      }
-    ],
-    circle: [
-      {
-        label: 'Annuler',
-        id: 0,
-        end: true
-      }
-    ]
+    move: {
+      label: 'move'
+    },
+    polyligne:
+    {
+      label: 'polyligne'
+    },
+    polygon:
+    {
+      label: 'polygon'
+    },
+    rectangle:
+    {
+      label: 'rectangle'
+    },
+    circle:
+    {
+      label: 'circle'
+    }
   };
+  states = this.statesModel.move;
 
   ngOnInit() {
   }
 
+  color(state: any) {
+    let color = 'black';
+    if (this.states.label === state) {
+      color = 'red';
+    }
+    return color;
+  }
+
+  move(event: any) {
+    this.menuEventService.callEvent('drawEnd', null);
+    this.states = this.statesModel.move;
+  }
 
   polyligne(event: any) {
     this.menuEventService.prepareEvent('polyline', null);

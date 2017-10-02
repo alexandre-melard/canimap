@@ -4,7 +4,7 @@ import { HttpModule } from '@angular/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
-  MdDialogModule, MdButtonModule, MdIconModule, MdTooltipModule,
+  MdDialogModule, MdButtonModule, MdButtonToggleModule, MdIconModule, MdTooltipModule,
   MdInputModule, MdSliderModule, MdExpansionModule, MdTableModule
 } from '@angular/material';
 import { AgmCoreModule } from '@agm/core';
@@ -57,6 +57,7 @@ import { HelperEventService } from './_services/helperEvent.service';
     BrowserAnimationsModule,
     MdDialogModule,
     MdButtonModule,
+    MdButtonToggleModule,
     MdIconModule,
     MdTooltipModule,
     MdInputModule,

@@ -1,25 +1,31 @@
 ﻿<div class="btn-group menu-bar" role="toolbar" aria-label="Toolbar with button groups">
+  <button md-icon-button aria-label="Move" mdTooltipPosition="below" mdTooltip="Déplacer la carte" i18n="Move|Move the map"
+    (click)="move($event)">
+  <md-icon [style.color]="color('move')">
+    zoom_out_map
+  </md-icon>
+  </button>
   <button md-icon-button aria-label="Multilignes" mdTooltipPosition="below" mdTooltip="Multilignes" i18n="Multilignes|Tracer des lignes"
     (click)="polyligne($event)">
-    <md-icon class="md-24">
+    <md-icon class="md-24" [style.color]="color('polyligne')">
       call_missed_outgoing
     </md-icon>
   </button>
   <button md-icon-button aria-label="Polygone" mdTooltipPosition="below" mdTooltip="Polygone" i18n="Polygone|Dessiner un polygone"
     (click)="polygon($event)">
-    <md-icon class="md-24">
+    <md-icon class="md-24" [style.color]="color('polygon')">
       details
     </md-icon>
   </button>
   <button md-icon-button aria-label="Rectangle" mdTooltipPosition="below" mdTooltip="Rectangle" i18n="Rectangle|Dessiner un rectangle"
     (click)="rectangle($event)">
-    <md-icon class="md-24">
+    <md-icon class="md-24" [style.color]="color('rectangle')">
       crop_square
     </md-icon>
   </button>
   <button md-icon-button aria-label="Disque" mdTooltipPosition="below" mdTooltip="Disque" i18n="Disque|Dessiner un disque"
     (click)="circle($event)">
-    <md-icon class="md-24">
+    <md-icon class="md-24" [style.color]="color('circle')">
       fiber_manual_record
     </md-icon>
   </button>

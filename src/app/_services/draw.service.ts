@@ -48,6 +48,12 @@ export class DrawService implements OnDestroy {
         this.mapLoaded(map);
       }
     ));
+    this.subscriptions.push(this.menuEventService.getObservable('drawEnd').subscribe(
+      () => {
+        console.log('drawing stop');
+        this.map.removeInteraction(this.draw);
+      }
+    ));
     this.subscriptions.push(this.menuEventService.getObservable('polyline').subscribe(
       () => {
         console.log('drawing polyline start');
