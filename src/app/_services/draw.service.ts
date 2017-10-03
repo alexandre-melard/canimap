@@ -9,18 +9,20 @@ import {
   Attribution, Feature, Map, Sphere, geom, style, StyleFunction, View, format,
   tilegrid, proj, extent, control, interaction, source, layer
 } from 'openlayers';
+import * as ol from 'openlayers';
 
 import { MapBox } from '../_models/mapBox';
 import { LayerBox } from '../_models/layerBox';
 import { User } from '../_models/user';
-import * as $ from 'jquery';
 import { Tooltip } from '../_utils/map-tooltip';
 import { formatLength } from '../_utils/map-format-length';
 import { hexToRgb } from '../_utils/color-hex-to-rgb';
 import { colorGetBrightness } from '../_utils/color-brightness';
+import * as $ from 'jquery';
 
 class DrawingType {
   type: string;
+  geometry?: ol.geom.GeometryType;
   draw: interaction.Draw;
 }
 
@@ -34,13 +36,15 @@ export class DrawService implements OnDestroy {
   select: interaction.Select;
   snap: interaction.Snap;
   tooltip = new Tooltip();
+  overlay: ol.Overlay;
 
   drawInteractions: DrawingType[] = [
-    { type: 'Point', draw: null },
-    { type: 'LineString', draw: null },
-    { type: 'Polygon', draw: null },
-    { type: 'Rectangle', draw: null },
-    { type: 'Circle', draw: null }
+    { type: 'Point', geometry: 'Point', draw: null },
+    { type: 'ParkingMarker', geometry: 'Point', draw: null },
+    { type: 'LineString', geometry: 'LineString', draw: null },
+    { type: 'Polygon', geometry: 'Polygon', draw: null },
+    { type: 'Rectangle', geometry: 'Circle', draw: null },
+    { type: 'Circle', geometry: 'Circle', draw: null }
   ];
 
   private subscriptions = new Array<Subscription>();
@@ -84,7 +88,6 @@ export class DrawService implements OnDestroy {
           image: new style.Icon({
             color: color,
             crossOrigin: 'anonymous',
-            // src: 'https://openlayers.org/en/v4.3.4/examples/data/dot.png',
             src: '../assets/' + ((icon === undefined) ? 'arrow_20.png' : icon),
             anchor: [0.75, 0.5],
             rotateWithView: true,
@@ -92,6 +95,26 @@ export class DrawService implements OnDestroy {
           })
         }));
       });
+    } else if (feature.get('custom.type') === 'ParkingMarker') {
+      const iconStyle = new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */({
+          anchor: [0.5, 46],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'pixels',
+          src: '../assets/marker-icon.png'
+        })),
+        text: new ol.style.Text({
+          text: 'local_parking',
+          offsetX: 0,
+          offsetY: -23,
+          font: 'normal 18px Material Icons',
+          textBaseline: 'Bottom',
+          fill: new ol.style.Fill({
+            color: 'black',
+          })
+        })
+      });
+      styles.push(iconStyle);
     } else {
       styles.push(new style.Style({
         fill: new style.Fill({
@@ -117,6 +140,7 @@ export class DrawService implements OnDestroy {
         color = this.color;
       }
       const rgb = hexToRgb(this.color);
+      feature.set('custom.type', drawingType.type);
       feature.set('fill.color', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)');
       feature.set('stroke.color', color);
       feature.set('stroke.width', 3);
@@ -141,18 +165,13 @@ export class DrawService implements OnDestroy {
       map: map
     });
     this.drawInteractions.forEach((drawInteraction) => {
-      let options;
+      const options: olx.interaction.DrawOptions = {
+        source: this.source,
+        type: drawInteraction.geometry,
+      };
       if (drawInteraction.type === 'Rectangle') {
-        options = {
-          source: this.source,
-          type: 'Circle',
-          geometryFunction: interaction.Draw.createBox()
-        };
+        options.geometryFunction = interaction.Draw.createBox();
       } else {
-        options = {
-          source: this.source,
-          type: drawInteraction.type
-        };
       }
       drawInteraction.draw = new interaction.Draw(options);
       this.configureFeature(drawInteraction);
@@ -171,9 +190,9 @@ export class DrawService implements OnDestroy {
       const selected = selectEvent.selected;
       $(document).keydown((e) => {
         if (e.which === 46) {
-          selected.forEach((feature) => {
-            this.source.removeFeature(feature);
-          });
+          while (selected.length > 0) {
+            this.source.removeFeature(selectEvent.selected.pop());
+          }
         }
       });
     });
@@ -227,7 +246,7 @@ export class DrawService implements OnDestroy {
         this.mapLoaded(map);
       }
     ));
-    this.subscriptions.push(this.menuEventService.getObservable('drawEnd').subscribe(
+    this.subscriptions.push(this.menuEventService.getObservable('move').subscribe(
       () => {
         console.log('drawing stop');
         this.disableInteractions();
@@ -237,6 +256,12 @@ export class DrawService implements OnDestroy {
       () => {
         console.log('drawing polyline start');
         this.enableDrawInteraction('LineString');
+      }
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('parkingMarker').subscribe(
+      () => {
+        console.log('drawing marker start');
+        this.enableDrawInteraction('ParkingMarker');
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('polygon').subscribe(
@@ -267,6 +292,41 @@ export class DrawService implements OnDestroy {
       () => {
         console.log('drawing drawVictimPath start');
         this.enableDrawInteraction('LineString', '#F93');
+      }
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('gpsMarker').subscribe(
+      () => {
+        console.log('drawing gpsMarker start');
+        this.disableInteractions();
+        const options = {
+          element: $('#popup').get(0),
+          autoPan: true,
+          offset: [0, -25],
+          autoPanAnimation: {
+            duration: 250,
+            source: null
+          }
+        };
+        const overlay = new ol.Overlay(options);
+        this.map.addOverlay(overlay);
+        $('#map').css( 'cursor', 'crosshair' );
+        this.map.on('singleclick', function (evt) {
+          const coordinate = evt.coordinate;
+          const hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
+            coordinate, 'EPSG:3857', 'EPSG:4326'));
+
+          $('#popup-content').html('<code>' + hdms + '</code>');
+          overlay.setPosition(coordinate);
+        });
+        this.overlay = overlay;
+      }
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('gpsMarkerDismiss').subscribe(
+      () => {
+        console.log('drawing gpsMarkerDismiss start');
+        $('#map').css( 'cursor', '' );
+        this.map.un('singleclick', () => {});
+        this.overlay.setPosition(undefined);
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('edit').subscribe(

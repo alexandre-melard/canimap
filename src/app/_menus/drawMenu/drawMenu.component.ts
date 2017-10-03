@@ -29,6 +29,7 @@ export class DrawMenuComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.move();
   }
 
   color(state: any) {
@@ -39,8 +40,8 @@ export class DrawMenuComponent implements OnInit {
     return color;
   }
 
-  move(event: any) {
-    this.menuEventService.callEvent('drawEnd', null);
+  move(event?: any): void {
+    this.menuEventService.callEvent('move', null);
   }
 
   edit(event: any) {

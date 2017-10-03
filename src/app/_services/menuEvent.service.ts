@@ -16,7 +16,7 @@ class Call {
 export class MenuEventService {
   current: Call = { key: '', value: { data: {}, success: null, error: null } };
   waitingCalls = new Array<Call>();
-  state: string;
+  state = 'move';
 
   constructor() { }
 
