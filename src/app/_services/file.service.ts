@@ -72,9 +72,10 @@ export class FileService implements OnDestroy {
             () => console.log('onCompleted')
         ));
         this.subscriptions.push(this.menuEventService.getObservable('fileOpen').subscribe(
-            () => {
+            (data) => {
                 const dialogRef = this.dialog.open(DialogFileOpenComponent, {
-                    width: '700px'
+                    width: '700px',
+                    data: {types: data}
                 });
 
                 dialogRef.afterClosed().subscribe(result => {
@@ -82,7 +83,7 @@ export class FileService implements OnDestroy {
                     if (result !== undefined) {
                         const file: File = result;
                         me.parseFile(file, (content: string) => {
-                            me.menuEventService.callEvent('loadGPX', content);
+                            me.menuEventService.callEvent('loadGPS', { content: content, type: file.name.split('.').pop()});
                         });
                     }
                 });

@@ -1,13 +1,13 @@
 ﻿<div class="btn-group menu-bar" role="toolbar" aria-label="Toolbar with button groups">
   <button md-icon-button aria-label="Move" mdTooltipPosition="below" mdTooltip="Déplacer la carte" i18n="Move|Move the map"
     (click)="move($event)">
-  <md-icon [style.color]="color('move')">
+  <md-icon class="md-24" [style.color]="color('move')">
     zoom_out_map
   </md-icon>
   </button>
   <button md-icon-button aria-label="Multilignes" mdTooltipPosition="below" mdTooltip="Multilignes" i18n="Multilignes|Tracer des lignes"
-    (click)="polyligne($event)">
-    <md-icon class="md-24" [style.color]="color('polyligne')">
+    (click)="polyline($event)">
+    <md-icon class="md-24" [style.color]="color('polyline')">
       call_missed_outgoing
     </md-icon>
   </button>
@@ -31,7 +31,7 @@
   </button>
   <button md-icon-button aria-label="Modifier" mdTooltipPosition="below" mdTooltip="Modifier" i18n="Modify|Modify the markers"
     (click)="edit($event)">
-    <md-icon class="md-24" [style.color]="editColor">
+    <md-icon class="md-24" [style.color]="color('edit')">
       edit
     </md-icon>
   </button>

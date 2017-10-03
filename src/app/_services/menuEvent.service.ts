@@ -16,6 +16,7 @@ class Call {
 export class MenuEventService {
   current: Call = { key: '', value: { data: {}, success: null, error: null } };
   waitingCalls = new Array<Call>();
+  state: string;
 
   constructor() { }
 
@@ -32,7 +33,7 @@ export class MenuEventService {
         }
       }
     );
-    return { observable: this.getEvent(key).asObservable(), values: events.map(event => event.value)};
+    return { observable: this.getEvent(key).asObservable(), values: events.map(event => event.value) };
   }
 
   getObservable(key: string): any {
@@ -49,6 +50,7 @@ export class MenuEventService {
   }
 
   callEvent(key: string, value: any) {
+    this.state = key;
     if (!this.isEvent(key)) {
       this.waitingCalls.push(new Call(key, value));
     } else {

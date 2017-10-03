@@ -35,6 +35,14 @@ export class TrackMenuComponent implements OnInit {
   ngOnInit() {
   }
 
+  color(state: any) {
+    let color = 'black';
+    if (this.menuEventService.state === state) {
+      color = 'red';
+    }
+    return color;
+  }
+
   drawVictimPath(e: MouseEvent) {
     this.contextVisible = true;
     this.menuEventService.prepareEvent('drawVictimPath', null, null);

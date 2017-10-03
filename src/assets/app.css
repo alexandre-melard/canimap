@@ -58,6 +58,12 @@ app-canimap-location {
   color: #bbb;
 }
 
+#drop_zone a {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;  
+}
+
 .canimap-menu-mobile {
   display: none;
   position: absolute;
@@ -66,7 +72,19 @@ app-canimap-location {
   z-index: 9999;
 }
 
+.app-canimap-tooltip-help, .app-canimap-tooltip-measure {
+  position: relative;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+  color: white;
+  padding: 4px 8px;
+  opacity: 1;
+  white-space: nowrap;
+}
 
+.app-canimap-tooltip-measure {
+  background: rgba(200, 100, 100, 0.6);
+}
 .canimap-menu-mobile button {
   background-color: rgba(255,255,255,0.9);
   cursor: pointer;

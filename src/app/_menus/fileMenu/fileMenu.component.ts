@@ -40,9 +40,9 @@ export class FileMenuComponent implements OnInit {
     });
   }
 
-  gpx(e: MouseEvent) {
-    this.menuEventService.prepareEvent('fileOpen', null);
-    this.helperEventService.showHelper('loadGPX', () => {
+  gps(e: MouseEvent) {
+    this.menuEventService.prepareEvent('fileOpen', ['gpx', 'kml']);
+    this.helperEventService.showHelper('loadGPS', () => {
       this.menuEventService.proceed();
     });
   }

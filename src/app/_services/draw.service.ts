@@ -14,6 +14,10 @@ import { MapBox } from '../_models/mapBox';
 import { LayerBox } from '../_models/layerBox';
 import { User } from '../_models/user';
 import * as $ from 'jquery';
+import { Tooltip } from '../_utils/map-tooltip';
+import { formatLength } from '../_utils/map-format-length';
+import { hexToRgb } from '../_utils/color-hex-to-rgb';
+import { colorGetBrightness } from '../_utils/color-brightness';
 
 class DrawingType {
   type: string;
@@ -29,6 +33,8 @@ export class DrawService implements OnDestroy {
   modify: interaction.Modify;
   select: interaction.Select;
   snap: interaction.Snap;
+  tooltip = new Tooltip();
+
   drawInteractions: DrawingType[] = [
     { type: 'Point', draw: null },
     { type: 'LineString', draw: null },
@@ -43,40 +49,6 @@ export class DrawService implements OnDestroy {
 
 
   styleFunction(feature: Feature) {
-    const colorGetBrightness = (rgb) => {
-      return Math.sqrt(
-        rgb.r * rgb.r * 0.299 +
-        rgb.g * rgb.g * 0.587 +
-        rgb.b * rgb.b * 0.114);
-    };
-
-    const formatLength = (line: geom.Geometry) => {
-      const length = Sphere.getLength(line);
-      let output;
-      if (length > 100) {
-        output = (Math.round(length / 1000 * 100) / 100) +
-          ' ' + 'km';
-      } else {
-        output = (Math.round(length * 100) / 100) +
-          ' ' + 'm';
-      }
-      return output;
-    };
-    const hexToRgb = (hex: string) => {
-      // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-      const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-      hex = hex.replace(shorthandRegex, function (m, r, g, b) {
-        return r + r + g + g + b + b;
-      });
-
-      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-      } : null;
-    };
-
     const geometry: geom.LineString = <geom.LineString>feature.getGeometry();
     const color = feature.get('stroke.color');
     const rgb = hexToRgb(color);
@@ -101,7 +73,6 @@ export class DrawService implements OnDestroy {
         })
       })
       );
-
       geometry.forEachSegment(function (start, end) {
         const dx = end[0] - start[0];
         const dy = end[1] - start[1];
@@ -136,18 +107,22 @@ export class DrawService implements OnDestroy {
   }
 
   configureFeature(drawingType: DrawingType) {
+    drawingType.draw.on('drawstart', (event: interaction.Draw.Event) => {
+      this.tooltip.sketch = event.feature;
+    });
     drawingType.draw.on('drawend', (event: interaction.Draw.Event) => {
       const feature = event.feature;
       let color = this.predefinedColor;
       if (color === undefined) {
         color = this.color;
       }
-      const rgb = this.hexToRgb(this.color);
+      const rgb = hexToRgb(this.color);
       feature.set('fill.color', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)');
       feature.set('stroke.color', color);
       feature.set('stroke.width', 3);
-      //      feature.setStyle(this.styleFunction(feature, color, undefined));
       this.predefinedColor = undefined;
+      this.tooltip.sketch = null;
+      this.tooltip.resetTooltips(this.map);
     });
     $(document).keydown((e) => {
       if (e.which === 27) {
@@ -169,7 +144,7 @@ export class DrawService implements OnDestroy {
       let options;
       if (drawInteraction.type === 'Rectangle') {
         options = {
-          source: this.vector.getSource(),
+          source: this.source,
           type: 'Circle',
           geometryFunction: interaction.Draw.createBox()
         };
@@ -189,8 +164,18 @@ export class DrawService implements OnDestroy {
     map.addInteraction(this.select);
     this.select.setActive(false);
     const selectedFeatures = this.select.getFeatures();
-    this.select.on('change:active', function () {
+    this.select.on('change:active', () => {
       selectedFeatures.forEach(selectedFeatures.remove, selectedFeatures);
+    });
+    this.select.on('select', (selectEvent: interaction.Select.Event) => {
+      const selected = selectEvent.selected;
+      $(document).keydown((e) => {
+        if (e.which === 46) {
+          selected.forEach((feature) => {
+            this.source.removeFeature(feature);
+          });
+        }
+      });
     });
 
     this.modify = new interaction.Modify({
@@ -198,27 +183,6 @@ export class DrawService implements OnDestroy {
     });
     map.addInteraction(this.modify);
     this.modify.setActive(false);
-    // let s;
-    // this.modify.on('modifystart', (e) => {
-    //   s = e.features.getArray()[0].getStyle();
-    //   e.features.getArray()[0].setStyle([new style.Style({
-    //     image: new style.Circle({
-    //       radius: 3 * 2,
-    //       fill: new style.Fill({
-    //         color: [0, 153, 255, 1]
-    //       }),
-    //       stroke: new style.Stroke({
-    //         color: 'white',
-    //         width: 3 / 2
-    //       })
-    //     }),
-    //     zIndex: Infinity
-    //   })]);
-    // });
-    // this.modify.on('modifyend', (e) => {
-    //   const feature = e.features.getArray()[0];
-    //   e.target.setStyle(this.styleFunction(feature, feature.get('stroke.color'), null));
-    // });
 
     // The snap interaction must be added after the Modify and Draw interactions
     // in order for its map browser event handlers to be fired first. Its handlers
@@ -227,7 +191,6 @@ export class DrawService implements OnDestroy {
       source: this.vector.getSource()
     });
     map.addInteraction(this.snap);
-
     this.map = map;
   }
 
@@ -235,6 +198,7 @@ export class DrawService implements OnDestroy {
     this.drawInteractions.map((drawInteraction) => drawInteraction.draw.setActive(false));
     this.select.setActive(false);
     this.modify.setActive(false);
+    this.tooltip.deleteTooltips(this.map);
   }
 
   getDrawInteraction(type: string): interaction.Draw {
@@ -245,6 +209,7 @@ export class DrawService implements OnDestroy {
     this.predefinedColor = color;
     this.disableInteractions();
     this.getDrawInteraction(type).setActive(true);
+    this.tooltip.createTooltips(this.map, null);
   }
 
   constructor(
@@ -316,57 +281,43 @@ export class DrawService implements OnDestroy {
         console.log('importing json as draw');
         const geojsonFormat = new format.GeoJSON();
         const features = geojsonFormat.readFeatures(json);
-        features.forEach((feature) => {
-          feature.setStyle(new style.Style({
-            fill: new style.Fill({
-              color: feature.get('fill.color')
-            }),
-            stroke: new style.Stroke({
-              color: feature.get('stroke.color'),
-              width: feature.get('stroke.width')
-            })
-          }));
-        });
         this.source.addFeatures(features);
         this.map.getView().fit(this.source.getExtent());
       }
     ));
-    this.subscriptions.push(this.menuEventService.getObservable('loadGPX').subscribe(
-      (gpx) => {
+    this.subscriptions.push(this.menuEventService.getObservable('loadGPS').subscribe(
+      (gps: { content, type }) => {
         console.log('importing json as draw');
-        const gpxFormat = new format.GPX();
-        const features = gpxFormat.readFeatures(gpx, { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' });
-        const rgb = this.hexToRgb(this.color);
+        let f;
+        switch (gps.type) {
+          case 'gpx':
+            f = new format.GPX();
+            break;
+          case 'kml':
+            f = new format.KML();
+            break;
+        }
+        const features = f.readFeatures(gps.content, { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' });
+        const rgb = hexToRgb(this.color);
         features.forEach((feature) => {
           if (feature.getGeometry().getType() === 'MultiLineString') {
             (<geom.MultiLineString>feature.getGeometry()).getLineStrings().forEach((lineStringGeom: geom.LineString) => {
               const feat = new Feature(lineStringGeom);
-              //              feat.setStyle(this.styleFunction(feat, this.color, 'arrow_16.png'));
               feat.set('fill.color', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)');
               feat.set('stroke.color', this.color);
               feat.set('stroke.width', 3);
               this.source.addFeature(feat);
             });
+          } else {
+            feature.set('fill.color', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)');
+            feature.set('stroke.color', this.color);
+            feature.set('stroke.width', 3);
+            this.source.addFeature(feature);
           }
         });
         this.map.getView().fit(this.source.getExtent());
       }
     ));
-  }
-
-  hexToRgb(hex: string) {
-    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    hex = hex.replace(shorthandRegex, function (m, r, g, b) {
-      return r + r + g + g + b + b;
-    });
-
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : null;
   }
 
   getGeoJson(): any {

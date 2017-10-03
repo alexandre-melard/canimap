@@ -1,4 +1,4 @@
-import { Inject, Component } from '@angular/core';
+import { Inject, ElementRef, ViewChild, Component } from '@angular/core';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
 @Component({
@@ -6,8 +6,20 @@ import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
   templateUrl: './templates/app-dialog-file-open.html',
 })
 export class DialogFileOpenComponent {
-  public data: File;
-  constructor(public dialogRef: MdDialogRef<DialogFileOpenComponent>) { }
+  types;
+
+  @ViewChild('fileOpen')
+  public uploadElement: ElementRef;
+
+  constructor(public dialogRef: MdDialogRef<DialogFileOpenComponent>,
+    @Inject(MD_DIALOG_DATA) public data: any) {
+    this.types = '.' + (<string[]>this.data.types.data).join(',.');
+    this.data = undefined;
+  }
+
+  upload() {
+    this.uploadElement.nativeElement.click();
+  }
 
   fileReceived(evt: any) {
     this.data = evt.target.files[0];

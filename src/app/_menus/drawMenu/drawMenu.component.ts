@@ -27,38 +27,13 @@ export class DrawMenuComponent implements OnInit {
     private helperEventService: HelperEventService,
     public dialog: MdDialog
   ) { }
-  statesModel = {
-    move: {
-      label: 'move'
-    },
-    edit: {
-      label: 'edit'
-    },
-    polyligne:
-    {
-      label: 'polyligne'
-    },
-    polygon:
-    {
-      label: 'polygon'
-    },
-    rectangle:
-    {
-      label: 'rectangle'
-    },
-    circle:
-    {
-      label: 'circle'
-    }
-  };
-  states = this.statesModel.move;
 
   ngOnInit() {
   }
 
   color(state: any) {
     let color = 'black';
-    if (this.states.label === state) {
+    if (this.menuEventService.state === state) {
       color = 'red';
     }
     return color;
@@ -66,7 +41,6 @@ export class DrawMenuComponent implements OnInit {
 
   move(event: any) {
     this.menuEventService.callEvent('drawEnd', null);
-    this.states = this.statesModel.move;
   }
 
   edit(event: any) {
@@ -74,15 +48,13 @@ export class DrawMenuComponent implements OnInit {
     this.helperEventService.showHelper('edit', () => {
       this.menuEventService.proceed();
     });
-    this.states = this.statesModel.edit;
   }
 
-  polyligne(event: any) {
+  polyline(event: any) {
     this.menuEventService.prepareEvent('polyline', null);
     this.helperEventService.showHelper('polyline', () => {
       this.menuEventService.proceed();
     });
-    this.states = this.statesModel.polyligne;
   }
 
   polygon(event: any) {
@@ -90,7 +62,6 @@ export class DrawMenuComponent implements OnInit {
     this.helperEventService.showHelper('polygon', () => {
       this.menuEventService.proceed();
     });
-    this.states = this.statesModel.polygon;
   }
 
   rectangle(event: any) {
@@ -98,7 +69,6 @@ export class DrawMenuComponent implements OnInit {
     this.helperEventService.showHelper('rectangle', () => {
       this.menuEventService.proceed();
     });
-    this.states = this.statesModel.rectangle;
   }
 
   circle(event: any) {
@@ -106,7 +76,6 @@ export class DrawMenuComponent implements OnInit {
     this.helperEventService.showHelper('circle', () => {
       this.menuEventService.proceed();
     });
-    this.states = this.statesModel.circle;
   }
 
   chooseColor() {
@@ -124,4 +93,3 @@ export class DrawMenuComponent implements OnInit {
     });
   }
 }
-
