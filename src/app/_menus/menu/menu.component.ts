@@ -13,6 +13,10 @@ export class MenuComponent implements OnInit {
   model: any = {};
   loading = false;
   returnUrl: string;
+  
+  get displayMap() {
+    return (this.router.url === '/map');
+  }
 
   constructor(private route: ActivatedRoute,
               private router: Router

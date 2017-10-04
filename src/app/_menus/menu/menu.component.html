@@ -1,19 +1,19 @@
 ﻿<div class="canimap-menu">
   <div class="btn-group menu-bar">
-    <button *ngIf="router.url !== '/map'" md-icon-button routerLink="/map" aria-label="Carte" mdTooltipPosition="below" mdTooltip="Affichez la carte"
+    <button *ngIf="!displayMap" md-icon-button routerLink="/map" aria-label="Carte" mdTooltipPosition="below" mdTooltip="Affichez la carte"
     i18n="Map|The mapping tools and display">
       <md-icon class="md-24">
         photo
       </md-icon>
     </button>
-    <button *ngIf="router.url === '/map'" md-icon-button routerLink="/user" mdTooltipPosition="below" mdTooltip="Gérez votre compte" i18n="Account|Account management">
+    <button *ngIf="displayMap" md-icon-button routerLink="/user" mdTooltipPosition="below" mdTooltip="Gérez votre compte" i18n="Account|Account management">
       <md-icon class="md-24">
         face
       </md-icon>
     </button>
   </div>
-  <app-canimap-file-menu *ngIf="router.url === '/map'"></app-canimap-file-menu>
-  <app-canimap-track-menu *ngIf="router.url === '/map'"></app-canimap-track-menu>
-  <app-canimap-draw-menu *ngIf="router.url === '/map'"></app-canimap-draw-menu>
-  <app-canimap-location *ngIf="router.url === '/map'"></app-canimap-location>
+  <app-canimap-file-menu *ngIf="displayMap"></app-canimap-file-menu>
+  <app-canimap-track-menu *ngIf="displayMap"></app-canimap-track-menu>
+  <app-canimap-draw-menu *ngIf="displayMap"></app-canimap-draw-menu>
+  <app-canimap-location *ngIf="displayMap"></app-canimap-location>
 </div>

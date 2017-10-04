@@ -1,5 +1,6 @@
 import { Inject, ElementRef, ViewChild, Component } from '@angular/core';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { AlertService } from '../_services/alert.service';
 
 @Component({
   selector: 'app-dialog-file-open',
@@ -12,6 +13,7 @@ export class DialogFileOpenComponent {
   public uploadElement: ElementRef;
 
   constructor(public dialogRef: MdDialogRef<DialogFileOpenComponent>,
+    private alertService: AlertService,
     @Inject(MD_DIALOG_DATA) public data: any) {
     this.types = '.' + (<string[]>this.data.types.data).join(',.');
     this.data = undefined;
@@ -34,7 +36,7 @@ export class DialogFileOpenComponent {
     evt.preventDefault();
     const files = evt.dataTransfer.files;
     if (files.length > 1) {
-      alert("Vous ne pouvez charger qu'un fichier gpx à la fois!'");
+      this.alertService.error(("Vous ne pouvez charger qu'un fichier gpx à la fois!'"));
     }
     this.data = files[0]; // FileList object.
   }

@@ -10,7 +10,7 @@ export class AuthGuard implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
         const user: User = JSON.parse(localStorage.getItem('currentUser'));
 
-        if ((user !== undefined) && (Date.now() - user.lastLogin) < (24 * 60 * 60)) {
+        if ((user !== undefined) && (user.lastLogin !== undefined) && (Date.now() - user.lastLogin) < (24 * 60 * 60)) {
             // logged in so return true
             return true;
         }
