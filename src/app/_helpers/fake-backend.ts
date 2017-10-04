@@ -35,6 +35,7 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
                             lastName: user.lastName,
                             mapBoxes: user.mapBoxes,
                             helpers: user.helpers,
+                            lastLogin: user.lastLogin,
                             token: 'fake-jwt-token'
                         }
                     })));

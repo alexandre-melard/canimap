@@ -9,4 +9,6 @@ export class User {
     lastName: string;
     helpers: Helper[];
     mapBoxes: MapBox[];
+    lastLogin: number;
+    token: string;
 }

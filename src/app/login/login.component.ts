@@ -2,6 +2,7 @@
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { AlertService, AuthenticationService } from '../_services/index';
+import * as $ from 'jquery';
 
 @Component({
     moduleId: module.id.toString(),
@@ -25,6 +26,11 @@ export class LoginComponent implements OnInit {
 
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+
+        const changelog = $('.changelog');
+        changelog.load(changelog.attr('data-include'));
+
+        // $($('.changelog').get(0)).load()
     }
 
     login() {

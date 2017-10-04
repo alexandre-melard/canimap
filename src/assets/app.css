@@ -8,6 +8,9 @@ html, body, app-canimap, app-canimap-map, .map {
 button.mat-icon-button {
   font-weight: bold!important;
 }
+.canimap-main {
+  margin-top: 100px;
+}
 
 .menu-bar, .pac-container {
   -moz-border-radius:10px;  /* for Firefox */
@@ -23,6 +26,11 @@ button.mat-icon-button {
 
 .ol-zoom {
   top: 10px;
+}
+
+app-canimap-alert {
+  text-align: center;
+  z-index: 1000;
 }
 
 app-canimap-menu {

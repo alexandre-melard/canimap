@@ -1,4 +1,4 @@
-import { Inject, Component } from '@angular/core';
+import { Inject, ElementRef, ViewChild, Component } from '@angular/core';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 
 @Component({
@@ -7,7 +7,15 @@ import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 })
 export class DialogFilesOpenComponent {
   public data: File[];
+
+  @ViewChild('filesOpen')
+  public uploadElement: ElementRef;
+
   constructor(public dialogRef: MdDialogRef<DialogFilesOpenComponent>) { }
+
+  upload() {
+    this.uploadElement.nativeElement.click();
+  }
 
   fileReceived(evt: any) {
     this.data = evt.target.files; // FileList object.

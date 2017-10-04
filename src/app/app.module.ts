@@ -17,6 +17,7 @@ import { BaseRequestOptions } from '@angular/http';
 
 import { AppComponent } from './app.component';
 
+import { AlertComponent } from './_directives/index';
 import { HomeComponent } from './home/index';
 import { LocationComponent } from './_menus/location/index';
 import { MenuComponent } from './_menus/menu/index';
@@ -46,6 +47,7 @@ import { FileService } from './_services/file.service';
 @NgModule({
   declarations: [
     AppComponent,
+    AlertComponent,
     HomeComponent,
     MenuComponent,
     MenuMobileComponent,
