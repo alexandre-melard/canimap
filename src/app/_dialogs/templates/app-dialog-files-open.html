@@ -8,11 +8,13 @@
           <th>Nom</th>
           <th>Taille</th>
           <th>Dernière modification</th>
+          <th>Type</th>
         </tr>
         <tr *ngFor="let f of data">
           <td>{{f.name}}</td>
           <td>{{f.size}}</td>
           <td>{{f.lastModifiedDate.toLocaleDateString()}}</td>
+          <td>{{f.name.split('.').pop().toUpperCase()}}</td>
         </tr>
       </table>
     </output>

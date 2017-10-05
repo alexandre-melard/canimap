@@ -14,14 +14,28 @@
   <button md-icon-button aria-label="Tracker" mdTooltipPosition="below" mdTooltip="Piste de l'&eacute;quipe" i18n="Tracker|draw the tracker path"
     (click)="drawK9Path($event)">
       <md-icon class="md-24" [style.color]="color('drawK9Path')">
-    pets</md-icon>
+        pets
+      </md-icon>
   </button>
   <button md-icon-button aria-label="Parking" mdTooltipPosition="below" mdTooltip="Parking" i18n="Parking|Put a parking slot"
     (click)="parkingMarker($event)">
-      <md-icon class="md-24"  color="primary">
-    local_parking</md-icon>
+    <md-icon class="md-24"  color="primary">
+      local_parking
+    </md-icon>
   </button>
-  <button md-icon-button aria-label="Coordinates" mdTooltipPosition="below" mdTooltip="Position GPS" i18n="GPG|Add GPS marker"
+  <button md-icon-button aria-label="Pose" mdTooltipPosition="below" mdTooltip="Objet posé" i18n="Laying|put a laying object"
+    (click)="poseMarker($event)">
+    <img src="../assets/dot_green.png"/>
+  </button>
+  <button md-icon-button aria-label="Suspendus" mdTooltipPosition="below" mdTooltip="Objet suspendu" i18n="Hanging|put a suspended object"
+  (click)="suspenduMarker($event)">
+  <img src="../assets/dot_blue.png"/>
+</button>
+<button md-icon-button aria-label="Cache" mdTooltipPosition="below" mdTooltip="Objet caché" i18n="Hidden|put a hidden object"
+(click)="cacheMarker($event)">
+  <img src="../assets/dot_purple.png"/>
+</button>
+<button md-icon-button aria-label="Coordinates" mdTooltipPosition="below" mdTooltip="Position GPS" i18n="GPG|Add GPS marker"
     (click)="gpsMarker($event)">
     <md-icon class="md-24" [style.color]="gpsColor()">
       location_searching

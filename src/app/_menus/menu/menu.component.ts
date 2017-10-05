@@ -18,10 +18,10 @@ export class MenuComponent implements OnInit {
     return (this.router.url === '/map');
   }
 
-  constructor(private route: ActivatedRoute,
-              private router: Router
-            ) {
+  get isMapVisible() {
+    return this.router.url === '/map';
   }
+  constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit() {
   }

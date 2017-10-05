@@ -41,6 +41,9 @@ export class DrawService implements OnDestroy {
   drawInteractions: DrawingType[] = [
     { type: 'Point', geometry: 'Point', draw: null },
     { type: 'ParkingMarker', geometry: 'Point', draw: null },
+    { type: 'PoseMarker', geometry: 'Point', draw: null },
+    { type: 'SuspenduMarker', geometry: 'Point', draw: null },
+    { type: 'CacheMarker', geometry: 'Point', draw: null },
     { type: 'LineString', geometry: 'LineString', draw: null },
     { type: 'Polygon', geometry: 'Polygon', draw: null },
     { type: 'Rectangle', geometry: 'Circle', draw: null },
@@ -105,13 +108,37 @@ export class DrawService implements OnDestroy {
         })),
         text: new ol.style.Text({
           text: 'local_parking',
-          offsetX: 0,
-          offsetY: -23,
+          offsetX: 2,
+          offsetY: -25,
           font: 'normal 18px Material Icons',
           textBaseline: 'Bottom',
           fill: new ol.style.Fill({
             color: 'black',
           })
+        })
+      });
+      styles.push(iconStyle);
+    } else if (feature.get('custom.type') === 'PoseMarker') {
+      const iconStyle = new ol.style.Style({
+        image: new ol.style.Icon({
+          crossOrigin: 'anonymous',
+          src: '../assets/dot_green.png'
+        })
+      });
+      styles.push(iconStyle);
+    } else if (feature.get('custom.type') === 'SuspenduMarker') {
+      const iconStyle = new ol.style.Style({
+        image: new ol.style.Icon({
+          crossOrigin: 'anonymous',
+          src: '../assets/dot_blue.png'
+        })
+      });
+      styles.push(iconStyle);
+    } else if (feature.get('custom.type') === 'CacheMarker') {
+      const iconStyle = new ol.style.Style({
+        image: new ol.style.Icon({
+          crossOrigin: 'anonymous',
+          src: '../assets/dot_purple.png'
         })
       });
       styles.push(iconStyle);
@@ -264,6 +291,24 @@ export class DrawService implements OnDestroy {
         this.enableDrawInteraction('ParkingMarker');
       }
     ));
+    this.subscriptions.push(this.menuEventService.getObservable('poseMarker').subscribe(
+      () => {
+        console.log('drawing marker start');
+        this.enableDrawInteraction('PoseMarker');
+      }
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('suspenduMarker').subscribe(
+      () => {
+        console.log('drawing marker start');
+        this.enableDrawInteraction('SuspenduMarker');
+      }
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('cacheMarker').subscribe(
+      () => {
+        console.log('drawing marker start');
+        this.enableDrawInteraction('CacheMarker');
+      }
+    ));
     this.subscriptions.push(this.menuEventService.getObservable('polygon').subscribe(
       () => {
         console.log('drawing polygon start');
@@ -309,7 +354,7 @@ export class DrawService implements OnDestroy {
         };
         const overlay = new ol.Overlay(options);
         this.map.addOverlay(overlay);
-        $('#map').css( 'cursor', 'crosshair' );
+        $('#map').css('cursor', 'crosshair');
         this.map.on('singleclick', function (evt) {
           const coordinate = evt.coordinate;
           const hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
@@ -324,8 +369,8 @@ export class DrawService implements OnDestroy {
     this.subscriptions.push(this.menuEventService.getObservable('gpsMarkerDismiss').subscribe(
       () => {
         console.log('drawing gpsMarkerDismiss start');
-        $('#map').css( 'cursor', '' );
-        this.map.un('singleclick', () => {});
+        $('#map').css('cursor', '');
+        this.map.un('singleclick', () => { });
         this.overlay.setPosition(undefined);
       }
     ));

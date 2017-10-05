@@ -24,7 +24,7 @@ export class FileService implements OnDestroy {
         const me = this;
         this.subscriptions.push(this.menuEventService.getObservable('fileSave').subscribe(
             () => {
-                let fileName = 'carte.geojson';
+                let fileName = 'carte';
                 const dialogRef = this.dialog.open(DialogFileSaveComponent, {
                     width: '320px',
                     data: { name: fileName }
@@ -40,7 +40,7 @@ export class FileService implements OnDestroy {
 
                         // Stringify the GeoJson
                         // const convertedData = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(geoJson));
-                        saveAs(new Blob([geoJson]), fileName);
+                        saveAs(new Blob([geoJson]), fileName + '.geojson');
                     }
                 });
             },

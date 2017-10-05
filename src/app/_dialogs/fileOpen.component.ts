@@ -36,7 +36,7 @@ export class DialogFileOpenComponent {
     evt.preventDefault();
     const files = evt.dataTransfer.files;
     if (files.length > 1) {
-      this.alertService.error(("Vous ne pouvez charger qu'un fichier gpx à la fois!'"));
+      this.alertService.error(("Vous ne pouvez charger qu'un fichier à la fois!'"));
     }
     this.data = files[0]; // FileList object.
   }

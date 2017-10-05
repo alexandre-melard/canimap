@@ -79,7 +79,7 @@ export class DrawMenuComponent implements OnInit {
     });
   }
 
-  chooseColor() {
+  chooseColor(event: any) {
     const dialogRef = this.dialog.open(DialogChooseColorComponent, {
       width: '500px',
       data: this.drawService.color

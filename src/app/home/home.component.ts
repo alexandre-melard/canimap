@@ -2,6 +2,7 @@
 
 import { User } from '../_models/index';
 import { UserService } from '../_services/index';
+import * as $ from 'jquery';
 
 @Component({
     moduleId: module.id.toString(),
@@ -18,6 +19,8 @@ export class HomeComponent implements OnInit {
 
     ngOnInit() {
         this.loadAllUsers();
+        const changelog = $('.changelog');
+        changelog.load(changelog.attr('data-include'));
     }
 
     deleteUser(id: number) {

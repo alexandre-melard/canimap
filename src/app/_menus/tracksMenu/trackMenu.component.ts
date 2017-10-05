@@ -66,6 +66,27 @@ export class TrackMenuComponent implements OnInit {
     });
   }
 
+  poseMarker(e: MouseEvent) {
+    this.menuEventService.prepareEvent('poseMarker', null, null);
+    this.helperEventService.showHelper('marker', () => {
+      this.menuEventService.proceed();
+    });
+  }
+
+  suspenduMarker(e: MouseEvent) {
+    this.menuEventService.prepareEvent('suspenduMarker', null, null);
+    this.helperEventService.showHelper('marker', () => {
+      this.menuEventService.proceed();
+    });
+  }
+
+  cacheMarker(e: MouseEvent) {
+    this.menuEventService.prepareEvent('cacheMarker', null, null);
+    this.helperEventService.showHelper('marker', () => {
+      this.menuEventService.proceed();
+    });
+  }
+
   gpsColor() {
     return this.gpsMarkerToggle ? 'black' : 'red';
   }
@@ -82,7 +103,7 @@ export class TrackMenuComponent implements OnInit {
     this.gpsMarkerToggle = !this.gpsMarkerToggle;
   }
 
-  chooseLayers() {
+  chooseLayers(event: any) {
     const dialogRef = this.dialog.open(DialogChooseLayersComponent, {
       width: '350px'
     });

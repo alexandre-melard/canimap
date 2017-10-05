@@ -29,8 +29,6 @@ export class LoginComponent implements OnInit {
 
         const changelog = $('.changelog');
         changelog.load(changelog.attr('data-include'));
-
-        // $($('.changelog').get(0)).load()
     }
 
     login() {
