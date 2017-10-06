@@ -22,8 +22,8 @@ import { HomeComponent } from './home/index';
 import { LocationComponent } from './_menus/location/index';
 import { MenuComponent } from './_menus/menu/index';
 import { MenuMobileComponent } from './_menus/mobileMenu/index';
+import { BaseMenuComponent } from './_menus/baseMenu';
 import { FileMenuComponent } from './_menus/fileMenu/index';
-import { LoginComponent } from './login/index';
 import { CanimapComponent } from './map/index';
 import { RegisterComponent } from './register/index';
 import { TrackMenuComponent } from './_menus/tracksMenu';
@@ -35,6 +35,7 @@ import { DialogHelperComponent } from './_dialogs/helper.component';
 import { DialogFileOpenComponent } from './_dialogs/fileOpen.component';
 import { DialogFileSaveComponent } from './_dialogs/fileSave.component';
 import { DialogFilesOpenComponent } from './_dialogs/filesOpen.component';
+import { DialogLoginComponent } from './_dialogs/login.component';
 
 import { AuthGuard } from './_guards/index';
 import { AlertService, AuthenticationService, UserService } from './_services/index';
@@ -53,9 +54,9 @@ import { FileService } from './_services/file.service';
     MenuMobileComponent,
     FileMenuComponent,
     LocationComponent,
+    BaseMenuComponent,
     TrackMenuComponent,
     DrawMenuComponent,
-    LoginComponent,
     CanimapComponent,
     DialogChooseLayersComponent,
     DialogChooseColorComponent,
@@ -63,6 +64,7 @@ import { FileService } from './_services/file.service';
     DialogFileOpenComponent,
     DialogFilesOpenComponent,
     DialogFileSaveComponent,
+    DialogLoginComponent,
     RegisterComponent
   ],
   imports: [
@@ -106,6 +108,7 @@ import { FileService } from './_services/file.service';
     DialogFilesOpenComponent,
     DialogChooseLayersComponent,
     DialogChooseColorComponent,
+    DialogLoginComponent,
     DialogHelperComponent
   ],
   bootstrap: [AppComponent]

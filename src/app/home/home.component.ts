@@ -1,7 +1,10 @@
 ﻿import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { User } from '../_models/index';
 import { UserService } from '../_services/index';
+import { AuthenticationService } from '../_services/authentication.service';
+
 import * as $ from 'jquery';
 
 @Component({
@@ -13,7 +16,9 @@ export class HomeComponent implements OnInit {
     currentUser: User;
     users: User[] = [];
 
-    constructor(private userService: UserService) {
+    constructor(private userService: UserService,
+        private router: Router,
+        private authenticationService: AuthenticationService) {
         this.currentUser = userService.currentUser();
     }
 
@@ -26,8 +31,14 @@ export class HomeComponent implements OnInit {
         });
     }
 
+    logout() {
+        this.authenticationService.logout();
+        this.currentUser = this.userService.currentUser();
+        this.router.navigate(['/']);
+    }
+
     deleteUser(id: number) {
-        this.userService.delete(id).subscribe(() => { this.loadAllUsers() });
+        this.userService.delete(id).subscribe(() => this.loadAllUsers());
     }
 
     private loadAllUsers() {

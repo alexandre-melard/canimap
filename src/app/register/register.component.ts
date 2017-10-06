@@ -23,7 +23,7 @@ export class RegisterComponent {
             .subscribe(
                 data => {
                     this.alertService.success('Enregistrement réussit', true);
-                    this.router.navigate(['/login']);
+                    this.router.navigate(['/']);
                 },
                 error => {
                     this.alertService.error(error);

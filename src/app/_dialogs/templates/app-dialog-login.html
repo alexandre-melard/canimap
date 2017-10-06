@@ -1,0 +1,17 @@
+<form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
+    <h2 md-dialog-title>Veuillez vous connecter</h2>
+    <div md-dialog-content>
+        <md-form-field>
+            <input mdInput type="text" name="username" [(ngModel)]="model.username" #username="ngModel" placeholder="Login" required>
+        </md-form-field>
+        <md-form-field>
+            <input mdInput type="password" name="password" [(ngModel)]="model.password" #username="ngModel" placeholder="Mot de passe"
+                required>
+        </md-form-field>
+    </div>
+    <div md-dialog-actions>
+        <button md-button color="primary" type="submit" [disabled]="loading">Se connecter</button>
+        <div *ngIf="loading" class="loading"><img src="../../assets/loading.gif" /></div>
+        <button md-button md-dialog-close [routerLink]="['/register']">S'inscrire</button>
+    </div>
+</form>
