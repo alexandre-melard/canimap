@@ -357,10 +357,12 @@ export class DrawService implements OnDestroy {
         $('#map').css('cursor', 'crosshair');
         this.map.on('singleclick', function (evt) {
           const coordinate = evt.coordinate;
-          const hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
+          let hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
             coordinate, 'EPSG:3857', 'EPSG:4326'));
-
-          $('#popup-content').html('<code>' + hdms + '</code>');
+            hdms = hdms.split(' ').join('');
+            hdms = hdms.replace('N', 'N ');
+            hdms = hdms.replace('S', 'S ');
+            $('#popup-content').html('<code>' + hdms + '</code>');
           overlay.setPosition(coordinate);
         });
         this.overlay = overlay;

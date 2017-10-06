@@ -45,6 +45,10 @@ app-canimap-menu {
 app-canimap-location {
 }
 
+.ol-popup {
+  cursor: pointer;
+}
+
 .loading {
   position: fixed;
   top: 50%;

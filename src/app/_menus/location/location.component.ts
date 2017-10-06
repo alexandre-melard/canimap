@@ -33,23 +33,42 @@ export class LocationComponent implements OnInit {
     // load Places Autocomplete
     this.mapsAPILoader.load().then(() => {
       const autocomplete = new google.maps.places.Autocomplete(me.searchElementRef.nativeElement, {
-        type: 'address',
+        type: 'geocode',
         componentRestrictions: { country: 'fr' }
       });
       autocomplete.addListener('place_changed', () => {
         me.ngZone.run(() => {
           // get the place result
           const place: google.maps.places.PlaceResult = autocomplete.getPlace();
+          let latitude;
+          let longitude;
 
           // verify result
           if (place.geometry === undefined || place.geometry === null) {
-            return;
+            let output;
+            const coords = place.name.split(' ');
+            const latlng = coords.map((coord) => {
+              const a = coord.split(/\D+/);
+              let degrees = Number(a[0]);
+              const minutes = typeof (a[1]) !== 'undefined' ? Number(a[1]) / 60 : 0;
+              const seconds = typeof (a[2]) !== 'undefined' ? Number(a[2]) / 3600 : 0;
+              const hemisphere = a[3] || null;
+              if (hemisphere !== null && /[SW]/i.test(hemisphere)) {
+                degrees = Math.abs(degrees) * -1;
+              }
+              if (degrees < 0) {
+                output = degrees - minutes - seconds;
+              } else {
+                output = degrees + minutes + seconds;
+              }
+              return output;
+            });
+            latitude = latlng[0];
+            longitude = latlng[1];
+          } else {
+            latitude = place.geometry.location.lat();
+            longitude = place.geometry.location.lng();
           }
-
-          // set latitude, longitude and zoom
-          const latitude = place.geometry.location.lat();
-          const longitude = place.geometry.location.lng();
-
           me.menuEventService.callEvent('mapMove', { lat: latitude, lng: longitude });
         });
       });
