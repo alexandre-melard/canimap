@@ -20,7 +20,10 @@ export class HomeComponent implements OnInit {
     ngOnInit() {
         this.loadAllUsers();
         const changelog = $('.changelog');
-        changelog.load(changelog.attr('data-include'));
+        $.each(changelog, (i, c) => {
+            c = $(c);
+            c.load(c.attr('data-include'));
+        });
     }
 
     deleteUser(id: number) {
