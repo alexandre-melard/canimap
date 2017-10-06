@@ -36,11 +36,9 @@ export class FileService implements OnDestroy {
                         fileName = result;
 
                         // Get geojson data
-                        const geoJson = this.drawService.getGeoJson();
-
-                        // Stringify the GeoJson
-                        // const convertedData = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(geoJson));
-                        saveAs(new Blob([geoJson]), fileName + '.geojson');
+                        me.menuEventService.callEvent('getGeoJson', (geoJson) => {
+                            saveAs(new Blob([geoJson]), fileName + '.geojson');
+                        });
                     }
                 });
             },
@@ -75,7 +73,7 @@ export class FileService implements OnDestroy {
             (data) => {
                 const dialogRef = this.dialog.open(DialogFileOpenComponent, {
                     width: '700px',
-                    data: {types: data}
+                    data: { types: data }
                 });
 
                 dialogRef.afterClosed().subscribe(result => {
@@ -83,7 +81,7 @@ export class FileService implements OnDestroy {
                     if (result !== undefined) {
                         const file: File = result;
                         me.parseFile(file, (content: string) => {
-                            me.menuEventService.callEvent('loadGPS', { content: content, type: file.name.split('.').pop()});
+                            me.menuEventService.callEvent('loadGPS', { content: content, type: file.name.split('.').pop() });
                         });
                     }
                 });

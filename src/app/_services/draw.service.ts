@@ -13,18 +13,16 @@ import * as ol from 'openlayers';
 
 import { MapBox } from '../_models/mapBox';
 import { LayerBox } from '../_models/layerBox';
+import { CaniDraw } from '../_models/caniDraw';
+import { CaniStyle } from '../_models/caniStyle';
 import { User } from '../_models/user';
 import { Tooltip } from '../_utils/map-tooltip';
-import { formatLength } from '../_utils/map-format-length';
+import { drawInteractions } from '../_consts/drawings';
+
+import { styleFunction } from '../_utils/map-style';
 import { hexToRgb } from '../_utils/color-hex-to-rgb';
-import { colorGetBrightness } from '../_utils/color-brightness';
 import * as $ from 'jquery';
 
-class DrawingType {
-  type: string;
-  geometry?: ol.geom.GeometryType;
-  draw: interaction.Draw;
-}
 
 @Injectable()
 export class DrawService implements OnDestroy {
@@ -38,136 +36,23 @@ export class DrawService implements OnDestroy {
   tooltip = new Tooltip();
   overlay: ol.Overlay;
 
-  drawInteractions: DrawingType[] = [
-    { type: 'Point', geometry: 'Point', draw: null },
-    { type: 'ParkingMarker', geometry: 'Point', draw: null },
-    { type: 'PoseMarker', geometry: 'Point', draw: null },
-    { type: 'SuspenduMarker', geometry: 'Point', draw: null },
-    { type: 'CacheMarker', geometry: 'Point', draw: null },
-    { type: 'LineString', geometry: 'LineString', draw: null },
-    { type: 'Polygon', geometry: 'Polygon', draw: null },
-    { type: 'Rectangle', geometry: 'Circle', draw: null },
-    { type: 'Circle', geometry: 'Circle', draw: null }
-  ];
-
   private subscriptions = new Array<Subscription>();
   public color = '#F00';
   private predefinedColor;
 
-
-  styleFunction(feature: Feature) {
-    const geometry: geom.LineString = <geom.LineString>feature.getGeometry();
-    const color = feature.get('stroke.color');
-    const rgb = hexToRgb(color);
-    const icon = undefined;
-    const styles = new Array<style.Style>();
-    if (geometry.getType() === 'LineString') {
-      styles.push(new style.Style({
-        stroke: new style.Stroke({
-          color: color,
-          width: 3
-        }),
-        text: new style.Text({
-          text: formatLength(geometry),
-          font: '18px Calibri,sans-serif',
-          fill: new style.Fill({
-            color: color
-          }),
-          stroke: new style.Stroke({
-            color: (colorGetBrightness(rgb) < 220) ? 'white' : 'black',
-            width: 3
-          })
-        })
-      })
-      );
-      geometry.forEachSegment(function (start, end) {
-        const dx = end[0] - start[0];
-        const dy = end[1] - start[1];
-        const rotation = Math.atan2(dy, dx);
-
-        // arrows
-        styles.push(new style.Style({
-          geometry: new geom.Point([start[0] + dx / 2, start[1] + dy / 2]),
-          image: new style.Icon({
-            color: color,
-            crossOrigin: 'anonymous',
-            src: '../assets/' + ((icon === undefined) ? 'arrow_20.png' : icon),
-            anchor: [0.75, 0.5],
-            rotateWithView: true,
-            rotation: -rotation
-          })
-        }));
-      });
-    } else if (feature.get('custom.type') === 'ParkingMarker') {
-      const iconStyle = new ol.style.Style({
-        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */({
-          anchor: [0.5, 46],
-          anchorXUnits: 'fraction',
-          anchorYUnits: 'pixels',
-          src: '../assets/marker-icon.png'
-        })),
-        text: new ol.style.Text({
-          text: 'local_parking',
-          offsetX: 2,
-          offsetY: -25,
-          font: 'normal 18px Material Icons',
-          textBaseline: 'Bottom',
-          fill: new ol.style.Fill({
-            color: 'black',
-          })
-        })
-      });
-      styles.push(iconStyle);
-    } else if (feature.get('custom.type') === 'PoseMarker') {
-      const iconStyle = new ol.style.Style({
-        image: new ol.style.Icon({
-          crossOrigin: 'anonymous',
-          src: '../assets/dot_green.png'
-        })
-      });
-      styles.push(iconStyle);
-    } else if (feature.get('custom.type') === 'SuspenduMarker') {
-      const iconStyle = new ol.style.Style({
-        image: new ol.style.Icon({
-          crossOrigin: 'anonymous',
-          src: '../assets/dot_blue.png'
-        })
-      });
-      styles.push(iconStyle);
-    } else if (feature.get('custom.type') === 'CacheMarker') {
-      const iconStyle = new ol.style.Style({
-        image: new ol.style.Icon({
-          crossOrigin: 'anonymous',
-          src: '../assets/dot_purple.png'
-        })
-      });
-      styles.push(iconStyle);
-    } else {
-      styles.push(new style.Style({
-        fill: new style.Fill({
-          color: 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)'
-        }),
-        stroke: new style.Stroke({
-          color: color,
-          width: 3
-        })
-      }));
-    }
-    return styles;
-  }
-
-  configureFeature(drawingType: DrawingType) {
-    drawingType.draw.on('drawstart', (event: interaction.Draw.Event) => {
+  configureFeature(draw: CaniDraw) {
+    draw.interaction.on('drawstart', (event: interaction.Draw.Event) => {
       this.tooltip.sketch = event.feature;
     });
-    drawingType.draw.on('drawend', (event: interaction.Draw.Event) => {
+    draw.interaction.on('drawend', (event: interaction.Draw.Event) => {
       const feature = event.feature;
-      let color = this.predefinedColor;
-      if (color === undefined) {
-        color = this.color;
+      let color = this.color;
+      const colorStyle = draw.style.filter((style: CaniStyle) => style.name === 'color');
+      if (colorStyle !== undefined && colorStyle.length > 0) {
+        color = colorStyle[0].value;
       }
       const rgb = hexToRgb(this.color);
-      feature.set('custom.type', drawingType.type);
+      feature.set('custom.type', draw.type);
       feature.set('fill.color', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)');
       feature.set('stroke.color', color);
       feature.set('stroke.width', 3);
@@ -177,9 +62,9 @@ export class DrawService implements OnDestroy {
     });
     $(document).keydown((e) => {
       if (e.which === 27) {
-        drawingType.draw.removeLastPoint();
+        draw.interaction.removeLastPoint();
       } else if (e.which === 46) {
-        drawingType.draw.setActive(false);
+        draw.interaction.setActive(false);
       }
     });
   }
@@ -188,10 +73,10 @@ export class DrawService implements OnDestroy {
     this.source = new source.Vector({ wrapX: false });
     this.vector = new layer.Vector({
       source: this.source,
-      style: this.styleFunction,
+      style: styleFunction,
       map: map
     });
-    this.drawInteractions.forEach((drawInteraction) => {
+    drawInteractions.forEach((drawInteraction) => {
       const options: olx.interaction.DrawOptions = {
         source: this.source,
         type: drawInteraction.geometry,
@@ -200,10 +85,10 @@ export class DrawService implements OnDestroy {
         options.geometryFunction = interaction.Draw.createBox();
       } else {
       }
-      drawInteraction.draw = new interaction.Draw(options);
+      drawInteraction.interaction = new interaction.Draw(options);
       this.configureFeature(drawInteraction);
-      map.addInteraction(drawInteraction.draw);
-      drawInteraction.draw.setActive(false);
+      map.addInteraction(drawInteraction.interaction);
+      drawInteraction.interaction.setActive(false);
     });
 
     this.select = new interaction.Select();
@@ -241,14 +126,14 @@ export class DrawService implements OnDestroy {
   }
 
   disableInteractions() {
-    this.drawInteractions.map((drawInteraction) => drawInteraction.draw.setActive(false));
+    drawInteractions.map((drawInteraction) => drawInteraction.interaction.setActive(false));
     this.select.setActive(false);
     this.modify.setActive(false);
     this.tooltip.deleteTooltips(this.map);
   }
 
   getDrawInteraction(type: string): interaction.Draw {
-    return this.drawInteractions.find((drawInteraction) => drawInteraction.type === type).draw;
+    return drawInteractions.find((drawInteraction) => drawInteraction.type === type).interaction;
   }
 
   enableDrawInteraction(type: string, color?: string) {
@@ -279,66 +164,14 @@ export class DrawService implements OnDestroy {
         this.disableInteractions();
       }
     ));
-    this.subscriptions.push(this.menuEventService.getObservable('polyline').subscribe(
-      () => {
-        console.log('drawing polyline start');
-        this.enableDrawInteraction('LineString');
-      }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('parkingMarker').subscribe(
-      () => {
-        console.log('drawing marker start');
-        this.enableDrawInteraction('ParkingMarker');
-      }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('poseMarker').subscribe(
-      () => {
-        console.log('drawing marker start');
-        this.enableDrawInteraction('PoseMarker');
-      }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('suspenduMarker').subscribe(
-      () => {
-        console.log('drawing marker start');
-        this.enableDrawInteraction('SuspenduMarker');
-      }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('cacheMarker').subscribe(
-      () => {
-        console.log('drawing marker start');
-        this.enableDrawInteraction('CacheMarker');
-      }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('polygon').subscribe(
-      () => {
-        console.log('drawing polygon start');
-        this.enableDrawInteraction('Polygon');
-      }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('circle').subscribe(
-      () => {
-        console.log('drawing circle start');
-        this.enableDrawInteraction('Circle');
-      }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('rectangle').subscribe(
-      () => {
-        console.log('drawing rectangle start');
-        this.enableDrawInteraction('Rectangle');
-      }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('drawVictimPath').subscribe(
-      () => {
-        console.log('drawing drawVictimPath start');
-        this.enableDrawInteraction('LineString', '#00F');
-      }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('drawK9Path').subscribe(
-      () => {
-        console.log('drawing drawVictimPath start');
-        this.enableDrawInteraction('LineString', '#F93');
-      }
-    ));
+    drawInteractions.forEach((drawInteraction) => {
+      this.subscriptions.push(this.menuEventService.getObservable(drawInteraction.event).subscribe(
+        () => {
+          console.log('drawing ' + drawInteraction.type);
+          this.enableDrawInteraction(drawInteraction.type);
+        }
+      ));
+    });
     this.subscriptions.push(this.menuEventService.getObservable('gpsMarker').subscribe(
       () => {
         console.log('drawing gpsMarker start');
@@ -359,10 +192,10 @@ export class DrawService implements OnDestroy {
           const coordinate = evt.coordinate;
           let hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
             coordinate, 'EPSG:3857', 'EPSG:4326'));
-            hdms = hdms.split(' ').join('');
-            hdms = hdms.replace('N', 'N ');
-            hdms = hdms.replace('S', 'S ');
-            $('#popup-content').html('<code>' + hdms + '</code>');
+          hdms = hdms.split(' ').join('');
+          hdms = hdms.replace('N', 'N ');
+          hdms = hdms.replace('S', 'S ');
+          $('#popup-content').html('<code>' + hdms + '</code>');
           overlay.setPosition(coordinate);
         });
         this.overlay = overlay;
@@ -390,6 +223,14 @@ export class DrawService implements OnDestroy {
         const features = geojsonFormat.readFeatures(json);
         this.source.addFeatures(features);
         this.map.getView().fit(this.source.getExtent());
+      }
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('getGeoJson').subscribe(
+      (success: Function) => {
+        console.log('converting drawings to geoJson');
+        const geojsonFormat = new format.GeoJSON();
+        const json = geojsonFormat.writeFeatures(this.source.getFeatures());
+        success(json);
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('loadGPS').subscribe(
@@ -425,12 +266,6 @@ export class DrawService implements OnDestroy {
         this.map.getView().fit(this.source.getExtent());
       }
     ));
-  }
-
-  getGeoJson(): any {
-    const geojsonFormat = new format.GeoJSON();
-    const json = geojsonFormat.writeFeatures(this.source.getFeatures());
-    return json;
   }
 
   ngOnDestroy() {

@@ -9,6 +9,7 @@ import { } from '@types/googlemaps';
 import { AlertService, AuthenticationService } from '../../_services/index';
 import { HelperEventService } from '../../_services/helperEvent.service';
 import { MenuEventService } from '../../_services/menuEvent.service';
+import { BaseMenuComponent } from '../baseMenu';
 
 import { DialogChooseColorComponent } from '../../_dialogs/chooseColor.component';
 import { DialogChooseLayersComponent } from '../../_dialogs/chooseLayer.component';
@@ -22,69 +23,15 @@ import * as $ from 'jquery';
   templateUrl: 'trackMenu.component.html'
 })
 
-export class TrackMenuComponent implements OnInit {
+export class TrackMenuComponent extends BaseMenuComponent {
   gpsMarkerToggle = true;
   contextVisible = false;
   constructor(
     private router: Router,
-    private menuEventService: MenuEventService,
-    private helperEventService: HelperEventService,
-    public dialog: MdDialog) { }
-  states;
-
-  ngOnInit() {
-  }
-
-  color(state: any) {
-    let color = 'black';
-    if (this.menuEventService.state === state) {
-      color = 'red';
-    }
-    return color;
-  }
-
-  drawVictimPath(e: MouseEvent) {
-    this.contextVisible = true;
-    this.menuEventService.prepareEvent('drawVictimPath', null, null);
-    this.helperEventService.showHelper('drawPath', () => {
-      this.menuEventService.proceed();
-    });
-  }
-
-  drawK9Path(e: MouseEvent) {
-    this.contextVisible = true;
-    this.menuEventService.prepareEvent('drawK9Path', null, null);
-    this.helperEventService.showHelper('drawPath', () => {
-      this.menuEventService.proceed();
-    });
-  }
-
-  parkingMarker(e: MouseEvent) {
-    this.menuEventService.prepareEvent('parkingMarker', null, null);
-    this.helperEventService.showHelper('marker', () => {
-      this.menuEventService.proceed();
-    });
-  }
-
-  poseMarker(e: MouseEvent) {
-    this.menuEventService.prepareEvent('poseMarker', null, null);
-    this.helperEventService.showHelper('marker', () => {
-      this.menuEventService.proceed();
-    });
-  }
-
-  suspenduMarker(e: MouseEvent) {
-    this.menuEventService.prepareEvent('suspenduMarker', null, null);
-    this.helperEventService.showHelper('marker', () => {
-      this.menuEventService.proceed();
-    });
-  }
-
-  cacheMarker(e: MouseEvent) {
-    this.menuEventService.prepareEvent('cacheMarker', null, null);
-    this.helperEventService.showHelper('marker', () => {
-      this.menuEventService.proceed();
-    });
+    public menuEventService: MenuEventService,
+    public helperEventService: HelperEventService,
+    public dialog: MdDialog) {
+    super(menuEventService, helperEventService);
   }
 
   gpsColor() {

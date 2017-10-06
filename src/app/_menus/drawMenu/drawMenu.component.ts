@@ -6,6 +6,7 @@ import { MapService } from '../../_services/map.service';
 import { DrawService } from '../../_services/draw.service';
 import { MenuEventService } from '../../_services/menuEvent.service';
 import { HelperEventService } from '../../_services/helperEvent.service';
+import { BaseMenuComponent } from '../baseMenu';
 
 import { DialogChooseColorComponent } from '../../_dialogs/chooseColor.component';
 import { DialogChooseLayersComponent } from '../../_dialogs/chooseLayer.component';
@@ -19,25 +20,19 @@ import * as $ from 'jquery';
   templateUrl: 'drawMenu.component.html'
 })
 
-export class DrawMenuComponent implements OnInit {
+export class DrawMenuComponent extends BaseMenuComponent implements OnInit {
   constructor(
     private mapService: MapService,
     private drawService: DrawService,
-    private menuEventService: MenuEventService,
-    private helperEventService: HelperEventService,
+    public menuEventService: MenuEventService,
+    public helperEventService: HelperEventService,
     public dialog: MdDialog
-  ) { }
+  ) {
+    super(menuEventService, helperEventService);
+   }
 
   ngOnInit() {
     this.move();
-  }
-
-  color(state: any) {
-    let color = 'black';
-    if (this.menuEventService.state === state) {
-      color = 'red';
-    }
-    return color;
   }
 
   move(event?: any): void {
@@ -47,34 +42,6 @@ export class DrawMenuComponent implements OnInit {
   edit(event: any) {
     this.menuEventService.prepareEvent('edit', null);
     this.helperEventService.showHelper('edit', () => {
-      this.menuEventService.proceed();
-    });
-  }
-
-  polyline(event: any) {
-    this.menuEventService.prepareEvent('polyline', null);
-    this.helperEventService.showHelper('polyline', () => {
-      this.menuEventService.proceed();
-    });
-  }
-
-  polygon(event: any) {
-    this.menuEventService.prepareEvent('polygon', null);
-    this.helperEventService.showHelper('polygon', () => {
-      this.menuEventService.proceed();
-    });
-  }
-
-  rectangle(event: any) {
-    this.menuEventService.prepareEvent('rectangle', null);
-    this.helperEventService.showHelper('rectangle', () => {
-      this.menuEventService.proceed();
-    });
-  }
-
-  circle(event: any) {
-    this.menuEventService.prepareEvent('circle', null);
-    this.helperEventService.showHelper('circle', () => {
       this.menuEventService.proceed();
     });
   }
