@@ -1,4 +1,4 @@
 {
-  "title": "Positionner un parking",
-  "body": "<p>Pour placer un marker:<ol><li>Cliquez sur la carte</li><li>Un marker parking avec une voiture s'ajoute sur la carte</li><li>Vous pouvez déplacer le du parking en cliquant dessus et en faisant un glisser/déposer</li><li>N'oubliez pas de sauvegarder votre carte lorsque vous avez terminé</li></ol></p><p><i class='material-icons'>info_outline</i> Vous pourrez toujours modifier le parcours plus tard si vous vous êtes trompés.</p>"
+  "title": "Positionner un marker",
+  "body": "<p>Pour placer un marker:<ol><li>Cliquez sur la carte</li><li>Un marker s'ajoute sur la carte</li><li>Vous pouvez déplacer le marker en cliquant dessus et en faisant un glisser/déposer</li><li>N'oubliez pas de sauvegarder votre carte lorsque vous avez terminé</li></ol></p><p><i class='material-icons'>info_outline</i> Vous pourrez toujours modifier la position du marker plus tard si vous vous êtes trompés en utilisant le mode édition.</p>"
 }
