@@ -128,7 +128,7 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
         // validation
         const duplicateUser = users.filter(user => user.username === newUser.username).length;
         if (duplicateUser) {
-          return connection.mockError(new Error('Username "' + newUser.username + '" is already taken'));
+          return connection.mockError(new Error('Le login "' + newUser.username + '" est déjà utilisé, veuillez en choisir un autre.'));
         }
 
         // save new user

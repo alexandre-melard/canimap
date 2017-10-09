@@ -1,0 +1,16 @@
+.register {
+    display: flex;
+    flex-direction: column;
+}
+  
+.register > * {
+    width: 100%;
+}
+
+.no-break {
+    width: 100%;
+}
+
+.no-break > * {
+    display: inline-flex;
+}
