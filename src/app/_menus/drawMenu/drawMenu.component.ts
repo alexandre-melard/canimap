@@ -77,7 +77,8 @@ export class DrawMenuComponent extends BaseMenuComponent implements OnInit {
       console.log('The dialog was closed');
       if (result !== undefined) {
         this.drawService.color = result;
-        $('.app-canimap-color-chooser').css('background-color', result);
+        $('.app-canimap-color-chooser > span > img').css('background-color', result);
+        $('.app-canimap-color-chooser > span > img').css('border-radius', '20px');
         $('.app-canimap-color-chooser').css('border-radius', '0');
       }
     });

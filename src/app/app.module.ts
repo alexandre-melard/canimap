@@ -28,6 +28,7 @@ import { CanimapComponent } from './map/index';
 import { RegisterComponent } from './register/index';
 import { TrackMenuComponent } from './_menus/tracksMenu';
 import { DrawMenuComponent } from './_menus/drawMenu';
+import { HelpComponent } from './help/index';
 
 import { DialogChooseLayersComponent } from './_dialogs/chooseLayer.component';
 import { DialogChooseColorComponent } from './_dialogs/chooseColor.component';
@@ -58,6 +59,7 @@ import { FileService } from './_services/file.service';
     TrackMenuComponent,
     DrawMenuComponent,
     CanimapComponent,
+    HelpComponent,
     DialogChooseLayersComponent,
     DialogChooseColorComponent,
     DialogHelperComponent,

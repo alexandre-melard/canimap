@@ -11,6 +11,11 @@
         face
       </md-icon>
     </button>
+    <button md-icon-button routerLink="/help" mdTooltipPosition="below" mdTooltip="Aide" i18n="Help|Help">
+      <md-icon class="md-24">
+        help
+      </md-icon>
+    </button>
   </div>
   <app-canimap-file-menu *ngIf="isMapVisible"></app-canimap-file-menu>
   <app-canimap-track-menu *ngIf="isMapVisible"></app-canimap-track-menu>

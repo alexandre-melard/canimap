@@ -1,0 +1,11 @@
+.app-canimap-color-chooser {
+   background-color: transparent;
+}
+
+.app-canimap-color-chooser {
+    border-radius: 0;
+}
+
+.app-canimap-color-chooser-img {
+    border-radius: 20px;
+}
