@@ -5,12 +5,15 @@ import { AlertService, UserService } from '../_services/index';
 
 @Component({
     moduleId: module.id.toString(),
-    templateUrl: 'register.component.html'
+    templateUrl: 'register.component.html',
+    styleUrls: ['register.component.css']
 })
 
 export class RegisterComponent {
     model: any = {};
     loading = false;
+    error: string;
+    success: string;
 
     constructor(
         private router: Router,
@@ -22,11 +25,11 @@ export class RegisterComponent {
         this.userService.create(this.model)
             .subscribe(
                 data => {
-                    this.alertService.success('Enregistrement réussit', true);
+                    this.success = 'Enregistrement réussit';
                     this.router.navigate(['/']);
                 },
                 error => {
-                    this.alertService.error(error);
+                    this.error = error;
                     this.loading = false;
                 });
     }

@@ -13,13 +13,17 @@ export class MenuComponent implements OnInit {
   model: any = {};
   loading = false;
   returnUrl: string;
-  
+
   get displayMap() {
     return (this.router.url === '/map');
   }
 
   get isMapVisible() {
     return this.router.url === '/map';
+  }
+
+  get isRegisterVisible() {
+    return this.router.url === '/register';
   }
   constructor(private route: ActivatedRoute, private router: Router) {}
 

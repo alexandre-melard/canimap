@@ -1,31 +1,46 @@
 ﻿<div class="container-fluid">
     <div class="row">
-      <div class="col-3"></div>
-      <div class="canimap-main col-6">
+        <div class="col-3"></div>
+        <div class="canimap-main col-6">
             <h2>S'inscrire</h2>
-            <form name="form" (ngSubmit)="f.form.valid && register()" #f="ngForm" novalidate>
-                <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
-                    <label for="firstName">Prénom</label>
-                    <input type="text" class="form-control" name="firstName" [(ngModel)]="model.firstName" #firstName="ngModel" required />
-                    <div *ngIf="f.submitted && !firstName.valid" class="help-block">First Name is required</div>
+            <form name="form" class="register" (ngSubmit)="f.form.valid && register()" #f="ngForm" novalidate>
+                <md-form-field>
+                    <input mdInput type="text" name="lastName" [(ngModel)]="model.lastName" #lastName="ngModel" placeholder="Nom" required>
+                </md-form-field>
+                <md-form-field>
+                    <input mdInput type="text" name="firstName" [(ngModel)]="model.firstName" #firstName="ngModel" placeholder="Prénom" required>
+                </md-form-field>
+                <div class="no-break">
+                    <md-form-field>
+                        <input mdInput type="text" name="street" [(ngModel)]="model.street" #street="ngModel" placeholder="Rue" required>
+                    </md-form-field>
+                    <md-form-field>
+                        <input mdInput type="text" name="cp" [(ngModel)]="model.cp" #cp="ngModel" placeholder="Code Postal" required>
+                    </md-form-field>
+                    <md-form-field>
+                        <input mdInput type="text" name="city" [(ngModel)]="model.city" #city="ngModel" placeholder="Ville" required>
+                    </md-form-field>
                 </div>
-                <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
-                    <label for="lastName">Nom</label>
-                    <input type="text" class="form-control" name="lastName" [(ngModel)]="model.lastName" #lastName="ngModel" required />
-                    <div *ngIf="f.submitted && !lastName.valid" class="help-block">Last Name is required</div>
+                <md-form-field>
+                    <input mdInput type="text" name="club" [(ngModel)]="model.club" #club="ngModel" placeholder="Club" required>
+                </md-form-field>
+                <div class="no-break">
+                    <md-form-field>
+                        <input mdInput type="text" name="username" [(ngModel)]="model.username" #username="ngModel" placeholder="Login" required>
+                    </md-form-field>
+                    <md-form-field>
+                        <input mdInput type="password" name="password" [(ngModel)]="model.password" #password="ngModel" placeholder="Mot de passe"
+                            required>
+                    </md-form-field>
                 </div>
-                <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
-                    <label for="username">Login</label>
-                    <input type="text" class="form-control" name="username" [(ngModel)]="model.username" #username="ngModel" required />
-                    <div *ngIf="f.submitted && !username.valid" class="help-block">Username is required</div>
+                <div [hidden]="!error" class="alert alert-danger">
+                    {{error}}
                 </div>
-                <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !password.valid }">
-                    <label for="password">Mot de passe</label>
-                    <input type="password" class="form-control" name="password" [(ngModel)]="model.password" #password="ngModel" required />
-                    <div *ngIf="f.submitted && !password.valid" class="help-block">Password is required</div>
+                <div [hidden]="!success" class="success alert-success">
+                    {{success}}
                 </div>
                 <div class="form-group">
-                    <button md-button color="primary" [disabled]="loading">Register</button>
+                    <button md-button color="primary" [disabled]="loading">Enregistrer</button>
                     <div *ngIf="loading" class="loading"><img src="../../assets/loading.gif" /></div>
                 </div>
             </form>

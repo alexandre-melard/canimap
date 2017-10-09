@@ -33,7 +33,6 @@ export class HomeComponent implements OnInit {
 
     logout() {
         this.authenticationService.logout();
-        this.currentUser = this.userService.currentUser();
         this.router.navigate(['/']);
     }
 
