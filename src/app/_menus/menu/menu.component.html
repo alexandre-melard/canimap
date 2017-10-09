@@ -1,12 +1,13 @@
 ﻿<div class="canimap-menu">
   <div class="btn-group menu-bar">
-    <button *ngIf="!isMapVisible && !isRegisterVisible" md-icon-button routerLink="/map" aria-label="Carte" mdTooltipPosition="below" mdTooltip="Affichez la carte"
-    i18n="Map|The mapping tools and display">
+    <button *ngIf="!isMapVisible && !isRegisterVisible" md-icon-button routerLink="/map" aria-label="Carte" mdTooltipPosition="below"
+      mdTooltip="Affichez la carte" i18n="Map|The mapping tools and display">
       <md-icon class="md-24">
         photo
       </md-icon>
     </button>
-    <button *ngIf="isMapVisible" md-icon-button routerLink="/user" mdTooltipPosition="below" mdTooltip="Gérez votre compte" i18n="Account|Account management">
+    <button *ngIf="isMapVisible || isRegisterVisible" md-icon-button routerLink="/user" mdTooltipPosition="below" mdTooltip="Gérez votre compte"
+      i18n="Account|Account management">
       <md-icon class="md-24">
         face
       </md-icon>

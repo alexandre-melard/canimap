@@ -8,37 +8,41 @@ import { AuthenticationService } from '../_services/authentication.service';
 import * as $ from 'jquery';
 
 @Component({
-    moduleId: module.id.toString(),
-    templateUrl: 'help.component.html'
+  moduleId: module.id.toString(),
+  templateUrl: 'help.component.html'
 })
 
 export class HelpComponent implements OnInit {
-    currentUser: User;
-    users: User[] = [];
-    content = {
-        files: {
-            'fileSave': { title: '', body: '' }, 'filesOpen': { title: '', body: '' }, 'loadGPS': { title: '', body: '' }
-        },
-        ru: { 'polyline': { title: '', body: '' }, 'marker': { title: '', body: '' }, 'gps': { title: '', body: '' } }
-    };
+  currentUser: User;
+  users: User[] = [];
+  content = {
+    'fileSave': { title: '', body: '' },
+    'filesOpen': { title: '', body: '' },
+    'loadGPS': { title: '', body: '' },
+    'polyline': { title: '', body: '' },
+    'marker': { title: '', body: '' },
+    'gps': { title: '', body: '' }
+  };
 
-    constructor(private userService: UserService,
-        private router: Router,
-        private authenticationService: AuthenticationService) {
-        this.currentUser = userService.currentUser();
-    }
+  constructor(private userService: UserService,
+    private router: Router,
+    private authenticationService: AuthenticationService) {
+    this.currentUser = userService.currentUser();
+  }
 
-    ngOnInit() {
-        this.getJson('fileSave', (res) => {
-            this.content.files.fileSave.title = res.title;
-            this.content.files.fileSave.body = res.body;
-        });
-    }
+  ngOnInit() {
+    ['fileSave', 'filesOpen', 'loadGPS', 'polyline', 'marker', 'gps'].forEach((what) => {
+      this.getJson(what, (res) => {
+        this.content[what].title = res.title;
+        this.content[what].body = res.body;
+      });
+    });
+  }
 
-    getJson(name: string, success: Function) {
-        const me = this;
-        $.get('../assets/helpers/' + name + '.json', function (data) {
-            success(data);
-        });
-    }
+  getJson(name: string, success: Function) {
+    const me = this;
+    $.get('../assets/helpers/' + name + '.json', function (data) {
+      success(data);
+    });
+  }
 }

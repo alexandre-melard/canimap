@@ -4,13 +4,9 @@
         <div class="canimap-main col-6">
             <h1>bonjour {{currentUser.firstName}}!</h1>
             <p>Vous êtes bien connectés à l'application Canimap, vous pouvez aller sur <a [routerLink]="['/map']">la carte</a></p>
-            <h3>Liste des comptes que vous avez sur la machine:</h3>
-            <ul>
-                <li *ngFor="let user of users">
-                    {{user.username}} ({{user.firstName}} {{user.lastName}}) - <button md-button color="accent" (click)="deleteUser(user.id)">Effacer</button>
-                </li>
-            </ul>
-            <p><button md-button (click)="logout()">Deconnexion</button></p>
+            <button md-raised-button color="primary" routerLink="/register" >Modifier</button>
+            <button md-raised-button (click)="logout()">Deconnexion</button>
+            <button md-raised-button color="accent" (click)="deleteUser()">Effacer</button>
         </div>
         <hr/>
     </div>
@@ -19,6 +15,7 @@
         <div class="canimap-main col-6">
             <h2>Journal des modifications</h2>
             <hr/>
+            <div class="changelog" data-include="../assets/changelogs/4.6.0.html" width="100%" height="100%"></div>
             <div class="changelog" data-include="../assets/changelogs/4.5.0.html" width="100%" height="100%"></div>
             <div class="changelog" data-include="../assets/changelogs/4.4.0.html" width="100%" height="100%"></div>
             <div class="changelog" data-include="../assets/changelogs/4.3.3.html" width="100%" height="100%"></div>

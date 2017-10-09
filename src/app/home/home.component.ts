@@ -8,39 +8,33 @@ import { AuthenticationService } from '../_services/authentication.service';
 import * as $ from 'jquery';
 
 @Component({
-    moduleId: module.id.toString(),
-    templateUrl: 'home.component.html'
+  moduleId: module.id.toString(),
+  templateUrl: 'home.component.html'
 })
 
 export class HomeComponent implements OnInit {
-    currentUser: User;
-    users: User[] = [];
+  currentUser: User;
 
-    constructor(private userService: UserService,
-        private router: Router,
-        private authenticationService: AuthenticationService) {
-        this.currentUser = userService.currentUser();
-    }
+  constructor(private userService: UserService,
+    private router: Router,
+    private authenticationService: AuthenticationService) {
+    this.currentUser = userService.currentUser();
+  }
 
-    ngOnInit() {
-        this.loadAllUsers();
-        const changelog = $('.changelog');
-        $.each(changelog, (i, c) => {
-            c = $(c);
-            c.load(c.attr('data-include'));
-        });
-    }
+  ngOnInit() {
+    const changelog = $('.changelog');
+    $.each(changelog, (i, c) => {
+      c = $(c);
+      c.load(c.attr('data-include'));
+    });
+  }
 
-    logout() {
-        this.authenticationService.logout();
-        this.router.navigate(['/']);
-    }
+  logout() {
+    this.authenticationService.logout();
+    this.router.navigate(['/']);
+  }
 
-    deleteUser(id: number) {
-        this.userService.delete(id).subscribe(() => this.loadAllUsers());
-    }
-
-    private loadAllUsers() {
-        this.userService.getAll().subscribe(users => { this.users = users; });
-    }
+  deleteUser() {
+    this.userService.delete(this.currentUser.id).subscribe(() => this.router.navigate(['/register']));
+  }
 }

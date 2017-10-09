@@ -11,9 +11,14 @@
         file_download
       </md-icon>
     </button>
+    <button md-icon-button aria-label="Image save" mdTooltipPosition="below" mdTooltip="Enregistrer une photo de l'ecran"
+    i18n="Print|print the map to file" (click)="printScreen($event)">
+      <md-icon class="md-24">
+        photo_camera
+      </md-icon>
+    </button>
     <button md-icon-button aria-label="Load GPS" mdTooltipPosition="below" mdTooltip="Charger une trace GPS"
     i18n="Gps|load GPS file" (click)="gps($event)">
       GPS
     </button>
   </div>
-  
