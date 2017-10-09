@@ -10,6 +10,7 @@ import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 export class DialogLoginComponent implements OnInit {
   model: any = {};
   loading = false;
+  error: string;
   returnUrl: string;
 
   constructor(
@@ -36,7 +37,7 @@ export class DialogLoginComponent implements OnInit {
         this.router.navigate([this.returnUrl]);
       },
       error => {
-        this.alertService.error(error);
+        this.error = error;
         this.loading = false;
       });
   }

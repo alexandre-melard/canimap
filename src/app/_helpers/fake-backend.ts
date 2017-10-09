@@ -47,7 +47,7 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
             const user = users.find(u => {
               return params.username === u.username;
             });
-            if (user.password === undefined) {
+            if ((user !== undefined) && (user.password === undefined)) {
               connection.mockError(new Error('Problème système, merci de créer un nouvel utilisateur avec un login différent'));
             } else {
               // else return 400 bad request
