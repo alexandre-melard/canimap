@@ -70,7 +70,7 @@ export class MapService implements OnDestroy {
           layerBox.layer.setVisible(m.visible);
         } else {
           // there is a problem with the saved data, removed corrupted entry
-          this.user.mapBoxes.slice(this.user.mapBoxes.lastIndexOf( m ), 1);
+          this.user.mapBoxes.slice(this.user.mapBoxes.lastIndexOf(m), 1);
         }
       });
     } else {
@@ -113,7 +113,7 @@ export class MapService implements OnDestroy {
         source: new source.BingMaps({
           key: 'AkI1BkPAQ-KOw7uZLelGWgLQ5Vbxq7-5K8p-2oMsMuboW8wGBMKA6T63GJ1nJVFK',
           // key: 'Anx1E8hu2hbq_faVPR_tOe-umWyZsOgtB64ruHLNdoMwYY-Rg2FUmMA5g7i1dSy8',
-          imagerySet: type
+          imagerySet: type,
           // use maxZoom 19 to see stretched tiles instead of the BingMaps
           // "no photos at this zoom level" tiles
           // maxZoom: 19
@@ -131,7 +131,8 @@ export class MapService implements OnDestroy {
         source: new source.TileImage(
           {
             url: 'http://khm{0-3}.googleapis.com/kh?v=742&hl=pl&&x={x}&y={y}&z={z}',
-            projection: proj.get('EPSG:3857')
+            projection: proj.get('EPSG:3857'),
+            crossOrigin: ''
           })
       });
     l.set('id', key);
@@ -171,7 +172,8 @@ export class MapService implements OnDestroy {
         html: '<a href="http://www.geoportail.fr/" target="_blank">' +
         '<img src="https://api.ign.fr/geoportail/api/js/latest/' +
         'theme/geoportal/img/logo_gp.gif"></a>'
-      })]
+      })],
+      crossOrigin: ''
     });
 
     const ign = new layer.Tile({

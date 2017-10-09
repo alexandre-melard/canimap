@@ -254,6 +254,19 @@ export class DrawService implements OnDestroy {
         success(json);
       }
     ));
+    this.subscriptions.push(this.menuEventService.getObservable('saveAsPng').subscribe(
+      (success: Function) => {
+        console.log('converting drawings to png');
+        this.map.once('postcompose', function (event) {
+          const canvas = event.context.canvas;
+          canvas.setAttribute('crossOrigin', 'anonymous');
+          canvas.toBlob(function (blob) {
+            success(blob);
+          });
+        });
+        this.map.renderSync();
+      }
+    ));
     this.subscriptions.push(this.menuEventService.getObservable('loadGPS').subscribe(
       (gps: { content, type }) => {
         console.log('importing json as draw');

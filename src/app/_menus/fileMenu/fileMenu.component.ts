@@ -26,6 +26,10 @@ export class FileMenuComponent implements OnInit {
   ngOnInit() {
   }
 
+  printScreen(e: MouseEvent) {
+    this.menuEventService.callEvent('printScreen', null);
+  }
+
   fileSave(e: MouseEvent) {
     this.menuEventService.prepareEvent('fileSave', null);
     this.helperEventService.showHelper('fileSave', () => {
