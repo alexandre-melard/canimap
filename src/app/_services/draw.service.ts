@@ -32,6 +32,7 @@ export class DrawService implements OnDestroy {
   source: source.Vector;
   modify: interaction.Modify;
   select: interaction.Select;
+  delete: interaction.Select;
   snap: interaction.Snap;
   tooltip = new Tooltip();
   overlay: ol.Overlay;
@@ -109,6 +110,19 @@ export class DrawService implements OnDestroy {
       });
     });
 
+    this.delete = new interaction.Select();
+    map.addInteraction(this.delete);
+    this.delete.setActive(false);
+    const deletedFeatures = this.delete.getFeatures();
+    this.delete.on('change:active', () => {
+      deletedFeatures.forEach(deletedFeatures.remove, deletedFeatures);
+    });
+    this.delete.on('select', (selectEvent: interaction.Select.Event) => {
+      while (selectEvent.selected.length > 0) {
+        this.source.removeFeature(selectEvent.selected.pop());
+      }
+    });
+
     this.modify = new interaction.Modify({
       features: this.select.getFeatures()
     });
@@ -128,6 +142,7 @@ export class DrawService implements OnDestroy {
   disableInteractions() {
     drawInteractions.map((drawInteraction) => drawInteraction.interaction.setActive(false));
     this.select.setActive(false);
+    this.delete.setActive(false);
     this.modify.setActive(false);
     this.tooltip.deleteTooltips(this.map);
   }
@@ -214,6 +229,12 @@ export class DrawService implements OnDestroy {
         this.disableInteractions();
         this.select.setActive(true);
         this.modify.setActive(true);
+      }
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('delete').subscribe(
+      () => {
+        this.disableInteractions();
+        this.delete.setActive(true);
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('addLayersFromJson').subscribe(

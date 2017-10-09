@@ -29,10 +29,25 @@ export class DrawMenuComponent extends BaseMenuComponent implements OnInit {
     public dialog: MdDialog
   ) {
     super(menuEventService, helperEventService);
-   }
+  }
 
   ngOnInit() {
     this.move();
+  }
+
+  color(state: any) {
+    let color: string;
+    ['edit', 'delete', 'move'].forEach((states) => {
+      if (this.menuEventService.state === state) {
+        color = 'red';
+      } else {
+        color = 'black';
+      }
+    });
+    if (color === undefined) {
+      color = super.color(state);
+    }
+    return color;
   }
 
   move(event?: any): void {
@@ -42,6 +57,13 @@ export class DrawMenuComponent extends BaseMenuComponent implements OnInit {
   edit(event: any) {
     this.menuEventService.prepareEvent('edit', null);
     this.helperEventService.showHelper('edit', () => {
+      this.menuEventService.proceed();
+    });
+  }
+
+  delete(event: any) {
+    this.menuEventService.prepareEvent('delete', null);
+    this.helperEventService.showHelper('delete', () => {
       this.menuEventService.proceed();
     });
   }
