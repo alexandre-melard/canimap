@@ -24,7 +24,7 @@ export class FileService implements OnDestroy {
     public dialog: MdDialog
   ) {
     const initParams: InitParams = {
-      appId: '1646279588918669',
+      appId: '133634944031998',
       xfbml: true,
       version: 'v2.8'
     };
@@ -73,36 +73,31 @@ export class FileService implements OnDestroy {
               // saveAs(blob, fileName + '.png');
               FB.getLoginStatus()
                 .then(function (response) {
-                  console.log(response);
-                })
-                .catch(function (response) {
-                  console.log(response);
-                });
-              const fd = new FormData();
-              fd.append('access_token', 'a25a6ef94b2e80b87fae878c7250afbb');
-              fd.append('source', blob);
-              fd.append('message', 'Photo Text');
-              try {
-                $.ajax({
-                  url: 'https://graph.facebook.com/me/photos?access_token=a25a6ef94b2e80b87fae878c7250afbb',
-                  type: 'POST',
-                  data: fd,
-                  processData: false,
-                  contentType: false,
-                  cache: false,
-                  success: function (data) {
-                    console.log('success ' + data);
-                  },
-                  error: function (shr, status, data) {
-                    console.log('error ' + data + ' Status ' + shr.status);
-                  },
-                  complete: function () {
-                    console.log('Posted to facebook');
+                  if (response.status === 'connected') {
+                    console.log('connnected');
+                    me.postImageToFacebook(response.authResponse.accessToken,
+                      'Canvas to Facebook', 'image/png', blob, window.location.href);
+                  } else {
+                    FB.login({ scope: 'publish_actions' })
+                      .then(function (r) {
+                        if (r.status === 'connected') {
+                          console.log('connnected');
+                          me.postImageToFacebook(r.authResponse.accessToken,
+                            'Canvas to Facebook', 'image/png', blob, window.location.href);
+                        } else if (r.status === 'not_authorized') {
+                          console.log('not authorized');
+                        } else {
+                          console.log('not logged into facebook');
+                        }
+                      })
+                      .catch(function (r) {
+                        console.log(r);
+                      });
+                    console.log('not authorized');
                   }
+                }).catch(function (response) {
+                  console.log(response);
                 });
-              } catch (e) {
-                console.log(e);
-              }
             });
           }
         });
@@ -165,6 +160,31 @@ export class FileService implements OnDestroy {
     ));
   }
 
+  postImageToFacebook(token, filename, mimeType, imageData, message) {
+    const fd = new FormData();
+    fd.append('access_token', token);
+    fd.append('source', imageData);
+    fd.append('no_story', 'true');
+
+    // Upload image to facebook without story(post to feed)
+    $.ajax({
+      url: 'https://graph.facebook.com/me/photos?access_token=' + token,
+      type: 'POST',
+      data: fd,
+      processData: false,
+      contentType: false,
+      cache: false,
+      success: (data) => {
+        console.log('success: ', data);
+      },
+      error: function (shr, status, data) {
+        console.log('error ' + data + ' Status ' + shr.status);
+      },
+      complete: function (data) {
+        console.log('Post to facebook Complete');
+      }
+    });
+  }
 
   parseFile(file: File, success: Function): void {
     const me = this;

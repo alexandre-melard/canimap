@@ -2,6 +2,7 @@
 import { Router } from '@angular/router';
 
 import { AlertService, UserService } from '../_services/index';
+import { User } from '../_models/user';
 
 @Component({
   moduleId: module.id.toString(),
@@ -24,6 +25,8 @@ export class RegisterComponent {
     if (user !== undefined) {
       this.model = user;
       this.udpate = true;
+    } else {
+        this.model = new User();
     }
   }
   save() {
