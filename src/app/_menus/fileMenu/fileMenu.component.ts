@@ -11,7 +11,6 @@ import { HelperEventService } from '../../_services/helperEvent.service';
 
 export class FileMenuComponent implements OnInit {
   model: any = {};
-  loading = false;
 
   constructor(
     private menuEventService: MenuEventService,
@@ -33,6 +32,13 @@ export class FileMenuComponent implements OnInit {
   fileSave(e: MouseEvent) {
     this.menuEventService.prepareEvent('fileSave', null);
     this.helperEventService.showHelper('fileSave', () => {
+      this.menuEventService.proceed();
+    });
+  }
+
+  facebook(e: MouseEvent) {
+    this.menuEventService.prepareEvent('facebook', null);
+    this.helperEventService.showHelper('facebook', () => {
       this.menuEventService.proceed();
     });
   }

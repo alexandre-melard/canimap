@@ -1,24 +1,29 @@
 <div class="btn-group menu-bar" role="toolbar" aria-label="Toolbar with button groups">
-    <button md-icon-button aria-label="Files open" mdTooltipPosition="below" mdTooltip="Ouvrir une ou des carte(s)" i18n="Open Files|Open saved files"
+  <button md-icon-button aria-label="Files open" mdTooltipPosition="below" mdTooltip="Ouvrir une ou des carte(s)" i18n="Open Files|Open saved files"
     (click)="filesOpen($event)">
       <md-icon class="md-24">
         folder
       </md-icon>
     </button>
-    <button md-icon-button aria-label="File save" mdTooltipPosition="below" mdTooltip="Enregistrer une carte"
-    i18n="Save|Save the map to file" (click)="fileSave($event)">
+  <button md-icon-button aria-label="File save" mdTooltipPosition="below" mdTooltip="Enregistrer une carte" i18n="Save|Save the map to file"
+    (click)="fileSave($event)">
       <md-icon class="md-24">
         file_download
       </md-icon>
     </button>
-    <button md-icon-button aria-label="Image save" mdTooltipPosition="below" mdTooltip="Enregistrer une photo de l'ecran"
-    i18n="Print|print the map to file" (click)="printScreen($event)">
+  <button md-icon-button aria-label="Image save" mdTooltipPosition="below" mdTooltip="Enregistrer une photo de l'ecran" i18n="Print|print the map to file"
+    (click)="printScreen($event)">
       <md-icon class="md-24">
         photo_camera
       </md-icon>
     </button>
-    <button md-icon-button aria-label="Load GPS" mdTooltipPosition="below" mdTooltip="Charger une trace GPS"
-    i18n="Gps|load GPS file" (click)="gps($event)">
+  <button md-icon-button aria-label="facebook" mdTooltipPosition="below" mdTooltip="Exporter votre carte sur Facebook" i18n="Facebook|export to facebook"
+    (click)="facebook($event)">
+    <img src="../assets/facebook.png" />
+    </button>
+
+  <button md-icon-button aria-label="Load GPS" mdTooltipPosition="below" mdTooltip="Charger une trace GPS" i18n="Gps|load GPS file"
+    (click)="gps($event)">
       GPS
     </button>
-  </div>
+</div>

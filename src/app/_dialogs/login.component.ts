@@ -2,6 +2,7 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { AlertService, AuthenticationService } from '../_services/index';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import * as $ from 'jquery';
 
 @Component({
   selector: 'app-dialog-choose-layers',
@@ -28,8 +29,14 @@ export class DialogLoginComponent implements OnInit {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
+  register() {
+    this.dialogRef.close();
+    this.router.navigate(['/register']);
+  }
+
   login() {
     this.loading = true;
+    $('.loading').css('visibility', 'visible');
     this.authenticationService.login(this.model.username, this.model.password)
       .subscribe(
       data => {
@@ -39,6 +46,7 @@ export class DialogLoginComponent implements OnInit {
       error => {
         this.error = error;
         this.loading = false;
+        $('.loading').css('visibility', 'hidden');
       });
   }
 }

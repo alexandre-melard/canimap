@@ -9,27 +9,20 @@ import { saveAs } from 'file-saver';
 import { DialogFileOpenComponent } from '../_dialogs/fileOpen.component';
 import { DialogFilesOpenComponent } from '../_dialogs/filesOpen.component';
 import { DialogFileSaveComponent } from '../_dialogs/fileSave.component';
-import { FacebookService, InitParams } from 'ngx-facebook';
-
-import * as $ from 'jquery';
+import { initFacebook, sendToFacebook } from '../_utils/facebook';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class FileService implements OnDestroy {
   private subscriptions = new Array<Subscription>();
+  private FB;
 
   constructor(
     private menuEventService: MenuEventService,
     private drawService: DrawService,
-    private FB: FacebookService,
     public dialog: MdDialog
   ) {
-    const initParams: InitParams = {
-      appId: '133634944031998',
-      xfbml: true,
-      version: 'v2.8'
-    };
-
-    FB.init(initParams);
+    this.FB = initFacebook(environment.facebook_api);
 
     const me = this;
     this.subscriptions.push(this.menuEventService.getObservable('fileSave').subscribe(
@@ -70,34 +63,7 @@ export class FileService implements OnDestroy {
 
             // Get geojson data
             me.menuEventService.callEvent('saveAsPng', (blob) => {
-              // saveAs(blob, fileName + '.png');
-              FB.getLoginStatus()
-                .then(function (response) {
-                  if (response.status === 'connected') {
-                    console.log('connnected');
-                    me.postImageToFacebook(response.authResponse.accessToken,
-                      'Canvas to Facebook', 'image/png', blob, window.location.href);
-                  } else {
-                    FB.login({ scope: 'publish_actions' })
-                      .then(function (r) {
-                        if (r.status === 'connected') {
-                          console.log('connnected');
-                          me.postImageToFacebook(r.authResponse.accessToken,
-                            'Canvas to Facebook', 'image/png', blob, window.location.href);
-                        } else if (r.status === 'not_authorized') {
-                          console.log('not authorized');
-                        } else {
-                          console.log('not logged into facebook');
-                        }
-                      })
-                      .catch(function (r) {
-                        console.log(r);
-                      });
-                    console.log('not authorized');
-                  }
-                }).catch(function (response) {
-                  console.log(response);
-                });
+              saveAs(blob, fileName + '.png');
             });
           }
         });
@@ -105,7 +71,29 @@ export class FileService implements OnDestroy {
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
     ));
-    this.subscriptions.push(this.menuEventService.getObservable('filesOpen').subscribe(
+    this.subscriptions.push(this.menuEventService.getObservable('facebook').subscribe(
+      () => {
+        let fileName = 'carte';
+        const dialogRef = this.dialog.open(DialogFileSaveComponent, {
+          width: '320px',
+          data: { name: fileName }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('The dialog was closed');
+          if (result !== undefined) {
+            fileName = result;
+
+            // Get geojson data
+            me.menuEventService.callEvent('saveAsPng', (blob) => {
+              sendToFacebook(me.FB, blob);
+            });
+          }
+        });
+      },
+      e => console.log('onError: %s', e),
+      () => console.log('onCompleted')
+    )); this.subscriptions.push(this.menuEventService.getObservable('filesOpen').subscribe(
       () => {
         const dialogRef = this.dialog.open(DialogFilesOpenComponent, {
           width: '700px'
@@ -158,32 +146,6 @@ export class FileService implements OnDestroy {
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
     ));
-  }
-
-  postImageToFacebook(token, filename, mimeType, imageData, message) {
-    const fd = new FormData();
-    fd.append('access_token', token);
-    fd.append('source', imageData);
-    fd.append('no_story', 'true');
-
-    // Upload image to facebook without story(post to feed)
-    $.ajax({
-      url: 'https://graph.facebook.com/me/photos?access_token=' + token,
-      type: 'POST',
-      data: fd,
-      processData: false,
-      contentType: false,
-      cache: false,
-      success: (data) => {
-        console.log('success: ', data);
-      },
-      error: function (shr, status, data) {
-        console.log('error ' + data + ' Status ' + shr.status);
-      },
-      complete: function (data) {
-        console.log('Post to facebook Complete');
-      }
-    });
   }
 
   parseFile(file: File, success: Function): void {

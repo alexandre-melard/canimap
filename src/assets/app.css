@@ -50,6 +50,7 @@ app-canimap-location {
 }
 
 .loading {
+  visibility: hidden;
   position: fixed;
   top: 50%;
   left: 50%;

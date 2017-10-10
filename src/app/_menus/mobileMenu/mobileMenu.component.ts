@@ -11,8 +11,6 @@ import { MenuEventService } from '../../_services/menuEvent.service';
 })
 
 export class MenuMobileComponent implements OnInit {
-    model: any = {};
-    loading = false;
     onTrackStatus = false;
     recordTrackStatus = false;
 

@@ -10,9 +10,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 
 export class MenuComponent implements OnInit {
-  model: any = {};
-  loading = false;
-  returnUrl: string;
 
   get displayMap() {
     return (this.router.url === '/map');

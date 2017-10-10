@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { AlertService, UserService } from '../_services/index';
 import { User } from '../_models/user';
+import * as $ from 'jquery';
 
 @Component({
   moduleId: module.id.toString(),
@@ -39,20 +40,24 @@ export class RegisterComponent {
 
   edit() {
     this.loading = true;
+    $('.loading').css('visibility', 'visible');
     this.userService.update(this.model)
       .subscribe(
       data => {
         this.success = 'Enregistrement réussit';
         this.loading = false;
+        $('.loading').css('visibility', 'hidden');
       },
       error => {
         this.error = error;
         this.loading = false;
+        $('.loading').css('visibility', 'hidden');
       });
   }
 
   register() {
     this.loading = true;
+    $('.loading').css('visibility', 'visible');
     this.userService.create(this.model)
       .subscribe(
       data => {
@@ -62,6 +67,7 @@ export class RegisterComponent {
       error => {
         this.error = error;
         this.loading = false;
+        $('.loading').css('visibility', 'hidden');
       });
   }
 }
