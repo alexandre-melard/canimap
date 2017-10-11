@@ -57,7 +57,7 @@ export function styleFunction(feature: ol.Feature) {
         text: new ol.style.Text({
           text: 'local_parking',
           offsetX: 2,
-          offsetY: -25,
+          offsetY: -26,
           font: 'normal 18px Material Icons',
           textBaseline: 'Bottom',
           fill: new ol.style.Fill({

@@ -16,16 +16,19 @@ export class HelperEventService {
     this.user = this.userService.currentUser();
   }
 
+
   getHelper(key: string): Helper {
     let helper: Helper;
-    if (this.user.helpers === undefined) {
-      this.user.helpers = new Array<Helper>();
+    const user = this.user;
+    if (user.helpers === undefined) {
+      user.helpers = new Array<Helper>();
     }
-    if ((helper = this.user.helpers.find((h) => h.key === key)) === undefined) {
+    if ((helper = user.helpers.find((h) => h.key === key)) === undefined) {
       helper = new Helper();
       helper.key = key;
       helper.visible = true;
-      this.user.helpers.push(helper);
+      user.helpers.push(helper);
+      this.userService.update(user);
     }
     return helper;
   }

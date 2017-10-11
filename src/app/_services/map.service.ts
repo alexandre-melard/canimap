@@ -13,7 +13,6 @@ import { User } from '../_models/user';
 @Injectable()
 export class MapService implements OnDestroy {
   private map: ol.Map;
-  user: User;
   private subject = new Subject<any>();
   private keepAfterNavigationChange = false;
   private subscriptions = new Array<Subscription>();
@@ -48,11 +47,19 @@ export class MapService implements OnDestroy {
     this.getIgnLayer('ignSatellite', 'ORTHOIMAGERY.ORTHOPHOTOS')
   );
 
+  _user: User;
+
+  get user(): User {
+    if (this._user === undefined || this._user === null) {
+      this._user = this.userService.currentUser();
+    }
+    return this._user;
+  }
+
   constructor(
     private menuEventService: MenuEventService,
     private userService: UserService
   ) {
-    this.user = this.userService.currentUser();
     this.subscriptions.push(this.menuEventService.getObservable('mapMove').subscribe(
       (coords) => {
         console.log('map move to :', JSON.stringify(coords));

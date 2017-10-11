@@ -30,10 +30,7 @@ export class UserService {
   }
 
   currentUser(): User {
-      if (this._user === undefined) {
-        this._user = JSON.parse(localStorage.getItem('currentUser'));
-      }
-      return this._user;
+    return JSON.parse(localStorage.getItem('currentUser'));
   }
 
   // private helper methods

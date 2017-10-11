@@ -60,8 +60,9 @@ function postImageToFacebook(FB, token, filename, mimeType, imageData, message) 
       success: (data) => {
         console.log('success: ', data);
         FB.ui({
-            method: 'share',
-            href: 'https://www.facebook.com/photo.php?fbid=' + data.id
+            method: 'feed',
+            link: 'https://www.facebook.com/photo.php?fbid=' + data.id,
+            caption: 'carte canimap'
         });
       },
       error: function (shr, status, data) {

@@ -1,4 +1,4 @@
-<form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
+<form *ngIf="showForm" name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
     <h2 md-dialog-title>Veuillez vous connecter</h2>
     <div md-dialog-content>
         <md-form-field>
@@ -14,6 +14,6 @@
     </div>
     <div md-dialog-actions>
         <button md-button color="primary" type="submit" [disabled]="loading">Se connecter</button>
-        <button md-button (click)="register()">S'inscrire</button>
     </div>
 </form>
+<button *ngIf="!showForm" md-button (click)="register()">S'inscrire</button>

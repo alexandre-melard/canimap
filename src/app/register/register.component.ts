@@ -17,17 +17,22 @@ export class RegisterComponent {
   error: string;
   success: string;
   udpate: boolean;
+  private _user: User;
+
+  get user(): User {
+    return this.userService.currentUser();
+  }
 
   constructor(
     private router: Router,
     private userService: UserService,
     private alertService: AlertService) {
     const user = this.userService.currentUser();
-    if (user !== undefined) {
+    if (user !== undefined && user !== null) {
       this.model = user;
       this.udpate = true;
     } else {
-        this.model = new User();
+      this.model = new User();
     }
   }
   save() {
@@ -61,8 +66,9 @@ export class RegisterComponent {
     this.userService.create(this.model)
       .subscribe(
       data => {
-        this.success = 'Enregistrement réussit';
+        this.success = 'Votre utilisateur a été créé avec succès';
         this.router.navigate(['/']);
+        $('.loading').css('visibility', 'hidden');
       },
       error => {
         this.error = error;

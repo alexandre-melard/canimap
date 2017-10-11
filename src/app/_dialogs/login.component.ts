@@ -2,6 +2,8 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { AlertService, AuthenticationService } from '../_services/index';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { UserService } from '../_services/user.service';
+
 import * as $ from 'jquery';
 
 @Component({
@@ -13,15 +15,20 @@ export class DialogLoginComponent implements OnInit {
   loading = false;
   error: string;
   returnUrl: string;
+  showForm: boolean;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService,
+    private userService: UserService,
     private alertService: AlertService,
     public dialogRef: MdDialogRef<DialogLoginComponent>) { }
 
   ngOnInit() {
+    const users = JSON.parse(localStorage.getItem('users'));
+    this.showForm = !(users === undefined || users === null || users.length === 0);
+
     // reset login status
     this.authenticationService.logout();
 
@@ -36,16 +43,19 @@ export class DialogLoginComponent implements OnInit {
 
   login() {
     this.loading = true;
+    const me = this;
     $('.loading').css('visibility', 'visible');
     this.authenticationService.login(this.model.username, this.model.password)
       .subscribe(
       data => {
-        this.dialogRef.close();
-        this.router.navigate([this.returnUrl]);
+        me.loading = false;
+        me.router.navigate([this.returnUrl]);
+        me.dialogRef.close();
+        $('.loading').css('visibility', 'hidden');
       },
       error => {
-        this.error = error;
-        this.loading = false;
+        me.error = error;
+        me.loading = false;
         $('.loading').css('visibility', 'hidden');
       });
   }

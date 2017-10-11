@@ -35,6 +35,8 @@ export class HomeComponent implements OnInit {
   }
 
   deleteUser() {
-    this.userService.delete(this.currentUser.id).subscribe(() => this.router.navigate(['/register']));
+    this.userService.delete(this.currentUser.id).subscribe(() => {
+      this.logout();
+    });
   }
 }

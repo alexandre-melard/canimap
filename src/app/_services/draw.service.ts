@@ -3,7 +3,6 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 import { MenuEventService } from './menuEvent.service';
-import { UserService } from './user.service';
 import { MapService } from './map.service';
 import {
   Attribution, Feature, Map, Sphere, geom, style, StyleFunction, View, format,
@@ -15,7 +14,6 @@ import { MapBox } from '../_models/mapBox';
 import { LayerBox } from '../_models/layerBox';
 import { CaniDraw } from '../_models/caniDraw';
 import { CaniStyle } from '../_models/caniStyle';
-import { User } from '../_models/user';
 import { Tooltip } from '../_utils/map-tooltip';
 import { drawInteractions } from '../_consts/drawings';
 
@@ -27,7 +25,6 @@ import * as $ from 'jquery';
 @Injectable()
 export class DrawService implements OnDestroy {
   private map: Map;
-  user: User;
   vector: layer.Vector;
   source: source.Vector;
   modify: interaction.Modify;
@@ -160,10 +157,8 @@ export class DrawService implements OnDestroy {
 
   constructor(
     private menuEventService: MenuEventService,
-    private userService: UserService,
     private mapService: MapService
   ) {
-    this.user = this.userService.currentUser();
     const menuEventServiceMapLoaded = this.menuEventService.getObservableAndMissedEvents('mapLoaded');
     menuEventServiceMapLoaded.values.forEach(map => {
       this.mapLoaded(map);

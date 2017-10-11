@@ -4,9 +4,12 @@ import { User } from '../_models/user';
 import { MapBox } from '../_models/mapBox';
 import { Helper } from '../_models/helper';
 
-export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOptions, realBackend: XHRBackend) {
+function users(): User[] {
   // array in local storage for registered users
-  const users: any[] = JSON.parse(localStorage.getItem('users')) || [];
+  return JSON.parse(localStorage.getItem('users')) || [];
+}
+
+export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOptions, realBackend: XHRBackend) {
 
   // configure fake backend
   backend.connections.subscribe((connection: MockConnection) => {
@@ -19,13 +22,13 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
         const params = JSON.parse(connection.request.getBody());
 
         // find if any user matches login credentials
-        const filteredUsers = users.filter(user => {
+        const filteredUsers = users().filter(user => {
           return user.username === params.username && user.password === params.password;
         });
 
         if (filteredUsers.length) {
           // if login details are valid return 200 OK with user details and fake jwt token
-          const user = filteredUsers[0];
+          const user: User = filteredUsers[0];
           connection.mockRespond(new Response(new ResponseOptions({
             status: 200,
             body: {
@@ -33,6 +36,10 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
               username: user.username,
               firstName: user.firstName,
               lastName: user.lastName,
+              street: user.street,
+              cp: user.cp,
+              city: user.city,
+              club: user.club,
               password: user.password,
               mapBoxes: user.mapBoxes,
               helpers: user.helpers,
@@ -41,10 +48,10 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
             }
           })));
         } else {
-          if (users === undefined || users.length === 0) {
+          if (users() === undefined || users().length === 0) {
             connection.mockError(new Error('Problème système, merci de créer un nouvel utilisateur'));
           } else {
-            const user = users.find(u => {
+            const user = users().find(u => {
               return params.username === u.username;
             });
             if ((user !== undefined) && (user.password === undefined)) {
@@ -64,7 +71,7 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
         // check for fake auth token in header and return users if valid, this security
         // is implemented server side in a real application
         if (connection.request.headers.get('Authorization') === 'Bearer fake-jwt-token') {
-          connection.mockRespond(new Response(new ResponseOptions({ status: 200, body: users })));
+          connection.mockRespond(new Response(new ResponseOptions({ status: 200, body: users() })));
         } else {
           // return 401 not authorised if token is null or invalid
           connection.mockRespond(new Response(new ResponseOptions({ status: 401 })));
@@ -81,7 +88,7 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
           // find user by id in users array
           const urlParts = connection.request.url.split('/');
           const id = parseInt(urlParts[urlParts.length - 1], 10);
-          const matchedUsers = users.filter(user => user.id === id);
+          const matchedUsers = users().filter(user => user.id === id);
           const user = matchedUsers.length ? matchedUsers[0] : null;
 
           // respond 200 OK with user
@@ -103,12 +110,13 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
           const urlParts = connection.request.url.split('/');
           const id = parseInt(urlParts[urlParts.length - 1], 10);
           const user = JSON.parse(connection.request.getBody());
+          const lUsers = users();
 
-          const index = users.findIndex(matchUser => user.id === id);
-          users[index] = user;
+          const index = lUsers.findIndex(matchUser => user.id === id);
+          lUsers[index] = user;
 
           localStorage.setItem('currentUser', JSON.stringify(user));
-          localStorage.setItem('users', JSON.stringify(users));
+          localStorage.setItem('users', JSON.stringify(lUsers));
 
           // respond 200 OK with user
           connection.mockRespond(new Response(new ResponseOptions({ status: 200, body: user })));
@@ -125,16 +133,20 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
         // get new user object from post body
         const newUser: User = JSON.parse(connection.request.getBody());
 
+        const lUsers = users();
+
         // validation
-        const duplicateUser = users.filter(user => user.username === newUser.username).length;
+        const duplicateUser = lUsers.filter(user => user.username === newUser.username).length;
         if (duplicateUser) {
           return connection.mockError(new Error('Le login "' + newUser.username + '" est déjà utilisé, veuillez en choisir un autre.'));
         }
-
+        newUser.mapBoxes = new Array();
+        newUser.helpers = new Array();
         // save new user
-        newUser.id = users.length + 1;
-        users.push(newUser);
-        localStorage.setItem('users', JSON.stringify(users));
+        newUser.id = lUsers.length + 1;
+        lUsers.push(newUser);
+        localStorage.setItem('currentUser', JSON.stringify(newUser));
+        localStorage.setItem('users', JSON.stringify(lUsers));
 
         // respond 200 OK
         connection.mockRespond(new Response(new ResponseOptions({ status: 200 })));
@@ -147,18 +159,8 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
         // check for fake auth token in header and return user if valid, this security is implemented
         // server side in a real application
         if (connection.request.headers.get('Authorization') === 'Bearer fake-jwt-token') {
-          // find user by id in users array
-          const urlParts = connection.request.url.split('/');
-          const id = parseInt(urlParts[urlParts.length - 1], 10);
-          for (let i = 0; i < users.length; i++) {
-            const user = users[i];
-            if (user.id === id) {
-              // delete user
-              users.splice(i, 1);
-              localStorage.setItem('users', JSON.stringify(users));
-              break;
-            }
-          }
+          localStorage.removeItem('currentUser');
+          localStorage.removeItem('users');
 
           // respond 200 OK
           connection.mockRespond(new Response(new ResponseOptions({ status: 200 })));
