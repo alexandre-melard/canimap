@@ -28,6 +28,7 @@ import { FileMenuComponent } from './_menus/fileMenu/index';
 import { CanimapComponent } from './map/index';
 import { RegisterComponent } from './register/index';
 import { TrackMenuComponent } from './_menus/tracksMenu';
+import { MapMenuComponent } from './_menus/mapMenu';
 import { DrawMenuComponent } from './_menus/drawMenu';
 import { HelpComponent } from './help/index';
 
@@ -58,6 +59,7 @@ import { FileService } from './_services/file.service';
     LocationComponent,
     BaseMenuComponent,
     TrackMenuComponent,
+    MapMenuComponent,
     DrawMenuComponent,
     CanimapComponent,
     HelpComponent,

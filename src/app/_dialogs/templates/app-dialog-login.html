@@ -12,8 +12,9 @@
             {{error}}
         </div>
     </div>
-    <div md-dialog-actions>
-        <button md-button color="primary" type="submit" [disabled]="loading">Se connecter</button>
-    </div>
+    <button *ngIf="showForm" md-button color="primary" type="submit" [disabled]="loading">Se connecter</button>
 </form>
-<button *ngIf="!showForm" md-button (click)="register()">S'inscrire</button>
+<div md-dialog-actions>
+    <button *ngIf="!showForm" md-button (click)="register()">S'inscrire</button>
+    <button *ngIf="showReset" md-button (click)="register()">Réinitialiser le compte</button>
+</div>

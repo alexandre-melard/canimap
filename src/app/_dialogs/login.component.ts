@@ -16,6 +16,7 @@ export class DialogLoginComponent implements OnInit {
   error: string;
   returnUrl: string;
   showForm: boolean;
+  showReset: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -28,6 +29,7 @@ export class DialogLoginComponent implements OnInit {
   ngOnInit() {
     const users = JSON.parse(localStorage.getItem('users'));
     this.showForm = !(users === undefined || users === null || users.length === 0);
+    this.showReset = false;
 
     // reset login status
     this.authenticationService.logout();
@@ -54,6 +56,7 @@ export class DialogLoginComponent implements OnInit {
         $('.loading').css('visibility', 'hidden');
       },
       error => {
+        this.showReset = true;
         me.error = error;
         me.loading = false;
         $('.loading').css('visibility', 'hidden');

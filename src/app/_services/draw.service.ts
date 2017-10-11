@@ -33,6 +33,7 @@ export class DrawService implements OnDestroy {
   snap: interaction.Snap;
   tooltip = new Tooltip();
   overlay: ol.Overlay;
+  gpsHandler: ol.EventsKey;
 
   private subscriptions = new Array<Subscription>();
   public color = '#F00';
@@ -159,33 +160,34 @@ export class DrawService implements OnDestroy {
     private menuEventService: MenuEventService,
     private mapService: MapService
   ) {
+    const me = this;
     const menuEventServiceMapLoaded = this.menuEventService.getObservableAndMissedEvents('mapLoaded');
     menuEventServiceMapLoaded.values.forEach(map => {
-      this.mapLoaded(map);
+      me.mapLoaded(map);
     });
     this.subscriptions.push(menuEventServiceMapLoaded.observable.subscribe(
       (map: Map) => {
-        this.mapLoaded(map);
+        me.mapLoaded(map);
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('move').subscribe(
       () => {
         console.log('drawing stop');
-        this.disableInteractions();
+        me.disableInteractions();
       }
     ));
     drawInteractions.forEach((drawInteraction) => {
       this.subscriptions.push(this.menuEventService.getObservable(drawInteraction.event).subscribe(
         () => {
           console.log('drawing ' + drawInteraction.type);
-          this.enableDrawInteraction(drawInteraction.type);
+          me.enableDrawInteraction(drawInteraction.type);
         }
       ));
     });
     this.subscriptions.push(this.menuEventService.getObservable('gpsMarker').subscribe(
       () => {
         console.log('drawing gpsMarker start');
-        this.disableInteractions();
+        me.disableInteractions();
         const options = {
           element: $('#popup').get(0),
           autoPan: true,
@@ -196,9 +198,9 @@ export class DrawService implements OnDestroy {
           }
         };
         const overlay = new ol.Overlay(options);
-        this.map.addOverlay(overlay);
+        me.map.addOverlay(overlay);
         $('#map').css('cursor', 'crosshair');
-        this.map.on('singleclick', function (evt) {
+        me.gpsHandler = <ol.EventsKey>me.map.on('singleclick', function (evt) {
           const coordinate = evt.coordinate;
           let hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
             coordinate, 'EPSG:3857', 'EPSG:4326'));
@@ -208,28 +210,28 @@ export class DrawService implements OnDestroy {
           $('#popup-content').html('<code>' + hdms + '</code>');
           overlay.setPosition(coordinate);
         });
-        this.overlay = overlay;
+        me.overlay = overlay;
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('gpsMarkerDismiss').subscribe(
       () => {
         console.log('drawing gpsMarkerDismiss start');
         $('#map').css('cursor', '');
-        this.map.un('singleclick', () => { });
-        this.overlay.setPosition(undefined);
+        ol.Observable.unByKey(me.gpsHandler);
+        me.overlay.setPosition(undefined);
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('edit').subscribe(
       () => {
-        this.disableInteractions();
-        this.select.setActive(true);
-        this.modify.setActive(true);
+        me.disableInteractions();
+        me.select.setActive(true);
+        me.modify.setActive(true);
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('delete').subscribe(
       () => {
-        this.disableInteractions();
-        this.delete.setActive(true);
+        me.disableInteractions();
+        me.delete.setActive(true);
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('addLayersFromJson').subscribe(
@@ -237,29 +239,29 @@ export class DrawService implements OnDestroy {
         console.log('importing json as draw');
         const geojsonFormat = new format.GeoJSON();
         const features = geojsonFormat.readFeatures(json);
-        this.source.addFeatures(features);
-        this.map.getView().fit(this.source.getExtent());
+        me.source.addFeatures(features);
+        me.map.getView().fit(me.source.getExtent());
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('getGeoJson').subscribe(
       (success: Function) => {
         console.log('converting drawings to geoJson');
         const geojsonFormat = new format.GeoJSON();
-        const json = geojsonFormat.writeFeatures(this.source.getFeatures());
+        const json = geojsonFormat.writeFeatures(me.source.getFeatures());
         success(json);
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('saveAsPng').subscribe(
       (success: Function) => {
         console.log('converting drawings to png');
-        this.map.once('postcompose', function (event) {
+        me.map.once('postcompose', function (event) {
           const canvas = event.context.canvas;
           canvas.setAttribute('crossOrigin', 'anonymous');
           canvas.toBlob(function (blob) {
             success(blob);
           });
         });
-        this.map.renderSync();
+        me.map.renderSync();
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('loadGPS').subscribe(
@@ -275,24 +277,24 @@ export class DrawService implements OnDestroy {
             break;
         }
         const features = f.readFeatures(gps.content, { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' });
-        const rgb = hexToRgb(this.color);
+        const rgb = hexToRgb(me.color);
         features.forEach((feature) => {
           if (feature.getGeometry().getType() === 'MultiLineString') {
             (<geom.MultiLineString>feature.getGeometry()).getLineStrings().forEach((lineStringGeom: geom.LineString) => {
               const feat = new Feature(lineStringGeom);
               feat.set('fill.color', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)');
-              feat.set('stroke.color', this.color);
+              feat.set('stroke.color', me.color);
               feat.set('stroke.width', 3);
-              this.source.addFeature(feat);
+              me.source.addFeature(feat);
             });
           } else {
             feature.set('fill.color', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)');
-            feature.set('stroke.color', this.color);
+            feature.set('stroke.color', me.color);
             feature.set('stroke.width', 3);
-            this.source.addFeature(feature);
+            me.source.addFeature(feature);
           }
         });
-        this.map.getView().fit(this.source.getExtent());
+        me.map.getView().fit(me.source.getExtent());
       }
     ));
   }

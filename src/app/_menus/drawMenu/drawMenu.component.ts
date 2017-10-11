@@ -32,12 +32,11 @@ export class DrawMenuComponent extends BaseMenuComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.move();
   }
 
   color(state: any) {
     let color: string;
-    ['edit', 'delete', 'move'].forEach((states) => {
+    ['edit', 'delete'].forEach((states) => {
       if (this.menuEventService.state === state) {
         color = 'red';
       } else {
@@ -48,10 +47,6 @@ export class DrawMenuComponent extends BaseMenuComponent implements OnInit {
       color = super.color(state);
     }
     return color;
-  }
-
-  move(event?: any): void {
-    this.menuEventService.callEvent('move', null);
   }
 
   edit(event: any) {
