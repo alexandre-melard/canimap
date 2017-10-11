@@ -1,5 +1,9 @@
-<div class="btn-group menu-bar" role="toolbar" aria-label="Toolbar with button groups">
-  <button md-icon-button aria-label="Files open" mdTooltipPosition="below" mdTooltip="Ouvrir une ou des carte(s)" i18n="Open Files|Open saved files"
+<button md-icon-button #menuTrigger="mdMenuTrigger" (mouseenter)="menuTrigger.openMenu()" [mdMenuTriggerFor]="appMenu" mdTooltip="Fichiers">
+  <md-icon class="md-24">
+      folder
+  </md-icon>
+</button>
+<md-menu #appMenu="mdMenu" [overlapTrigger]="false">  <button md-icon-button aria-label="Files open" mdTooltipPosition="below" mdTooltip="Ouvrir une ou des carte(s)" i18n="Open Files|Open saved files"
     (click)="filesOpen($event)">
       <md-icon class="md-24">
         folder
@@ -26,4 +30,4 @@
     (click)="gps($event)">
       GPS
     </button>
-</div>
+</md-menu>

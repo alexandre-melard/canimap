@@ -1,7 +1,7 @@
 ﻿<div class="canimap-menu">
   <div class="btn-group menu-bar">
-    <button *ngIf="!isMapVisible" md-icon-button routerLink="/map" aria-label="Carte" mdTooltipPosition="below"
-      mdTooltip="Affichez la carte" i18n="Map|The mapping tools and display">
+    <button *ngIf="!isMapVisible" md-icon-button routerLink="/map" aria-label="Carte" mdTooltipPosition="below" mdTooltip="Affichez la carte"
+      i18n="Map|The mapping tools and display">
       <md-icon class="md-24">
         photo
       </md-icon>
@@ -17,10 +17,10 @@
         help
       </md-icon>
     </button>
+    <app-canimap-file-menu *ngIf="isMapVisible"></app-canimap-file-menu>
+    <app-canimap-track-menu *ngIf="isMapVisible"></app-canimap-track-menu>
+    <app-canimap-map-menu *ngIf="isMapVisible"></app-canimap-map-menu>
+    <app-canimap-draw-menu *ngIf="isMapVisible"></app-canimap-draw-menu>
   </div>
-  <app-canimap-file-menu *ngIf="isMapVisible"></app-canimap-file-menu>
-  <app-canimap-track-menu *ngIf="isMapVisible"></app-canimap-track-menu>
-  <app-canimap-map-menu *ngIf="isMapVisible"></app-canimap-map-menu>
-  <app-canimap-draw-menu *ngIf="isMapVisible"></app-canimap-draw-menu>
   <app-canimap-location *ngIf="isMapVisible"></app-canimap-location>
 </div>

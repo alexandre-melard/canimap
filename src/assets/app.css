@@ -1,4 +1,4 @@
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
 html, body, app-canimap, app-canimap-map, .map {
   width: 100%;
@@ -12,12 +12,25 @@ button.mat-icon-button {
   margin-top: 100px;
 }
 
+.mat-menu-panel {
+  border: 2px solid gray!important;
+  border-radius: 10px!important;
+  background-color: rgba(255,255,255,0.7)!important;
+  width:100%!important;
+  max-width: 100%!important;
+}
+
+.mat-menu-content {
+  padding: 0!important;
+}
+
 .menu-bar, .pac-container {
   -moz-border-radius:10px;  /* for Firefox */
   -webkit-border-radius:10px; /* for Webkit-Browsers */
   border-radius:10px; /* regular */
   background:rgba(255,255,255,0.8); /* Transparent Background 50% */
   border: 2px solid gray;
+  float: left;
 }
 
 .pac-logo, .pac-logo:after {
@@ -43,6 +56,7 @@ app-canimap-menu {
 }
 
 app-canimap-location {
+  float: right;
 }
 
 .ol-popup {

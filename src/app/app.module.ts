@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   MdDialogModule, MdButtonModule, MdButtonToggleModule, MdIconModule, MdTooltipModule,
-  MdInputModule, MdSliderModule, MdExpansionModule, MdTableModule
+  MdInputModule, MdSliderModule, MdExpansionModule, MdTableModule, MdMenuModule
 } from '@angular/material';
 import { AgmCoreModule } from '@agm/core';
 import { FacebookModule } from 'ngx-facebook';
@@ -77,6 +77,7 @@ import { FileService } from './_services/file.service';
     BrowserAnimationsModule,
     MdDialogModule,
     MdButtonModule,
+    MdMenuModule,
     MdButtonToggleModule,
     MdIconModule,
     MdTooltipModule,
