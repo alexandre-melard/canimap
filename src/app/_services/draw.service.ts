@@ -37,7 +37,6 @@ export class DrawService implements OnDestroy {
 
   private subscriptions = new Array<Subscription>();
   public color = '#F00';
-  private predefinedColor;
 
   configureFeature(draw: CaniDraw) {
     draw.interaction.on('drawstart', (event: interaction.Draw.Event) => {
@@ -45,17 +44,11 @@ export class DrawService implements OnDestroy {
     });
     draw.interaction.on('drawend', (event: interaction.Draw.Event) => {
       const feature = event.feature;
-      let color = this.color;
-      const colorStyle = draw.style.filter((style: CaniStyle) => style.name === 'color');
-      if (colorStyle !== undefined && colorStyle.length > 0) {
-        color = colorStyle[0].value;
+      if (this.color !== undefined) {
+        feature.set('custom.user.color', this.color);
       }
-      const rgb = hexToRgb(this.color);
-      feature.set('custom.type', draw.type);
-      feature.set('fill.color', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)');
-      feature.set('stroke.color', color);
-      feature.set('stroke.width', 3);
-      this.predefinedColor = undefined;
+      draw.style.forEach((style) => feature.set(style.name, style.value));
+
       this.tooltip.sketch = null;
       this.tooltip.resetTooltips(this.map);
     });
@@ -149,8 +142,7 @@ export class DrawService implements OnDestroy {
     return drawInteractions.find((drawInteraction) => drawInteraction.type === type).interaction;
   }
 
-  enableDrawInteraction(type: string, color?: string) {
-    this.predefinedColor = color;
+  enableDrawInteraction(type: string) {
     this.disableInteractions();
     this.getDrawInteraction(type).setActive(true);
     this.tooltip.createTooltips(this.map, null);
@@ -282,15 +274,16 @@ export class DrawService implements OnDestroy {
           if (feature.getGeometry().getType() === 'MultiLineString') {
             (<geom.MultiLineString>feature.getGeometry()).getLineStrings().forEach((lineStringGeom: geom.LineString) => {
               const feat = new Feature(lineStringGeom);
-              feat.set('fill.color', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)');
-              feat.set('stroke.color', me.color);
-              feat.set('stroke.width', 3);
+              feat.set('custom.user.color', this.color);
+              console.log(drawInteractions);
+              drawInteractions.find((draw) => (draw.type === 'LineStringGps'))
+                .style.forEach((style) => feat.set(style.name, style.value));
               me.source.addFeature(feat);
             });
           } else {
-            feature.set('fill.color', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)');
-            feature.set('stroke.color', me.color);
-            feature.set('stroke.width', 3);
+            drawInteractions.find((draw) => (draw.type === 'LineStringGps'))
+              .style.forEach((style) => feature.set(style.name, style.value));
+            feature.set('custom.user.color', this.color);
             me.source.addFeature(feature);
           }
         });

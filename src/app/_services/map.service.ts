@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 import { MenuEventService } from './menuEvent.service';
 import { UserService } from './user.service';
-import { Attribution, Map, View, tilegrid, proj, extent, control, source, layer } from 'openlayers';
+import * as ol from 'openlayers';
 
 import { MapBox } from '../_models/mapBox';
 import { LayerBox } from '../_models/layerBox';
@@ -18,33 +18,33 @@ export class MapService implements OnDestroy {
   private subscriptions = new Array<Subscription>();
 
   get layerBoxes(): LayerBox[] {
-    return [this.ignPlan, this.ignSatellite, this.googleSatellite, this.bingHybride, this.bingSatellite];
+    return [this.ignPlan, this.ignSatellite, this.googleSatellite, this.bingSatellite, this.bingHybride];
   }
 
   googleSatellite = new LayerBox(
     'googleSatellite',
     'Google Satellite',
-    this.getGoogleLayer('googleSatellite', 's')
+    this.getGoogleLayer('googleSatellite', 's', 0, false)
   );
   bingSatellite = new LayerBox(
     'bingSatellite',
     'Bing Satellite',
-    this.getBingLayer('bingSatellite', 'Aerial')
+    this.getBingLayer('bingSatellite', 'Aerial', 0, false)
   );
   bingHybride = new LayerBox(
     'bingHybride',
     'Bing Hybride',
-    this.getBingLayer('bingHybride', 'AerialWithLabels')
+    this.getBingLayer('bingHybride', 'AerialWithLabels', 1, true)
   );
   ignPlan = new LayerBox(
     'ignPlan',
     'IGN Topo',
-    this.getIgnLayer('ignPlan', 'GEOGRAPHICALGRIDSYSTEMS.MAPS')
+    this.getIgnLayer('ignPlan', 'GEOGRAPHICALGRIDSYSTEMS.MAPS', 0, false)
   );
   ignSatellite = new LayerBox(
     'ignSatellite',
     'IGN Photo Aeriennes',
-    this.getIgnLayer('ignSatellite', 'ORTHOIMAGERY.ORTHOPHOTOS')
+    this.getIgnLayer('ignSatellite', 'ORTHOIMAGERY.ORTHOPHOTOS', 0, false)
   );
 
   _user: User;
@@ -63,7 +63,7 @@ export class MapService implements OnDestroy {
     this.subscriptions.push(this.menuEventService.getObservable('mapMove').subscribe(
       (coords) => {
         console.log('map move to :', JSON.stringify(coords));
-        this.map.getView().setCenter(proj.fromLonLat([coords.lng, coords.lat]));
+        this.map.getView().setCenter(ol.proj.fromLonLat([coords.lng, coords.lat]));
       }
     ));
   }
@@ -89,17 +89,17 @@ export class MapService implements OnDestroy {
   }
 
   loadMap() {
-    const map = new Map({
+    const map = new ol.Map({
       target: 'map',
-      controls: control.defaults({
+      controls: ol.control.defaults({
         attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
           collapsible: false
         })
       }),
       loadTilesWhileAnimating: false,
-      view: new View({
+      view: new ol.View({
         zoom: 15,
-        center: proj.transform([5.347022, 45.419364], 'EPSG:4326', 'EPSG:3857')
+        center: ol.proj.transform([5.347022, 45.419364], 'EPSG:4326', 'EPSG:3857')
       })
     });
 
@@ -107,19 +107,21 @@ export class MapService implements OnDestroy {
 
     this.layerBoxes.map(layerBox => map.addLayer(layerBox.layer));
 
+    // add slider
+    map.addControl(new ol.control.ZoomSlider());
+
     this.map = map;
     this.menuEventService.callEvent('mapLoaded', map);
   }
 
-  getBingLayer(key: string, type: string) {
-    const l = new layer.Tile(
+  getBingLayer(key: string, type: string, opacity: number, visible: boolean) {
+    const l = new ol.layer.Tile(
       {
-        visible: false,
-        opacity: 0,
+        visible: visible,
+        opacity: opacity,
         preload: Infinity,
-        source: new source.BingMaps({
+        source: new ol.source.BingMaps({
           key: 'AkI1BkPAQ-KOw7uZLelGWgLQ5Vbxq7-5K8p-2oMsMuboW8wGBMKA6T63GJ1nJVFK',
-          // key: 'Anx1E8hu2hbq_faVPR_tOe-umWyZsOgtB64ruHLNdoMwYY-Rg2FUmMA5g7i1dSy8',
           imagerySet: type,
           // use maxZoom 19 to see stretched tiles instead of the BingMaps
           // "no photos at this zoom level" tiles
@@ -130,15 +132,15 @@ export class MapService implements OnDestroy {
     return l;
   }
 
-  getGoogleLayer(key: string, type: string) {
-    const l = new layer.Tile(
+  getGoogleLayer(key: string, type: string, opacity: number, visible: boolean) {
+    const l = new ol.layer.Tile(
       {
-        visible: false,
-        opacity: 0,
-        source: new source.TileImage(
+        visible: visible,
+        opacity: opacity,
+        source: new ol.source.TileImage(
           {
             url: 'http://khm{0-3}.googleapis.com/kh?v=742&hl=pl&&x={x}&y={y}&z={z}',
-            projection: proj.get('EPSG:3857'),
+            projection: ol.proj.get('EPSG:3857'),
             crossOrigin: ''
           })
       });
@@ -146,18 +148,18 @@ export class MapService implements OnDestroy {
     return l;
   }
 
-  getIgnLayer(key: string, type: string): layer.Base {
+  getIgnLayer(key: string, type: string, opacity: number, visible: boolean): ol.layer.Base {
     const resolutions = [];
     const matrixIds = [];
-    const proj3857 = proj.get('EPSG:3857');
-    const maxResolution = extent.getWidth(proj3857.getExtent()) / 256;
+    const proj3857 = ol.proj.get('EPSG:3857');
+    const maxResolution = ol.extent.getWidth(proj3857.getExtent()) / 256;
 
     for (let i = 0; i < 18; i++) {
       matrixIds[i] = i.toString();
       resolutions[i] = maxResolution / Math.pow(2, i);
     }
 
-    const tileGrid = new tilegrid.WMTS({
+    const tileGrid = new ol.tilegrid.WMTS({
       origin: [-20037508, 20037508],
       resolutions: resolutions,
       matrixIds: matrixIds
@@ -167,7 +169,7 @@ export class MapService implements OnDestroy {
     // Expiration date is 06/29/2018.
     const apiKey = '6i88pkdxubzayoady4upbkjg';
 
-    const ign_source = new source.WMTS({
+    const ign_source = new ol.source.WMTS({
       url: 'https://wxs.ign.fr/' + apiKey + '/wmts',
       layer: type,
       matrixSet: 'PM',
@@ -175,7 +177,7 @@ export class MapService implements OnDestroy {
       projection: 'EPSG:3857',
       tileGrid: tileGrid,
       style: 'normal',
-      attributions: [new Attribution({
+      attributions: [new ol.Attribution({
         html: '<a href="http://www.geoportail.fr/" target="_blank">' +
         '<img src="https://api.ign.fr/geoportail/api/js/latest/' +
         'theme/geoportal/img/logo_gp.gif"></a>'
@@ -183,8 +185,9 @@ export class MapService implements OnDestroy {
       crossOrigin: ''
     });
 
-    const ign = new layer.Tile({
-      visible: true,
+    const ign = new ol.layer.Tile({
+      opacity: opacity,
+      visible: visible,
       source: ign_source
     });
     ign.set('id', key);
@@ -192,7 +195,7 @@ export class MapService implements OnDestroy {
     return ign;
   }
 
-  getLayer(map: Map, id): layer.Base {
+  getLayer(map: ol.Map, id): ol.layer.Base {
     let layer;
     map.getLayers().forEach(function (lyr) {
       if (id === lyr.get('id')) {

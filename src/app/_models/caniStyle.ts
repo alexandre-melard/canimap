@@ -1,8 +1,8 @@
 export class CaniStyle {
   name: string;
-  value: string;
-  constructor(name: string, value: string) {
-      this.name = name;
+  value: any;
+  constructor(name: string, value: any) {
+      this.name = 'custom.' + name;
       this.value = value;
   }
 }

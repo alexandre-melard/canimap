@@ -33,8 +33,7 @@ export class LocationComponent implements OnInit {
     // load Places Autocomplete
     this.mapsAPILoader.load().then(() => {
       const autocomplete = new google.maps.places.Autocomplete(me.searchElementRef.nativeElement, {
-        type: 'geocode',
-        componentRestrictions: { country: 'fr' }
+        type: 'geocode'
       });
       autocomplete.addListener('place_changed', () => {
         me.ngZone.run(() => {

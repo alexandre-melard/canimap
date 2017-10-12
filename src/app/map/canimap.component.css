@@ -1,11 +1,3 @@
 .canimap-main, .alert {
   margin-top: 80px;
 }
-
-.leaflet-container {
-  position: absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height: 100%;
-}
