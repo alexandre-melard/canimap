@@ -275,7 +275,6 @@ export class DrawService implements OnDestroy {
             (<geom.MultiLineString>feature.getGeometry()).getLineStrings().forEach((lineStringGeom: geom.LineString) => {
               const feat = new Feature(lineStringGeom);
               feat.set('custom.user.color', this.color);
-              console.log(drawInteractions);
               drawInteractions.find((draw) => (draw.type === 'LineStringGps'))
                 .style.forEach((style) => feat.set(style.name, style.value));
               me.source.addFeature(feat);

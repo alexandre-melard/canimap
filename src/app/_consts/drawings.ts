@@ -12,29 +12,29 @@ export class Drawings {
     new CaniDraw('draw-ParkingMarker', 'ParkingMarker', 'marker', 'Point',
       [
         new CaniStyle('type', 'Marker'),
-        new CaniStyle('anchor', [50, 50]),
-        new CaniStyle('anchorXUnits', 'pixels'),
-        new CaniStyle('anchorYUnits', 'pixels'),
-        new CaniStyle('scale', 0.15),
-        new CaniStyle('src', '../assets/icons/parking.svg')
+        new CaniStyle('icon.anchor', [50, 50]),
+        new CaniStyle('icon.anchorXUnits', 'pixels'),
+        new CaniStyle('icon.anchorYUnits', 'pixels'),
+        new CaniStyle('icon.scale', 0.15),
+        new CaniStyle('icon.src', '../assets/icons/parking.svg')
       ]
     ),
     new CaniDraw('draw-PoseMarker', 'PoseMarker', 'marker', 'Point',
       [
         new CaniStyle('type', 'Marker'),
-        new CaniStyle('src', '../assets/icons/dot_green.png')
+        new CaniStyle('icon.src', '../assets/icons/dot_green.png')
       ]
     ),
     new CaniDraw('draw-SuspenduMarker', 'SuspenduMarker', 'marker', 'Point',
       [
         new CaniStyle('type', 'Marker'),
-        new CaniStyle('src', '../assets/icons/dot_blue.png')
+        new CaniStyle('icon.src', '../assets/icons/dot_blue.png')
       ]
     ),
     new CaniDraw('draw-CacheMarker', 'CacheMarker', 'marker', 'Point',
       [
         new CaniStyle('type', 'Marker'),
-        new CaniStyle('src', '../assets/icons/dot_purple.png')
+        new CaniStyle('icon.src', '../assets/icons/dot_purple.png')
       ]
     ),
     new CaniDraw('draw-VictimPath', 'VictimPath', 'polyline', 'LineString',
@@ -46,13 +46,13 @@ export class Drawings {
         new CaniStyle('text.offsetY', -20),
         new CaniStyle('text.fill.color', '#00F'),
         new CaniStyle('text.stroke.color', '#00F'),
-        new CaniStyle('text.stroke.width', 2),
-        new CaniStyle('arrow.enabled', true),
-        new CaniStyle('arrow.color', '#00F'),
-        new CaniStyle('arrow.crossOrigin', 'anonymous'),
-        new CaniStyle('arrow.src', '../assets/icons/arrow_20.png'),
-        new CaniStyle('arrow.anchor', [0.75, 0.5]),
-        new CaniStyle('arrow.rotateWithView', true)
+        new CaniStyle('text.stroke.width', 3),
+        new CaniStyle('icon.enabled', true),
+        new CaniStyle('icon.color', '#00F'),
+        new CaniStyle('icon.crossOrigin', 'anonymous'),
+        new CaniStyle('icon.src', '../assets/icons/arrow_20.png'),
+        new CaniStyle('icon.anchor', [0.75, 0.5]),
+        new CaniStyle('icon.rotateWithView', true)
       ]
     ),
     new CaniDraw('draw-K9Path', 'K9Path', 'polyline', 'LineString',
@@ -65,13 +65,13 @@ export class Drawings {
         new CaniStyle('text.offsetY', -20),
         new CaniStyle('text.fill.color', '#F93'),
         new CaniStyle('text.stroke.color', '#F93'),
-        new CaniStyle('text.stroke.width', 2),
-        new CaniStyle('arrow.enabled', true),
-        new CaniStyle('arrow.color', '#F93'),
-        new CaniStyle('arrow.crossOrigin', 'anonymous'),
-        new CaniStyle('arrow.src', '../assets/icons/arrow_20.png'),
-        new CaniStyle('arrow.anchor', [0.75, 0.5]),
-        new CaniStyle('arrow.rotateWithView', true)
+        new CaniStyle('text.stroke.width', 3),
+        new CaniStyle('icon.enabled', true),
+        new CaniStyle('icon.color', '#F93'),
+        new CaniStyle('icon.crossOrigin', 'anonymous'),
+        new CaniStyle('icon.src', '../assets/icons/arrow_20.png'),
+        new CaniStyle('icon.anchor', [0.75, 0.5]),
+        new CaniStyle('icon.rotateWithView', true)
       ]
     ),
     new CaniDraw('draw-LineStringGps', 'LineStringGps', 'polyline', 'LineString',
@@ -80,13 +80,13 @@ export class Drawings {
         new CaniStyle('immutable', false),
         new CaniStyle('stroke.width', 3),
         new CaniStyle('text.offsetY', -20),
-        new CaniStyle('text.stroke.width', 2),
-        new CaniStyle('arrow.enabled', true),
-        new CaniStyle('arrow.crossOrigin', 'anonymous'),
-        new CaniStyle('arrow.src', '../assets/icons/arrow_16.png'),
-        new CaniStyle('arrow.anchor', [0.75, 0.5]),
-        new CaniStyle('arrow.rotateWithView', true),
-        new CaniStyle('arrow.frequency', 4)
+        new CaniStyle('text.stroke.width', 3),
+        new CaniStyle('icon.enabled', true),
+        new CaniStyle('icon.crossOrigin', 'anonymous'),
+        new CaniStyle('icon.src', '../assets/icons/arrow_16.png'),
+        new CaniStyle('icon.anchor', [0.75, 0.5]),
+        new CaniStyle('icon.rotateWithView', true),
+        new CaniStyle('icon.frequency', 5)
       ]
     ),
     new CaniDraw('draw-LineStringArrow', 'LineStringArrow', 'polyline', 'LineString',
@@ -95,12 +95,12 @@ export class Drawings {
       new CaniStyle('immutable', false),
       new CaniStyle('stroke.width', 3),
       new CaniStyle('text.offsetY', -20),
-      new CaniStyle('text.stroke.width', 2),
-      new CaniStyle('arrow.enabled', true),
-      new CaniStyle('arrow.crossOrigin', 'anonymous'),
-      new CaniStyle('arrow.src', '../assets/icons/arrow_20.png'),
-      new CaniStyle('arrow.anchor', [0.75, 0.5]),
-      new CaniStyle('arrow.rotateWithView', true)
+      new CaniStyle('text.stroke.width', 3),
+      new CaniStyle('icon.enabled', true),
+      new CaniStyle('icon.crossOrigin', 'anonymous'),
+      new CaniStyle('icon.src', '../assets/icons/arrow_20.png'),
+      new CaniStyle('icon.anchor', [0.75, 0.5]),
+      new CaniStyle('icon.rotateWithView', true)
     ]
   ),
   new CaniDraw('draw-LineString', 'LineString', 'polyline', 'LineString',
@@ -109,8 +109,8 @@ export class Drawings {
       new CaniStyle('immutable', false),
       new CaniStyle('stroke.width', 3),
       new CaniStyle('text.offsetY', -20),
-      new CaniStyle('text.stroke.width', 2),
-      new CaniStyle('arrow.enabled', false),
+      new CaniStyle('text.stroke.width', 3),
+      new CaniStyle('icon.enabled', false),
     ]
   ),
   new CaniDraw('draw-Polygon', 'Polygon', 'polygon', 'Polygon',
