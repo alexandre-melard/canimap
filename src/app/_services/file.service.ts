@@ -15,14 +15,14 @@ import { environment } from '../../environments/environment';
 @Injectable()
 export class FileService implements OnDestroy {
   private subscriptions = new Array<Subscription>();
-  private FB;
+  // private FB;
 
   constructor(
     private menuEventService: MenuEventService,
     private drawService: DrawService,
     public dialog: MdDialog
   ) {
-    this.FB = initFacebook(environment.facebook_api);
+    // this.FB = initFacebook(environment.facebook_api);
 
     const me = this;
     this.subscriptions.push(this.menuEventService.getObservable('fileSave').subscribe(
@@ -86,7 +86,7 @@ export class FileService implements OnDestroy {
 
             // Get geojson data
             me.menuEventService.callEvent('saveAsPng', (blob) => {
-              sendToFacebook(me.FB, blob);
+              // sendToFacebook(me.FB, blob);
             });
           }
         });
