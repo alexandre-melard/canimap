@@ -36,13 +36,6 @@ export class FileMenuComponent implements OnInit {
     });
   }
 
-  facebook(e: MouseEvent) {
-    this.menuEventService.prepareEvent('facebook', null);
-    this.helperEventService.showHelper('facebook', () => {
-      this.menuEventService.proceed();
-    });
-  }
-
   filesOpen(e: MouseEvent) {
     this.menuEventService.prepareEvent('filesOpen', null);
     this.helperEventService.showHelper('filesOpen', () => {

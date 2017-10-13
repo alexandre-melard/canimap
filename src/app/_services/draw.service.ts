@@ -44,11 +44,7 @@ export class DrawService implements OnDestroy {
     });
     draw.interaction.on('drawend', (event: interaction.Draw.Event) => {
       const feature = event.feature;
-      if (this.color !== undefined) {
-        feature.set('custom.user.color', this.color);
-      }
-      draw.style.forEach((style) => feature.set(style.name, style.value));
-
+      feature.set('style', draw.style(this.color));
       this.tooltip.sketch = null;
       this.tooltip.resetTooltips(this.map);
     });
@@ -231,6 +227,10 @@ export class DrawService implements OnDestroy {
         console.log('importing json as draw');
         const geojsonFormat = new format.GeoJSON();
         const features = geojsonFormat.readFeatures(json);
+        const style = drawInteractions.find((draw) => (draw.type === 'LineString')).style;
+        features.forEach((f) => {
+          f.set('style', style(this.color));
+        });
         me.source.addFeatures(features);
         me.map.getView().fit(me.source.getExtent());
       }
@@ -271,18 +271,15 @@ export class DrawService implements OnDestroy {
         const features = f.readFeatures(gps.content, { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' });
         const rgb = hexToRgb(me.color);
         features.forEach((feature) => {
+          const style = drawInteractions.find((draw) => (draw.type === 'LineStringGps')).style;
           if (feature.getGeometry().getType() === 'MultiLineString') {
             (<geom.MultiLineString>feature.getGeometry()).getLineStrings().forEach((lineStringGeom: geom.LineString) => {
               const feat = new Feature(lineStringGeom);
-              feat.set('custom.user.color', this.color);
-              drawInteractions.find((draw) => (draw.type === 'LineStringGps'))
-                .style.forEach((style) => feat.set(style.name, style.value));
+              feat.set('style', style(this.color));
               me.source.addFeature(feat);
             });
           } else {
-            drawInteractions.find((draw) => (draw.type === 'LineStringGps'))
-              .style.forEach((style) => feature.set(style.name, style.value));
-            feature.set('custom.user.color', this.color);
+            feature.set('style', style(this.color));
             me.source.addFeature(feature);
           }
         });

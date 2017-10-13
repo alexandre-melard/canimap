@@ -1,132 +1,241 @@
 import { CaniDraw } from '../_models/caniDraw';
 import { CaniStyle } from '../_models/caniStyle';
 import { hexToRgb } from '../_utils/color-hex-to-rgb';
+import { colorGetBrightness } from '../_utils/color-brightness';
+import { CaniDrawPoint } from '../_models/caniDrawPoint';
+import { CaniDrawLineString } from '../_models/caniDrawLineString';
+import { CaniDrawPolygon } from '../_models/caniDrawPolygon';
+import { CaniDrawCircle } from '../_models/caniDrawCircle';
+import { CaniDrawRectangle } from '../_models/caniDrawRectangle';
+import { CaniDrawIcon } from '../_models/caniDrawIcon';
+import * as ol from 'openlayers';
+
+function getTextColor(color: string) {
+  return (colorGetBrightness(hexToRgb(color)) < 220) ? 'white' : 'black';
+}
 
 export class Drawings {
   public static drawInteractions: CaniDraw[] = [
-    new CaniDraw('draw-Point', 'Point', '', 'Point',
-      [
-        new CaniStyle('type', 'Point')
-      ]
+    new CaniDrawPoint('Point', ''),
+    new CaniDrawPoint('ParkingMarker', 'marker',
+      () => {
+        return {
+          type: 'Marker',
+          anchor: [50, 50],
+          anchorXUnits: 'pixels',
+          anchorYUnits: 'pixels',
+          scale: 0.15,
+          src: '../assets/icons/parking.svg'
+        };
+      }
     ),
-    new CaniDraw('draw-ParkingMarker', 'ParkingMarker', 'marker', 'Point',
-      [
-        new CaniStyle('type', 'Marker'),
-        new CaniStyle('icon.anchor', [50, 50]),
-        new CaniStyle('icon.anchorXUnits', 'pixels'),
-        new CaniStyle('icon.anchorYUnits', 'pixels'),
-        new CaniStyle('icon.scale', 0.15),
-        new CaniStyle('icon.src', '../assets/icons/parking.svg')
-      ]
+    new CaniDrawPoint('PoseMarker', 'marker',
+      () => {
+        return {
+          type: 'Marker',
+          src: '../assets/icons/dot_green.png'
+        };
+      }
     ),
-    new CaniDraw('draw-PoseMarker', 'PoseMarker', 'marker', 'Point',
-      [
-        new CaniStyle('type', 'Marker'),
-        new CaniStyle('icon.src', '../assets/icons/dot_green.png')
-      ]
+    new CaniDrawPoint('SuspenduMarker', 'marker',
+      () => {
+        return {
+          type: 'Marker',
+          src: '../assets/icons/dot_blue.png'
+        };
+      }
     ),
-    new CaniDraw('draw-SuspenduMarker', 'SuspenduMarker', 'marker', 'Point',
-      [
-        new CaniStyle('type', 'Marker'),
-        new CaniStyle('icon.src', '../assets/icons/dot_blue.png')
-      ]
+    new CaniDrawPoint('CacheMarker', 'marker',
+      () => {
+        return {
+          type: 'Marker',
+          src: '../assets/icons/dot_purple.png'
+        };
+      }
     ),
-    new CaniDraw('draw-CacheMarker', 'CacheMarker', 'marker', 'Point',
-      [
-        new CaniStyle('type', 'Marker'),
-        new CaniStyle('icon.src', '../assets/icons/dot_purple.png')
-      ]
+    new CaniDrawLineString('VictimPath', 'polyline',
+      () => {
+        return {
+          type: 'LineString',
+          stroke: new ol.style.Stroke({
+            color: '#00F',
+            width: 3
+          }),
+          textOptions: {
+            offsetY: -20,
+            fillOptions: {
+              color: '#00F'
+            },
+            strockeOptions: {
+              color: getTextColor('#00F'),
+              width: 3
+            }
+          },
+          imageOptions: {
+            color: '#00F',
+            crossOrigin: 'anonymous',
+            src: '../assets/icons/arrow_20.png',
+            anchor: [0.75, 0.5],
+            rotateWithView: true
+          }
+        };
+      }
     ),
-    new CaniDraw('draw-VictimPath', 'VictimPath', 'polyline', 'LineString',
-      [
-        new CaniStyle('type', 'LineString'),
-        new CaniStyle('immutable', true),
-        new CaniStyle('stroke.color', '#00F'),
-        new CaniStyle('stroke.width', 3),
-        new CaniStyle('text.offsetY', -20),
-        new CaniStyle('text.fill.color', '#00F'),
-        new CaniStyle('text.stroke.color', '#00F'),
-        new CaniStyle('text.stroke.width', 3),
-        new CaniStyle('icon.enabled', true),
-        new CaniStyle('icon.color', '#00F'),
-        new CaniStyle('icon.crossOrigin', 'anonymous'),
-        new CaniStyle('icon.src', '../assets/icons/arrow_20.png'),
-        new CaniStyle('icon.anchor', [0.75, 0.5]),
-        new CaniStyle('icon.rotateWithView', true)
-      ]
+    new CaniDrawLineString('K9Path', 'polyline',
+      () => {
+        return {
+          type: 'LineString',
+          stroke: new ol.style.Stroke({
+            color: '#F93',
+            width: 3
+          }),
+          text: new ol.style.Text({
+            offsetY: -20,
+            font: '18px Calibri,sans-serif',
+            fill: new ol.style.Fill({
+              color: '#F93'
+            }),
+            stroke: new ol.style.Stroke({
+              color: getTextColor('#F93'),
+              width: 3
+            })
+          }),
+          imageOptions: {
+            color: '#F93',
+            crossOrigin: 'anonymous',
+            src: '../assets/icons/arrow_20.png',
+            anchor: [0.75, 0.5],
+            rotateWithView: true
+          }
+        };
+      }
     ),
-    new CaniDraw('draw-K9Path', 'K9Path', 'polyline', 'LineString',
-      [
-        new CaniStyle('type', 'LineString'),
-        new CaniStyle('immutable', true),
-        new CaniStyle('stroke.color', '#F93'),
-        new CaniStyle('stroke.width', 3),
-        new CaniStyle('text.text', ' '),
-        new CaniStyle('text.offsetY', -20),
-        new CaniStyle('text.fill.color', '#F93'),
-        new CaniStyle('text.stroke.color', '#F93'),
-        new CaniStyle('text.stroke.width', 3),
-        new CaniStyle('icon.enabled', true),
-        new CaniStyle('icon.color', '#F93'),
-        new CaniStyle('icon.crossOrigin', 'anonymous'),
-        new CaniStyle('icon.src', '../assets/icons/arrow_20.png'),
-        new CaniStyle('icon.anchor', [0.75, 0.5]),
-        new CaniStyle('icon.rotateWithView', true)
-      ]
+    new CaniDrawLineString('LineStringGps', 'polyline',
+      (color) => {
+        return {
+          type: 'LineString',
+          stroke: new ol.style.Stroke({
+            color: color,
+            width: 3
+          }),
+          text: new ol.style.Text({
+            offsetY: -20,
+            font: '18px Calibri,sans-serif',
+            fill: new ol.style.Fill({
+              color: color,
+            }),
+            stroke: new ol.style.Stroke({
+              color: getTextColor(color),
+              width: 3
+            })
+          }),
+          imageOptions: {
+            color: color,
+            crossOrigin: 'anonymous',
+            src: '../assets/icons/arrow_20.png',
+            anchor: [0.75, 0.5],
+            rotateWithView: true,
+            frequency: 5
+          }
+        };
+      }
     ),
-    new CaniDraw('draw-LineStringGps', 'LineStringGps', 'polyline', 'LineString',
-      [
-        new CaniStyle('type', 'LineString'),
-        new CaniStyle('immutable', false),
-        new CaniStyle('stroke.width', 3),
-        new CaniStyle('text.offsetY', -20),
-        new CaniStyle('text.stroke.width', 3),
-        new CaniStyle('icon.enabled', true),
-        new CaniStyle('icon.crossOrigin', 'anonymous'),
-        new CaniStyle('icon.src', '../assets/icons/arrow_16.png'),
-        new CaniStyle('icon.anchor', [0.75, 0.5]),
-        new CaniStyle('icon.rotateWithView', true),
-        new CaniStyle('icon.frequency', 5)
-      ]
+    new CaniDrawLineString('LineStringArrow', 'polyline',
+      (color) => {
+        return {
+          type: 'LineString',
+          stroke: new ol.style.Stroke({
+            color: color,
+            width: 3
+          }),
+          text: new ol.style.Text({
+            offsetY: -20,
+            font: '18px Calibri,sans-serif',
+            fill: new ol.style.Fill({
+              color: color,
+            }),
+            stroke: new ol.style.Stroke({
+              color: getTextColor(color),
+              width: 3
+            })
+          }),
+          imageOptions: {
+            color: color,
+            crossOrigin: 'anonymous',
+            src: '../assets/icons/arrow_20.png',
+            anchor: [0.75, 0.5],
+            rotateWithView: true
+          }
+        };
+      }
     ),
-    new CaniDraw('draw-LineStringArrow', 'LineStringArrow', 'polyline', 'LineString',
-    [
-      new CaniStyle('type', 'LineString'),
-      new CaniStyle('immutable', false),
-      new CaniStyle('stroke.width', 3),
-      new CaniStyle('text.offsetY', -20),
-      new CaniStyle('text.stroke.width', 3),
-      new CaniStyle('icon.enabled', true),
-      new CaniStyle('icon.crossOrigin', 'anonymous'),
-      new CaniStyle('icon.src', '../assets/icons/arrow_20.png'),
-      new CaniStyle('icon.anchor', [0.75, 0.5]),
-      new CaniStyle('icon.rotateWithView', true)
-    ]
-  ),
-  new CaniDraw('draw-LineString', 'LineString', 'polyline', 'LineString',
-    [
-      new CaniStyle('type', 'LineString'),
-      new CaniStyle('immutable', false),
-      new CaniStyle('stroke.width', 3),
-      new CaniStyle('text.offsetY', -20),
-      new CaniStyle('text.stroke.width', 3),
-      new CaniStyle('icon.enabled', false),
-    ]
-  ),
-  new CaniDraw('draw-Polygon', 'Polygon', 'polygon', 'Polygon',
-      [
-        new CaniStyle('type', 'Polygon')
-      ]
+    new CaniDrawLineString('LineString', 'polyline',
+      (color) => {
+        return {
+          type: 'LineString',
+          stroke: new ol.style.Stroke({
+            color: color,
+            width: 3
+          }),
+          text: new ol.style.Text({
+            offsetY: -20,
+            font: '18px Calibri,sans-serif',
+            fill: new ol.style.Fill({
+              color: color,
+            }),
+            stroke: new ol.style.Stroke({
+              color: getTextColor(color),
+              width: 3
+            })
+          })
+        };
+      }
     ),
-    new CaniDraw('draw-Rectangle', 'Rectangle', 'rectangle', 'Circle',
-      [
-        new CaniStyle('type', 'Rectangle')
-      ]
+    new CaniDrawPolygon('Polygon', 'polygon',
+      (color) => {
+        const rgb = hexToRgb(color);
+        return {
+          fill: new ol.style.Fill({
+            color: 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)'
+          }),
+          stroke: new ol.style.Stroke({
+            color: color,
+            width: 3
+          })
+        };
+      }
     ),
-    new CaniDraw('draw-Circle', 'Circle', 'circle', 'Circle',
-      [
-        new CaniStyle('type', 'Circle')
-      ]
+    new CaniDrawRectangle('Rectangle', 'polygon',
+      (color) => {
+        const rgb = hexToRgb(color);
+        return {
+          type: 'Rectangle',
+          radius: 10,
+          fill: new ol.style.Fill({
+            color: 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)'
+          }),
+          stroke: new ol.style.Stroke({
+            color: color,
+            width: 3
+          })
+        };
+      }
+    ),
+    new CaniDrawCircle('Circle', 'circle',
+      (color) => {
+        const rgb = hexToRgb(color);
+        return {
+          type: 'Circle',
+          radius: 10,
+          fill: new ol.style.Fill({
+            color: 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)'
+          }),
+          stroke: new ol.style.Stroke({
+            color: color,
+            width: 3
+          })
+        };
+      }
     )
   ];
 }

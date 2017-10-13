@@ -6,15 +6,12 @@ export class CaniDraw {
   type: string;
   interaction: ol.interaction.Draw;
   helper: string;
-  geometry?: ol.geom.GeometryType;
-  style?: CaniStyle[];
-  constructor(event: string, type: string, helper: string, geometry: ol.geom.GeometryType,
-    style?: CaniStyle[], interaction?: ol.interaction.Draw) {
-    this.event = event;
+  geometry: ol.geom.GeometryType;
+  style: Function;
+  constructor(type: string, helper: string, style?: Function) {
+    this.event = 'draw-' + type;
     this.type = type;
     this.helper = helper;
-    this.geometry = geometry;
-    this.interaction = interaction;
-    this.style = (style !== undefined) ? style : new Array<CaniStyle>();
+    this.style = style;
   }
 }

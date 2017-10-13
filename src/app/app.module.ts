@@ -8,7 +8,6 @@ import {
   MdInputModule, MdSliderModule, MdExpansionModule, MdTableModule, MdMenuModule
 } from '@angular/material';
 import { AgmCoreModule } from '@agm/core';
-import { FacebookModule } from 'ngx-facebook';
 import { routing } from './app.routing';
 
 // used to create fake backend
@@ -90,8 +89,7 @@ import { FileService } from './_services/file.service';
       apiKey: 'AIzaSyBb1BipElNZJQPhdkSUdX5DxZpPnQV_D3k',
       libraries: ['places']
     }),
-    routing,
-    FacebookModule.forRoot()
+    routing
   ],
   providers: [
     AuthGuard,

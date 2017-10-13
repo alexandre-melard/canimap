@@ -9,7 +9,6 @@ import { saveAs } from 'file-saver';
 import { DialogFileOpenComponent } from '../_dialogs/fileOpen.component';
 import { DialogFilesOpenComponent } from '../_dialogs/filesOpen.component';
 import { DialogFileSaveComponent } from '../_dialogs/fileSave.component';
-import { initFacebook, sendToFacebook } from '../_utils/facebook';
 import { environment } from '../../environments/environment';
 
 @Injectable()
@@ -22,8 +21,6 @@ export class FileService implements OnDestroy {
     private drawService: DrawService,
     public dialog: MdDialog
   ) {
-    this.FB = initFacebook(environment.facebook_api);
-
     const me = this;
     this.subscriptions.push(this.menuEventService.getObservable('fileSave').subscribe(
       () => {
@@ -71,29 +68,7 @@ export class FileService implements OnDestroy {
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
     ));
-    this.subscriptions.push(this.menuEventService.getObservable('facebook').subscribe(
-      () => {
-        let fileName = 'carte';
-        const dialogRef = this.dialog.open(DialogFileSaveComponent, {
-          width: '320px',
-          data: { name: fileName }
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-          console.log('The dialog was closed');
-          if (result !== undefined) {
-            fileName = result;
-
-            // Get geojson data
-            me.menuEventService.callEvent('saveAsPng', (blob) => {
-              sendToFacebook(me.FB, blob);
-            });
-          }
-        });
-      },
-      e => console.log('onError: %s', e),
-      () => console.log('onCompleted')
-    )); this.subscriptions.push(this.menuEventService.getObservable('filesOpen').subscribe(
+    this.subscriptions.push(this.menuEventService.getObservable('filesOpen').subscribe(
       () => {
         const dialogRef = this.dialog.open(DialogFilesOpenComponent, {
           width: '700px'
