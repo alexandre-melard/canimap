@@ -11,7 +11,7 @@ import { CaniDrawIcon } from '../_models/caniDrawIcon';
 import * as ol from 'openlayers';
 
 function getTextColor(color: string) {
-  return (colorGetBrightness(hexToRgb(color)) < 220) ? 'white' : 'black';
+  return (colorGetBrightness(hexToRgb(color)) > 125) ? 'black' : 'white';
 }
 
 export class Drawings {
@@ -56,17 +56,17 @@ export class Drawings {
     new CaniDrawLineString('VictimPath', 'polyline',
       () => {
         return {
-          type: 'LineString',
-          stroke: new ol.style.Stroke({
+          strokeOptions: {
             color: '#00F',
             width: 3
-          }),
+          },
           textOptions: {
             offsetY: -20,
+            font: '18px Calibri,sans-serif',
             fillOptions: {
               color: '#00F'
             },
-            strockeOptions: {
+            strokeOptions: {
               color: getTextColor('#00F'),
               width: 3
             }
@@ -84,22 +84,21 @@ export class Drawings {
     new CaniDrawLineString('K9Path', 'polyline',
       () => {
         return {
-          type: 'LineString',
-          stroke: new ol.style.Stroke({
+          strokeOptions: {
             color: '#F93',
             width: 3
-          }),
-          text: new ol.style.Text({
+          },
+          textOptions: {
             offsetY: -20,
             font: '18px Calibri,sans-serif',
-            fill: new ol.style.Fill({
+            fillOptions: {
               color: '#F93'
-            }),
-            stroke: new ol.style.Stroke({
+            },
+            strokeOptions: {
               color: getTextColor('#F93'),
               width: 3
-            })
-          }),
+            }
+          },
           imageOptions: {
             color: '#F93',
             crossOrigin: 'anonymous',
@@ -113,22 +112,21 @@ export class Drawings {
     new CaniDrawLineString('LineStringGps', 'polyline',
       (color) => {
         return {
-          type: 'LineString',
-          stroke: new ol.style.Stroke({
+          strokeOptions: {
             color: color,
             width: 3
-          }),
-          text: new ol.style.Text({
+          },
+          textOptions: {
             offsetY: -20,
             font: '18px Calibri,sans-serif',
-            fill: new ol.style.Fill({
-              color: color,
-            }),
-            stroke: new ol.style.Stroke({
+            fillOptions: {
+              color: color
+            },
+            strokeOptions: {
               color: getTextColor(color),
               width: 3
-            })
-          }),
+            }
+          },
           imageOptions: {
             color: color,
             crossOrigin: 'anonymous',
@@ -143,28 +141,27 @@ export class Drawings {
     new CaniDrawLineString('LineStringArrow', 'polyline',
       (color) => {
         return {
-          type: 'LineString',
-          stroke: new ol.style.Stroke({
+          strokeOptions: {
             color: color,
             width: 3
-          }),
-          text: new ol.style.Text({
+          },
+          textOptions: {
             offsetY: -20,
             font: '18px Calibri,sans-serif',
-            fill: new ol.style.Fill({
-              color: color,
-            }),
-            stroke: new ol.style.Stroke({
+            fillOptions: {
+              color: color
+            },
+            strokeOptions: {
               color: getTextColor(color),
               width: 3
-            })
-          }),
+            }
+          },
           imageOptions: {
             color: color,
             crossOrigin: 'anonymous',
             src: '../assets/icons/arrow_20.png',
             anchor: [0.75, 0.5],
-            rotateWithView: true
+            rotateWithView: true,
           }
         };
       }
@@ -172,22 +169,21 @@ export class Drawings {
     new CaniDrawLineString('LineString', 'polyline',
       (color) => {
         return {
-          type: 'LineString',
-          stroke: new ol.style.Stroke({
+          strokeOptions: {
             color: color,
             width: 3
-          }),
-          text: new ol.style.Text({
+          },
+          textOptions: {
             offsetY: -20,
             font: '18px Calibri,sans-serif',
-            fill: new ol.style.Fill({
-              color: color,
-            }),
-            stroke: new ol.style.Stroke({
+            fillOptions: {
+              color: color
+            },
+            strokeOptions: {
               color: getTextColor(color),
               width: 3
-            })
-          })
+            }
+          }
         };
       }
     ),
@@ -195,29 +191,29 @@ export class Drawings {
       (color) => {
         const rgb = hexToRgb(color);
         return {
-          fill: new ol.style.Fill({
+          fillOptions: {
             color: 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)'
-          }),
-          stroke: new ol.style.Stroke({
+          },
+          strokeOptions: {
             color: color,
             width: 3
-          })
+          }
         };
       }
     ),
-    new CaniDrawRectangle('Rectangle', 'polygon',
+    new CaniDrawRectangle('Rectangle', 'rectangle',
       (color) => {
         const rgb = hexToRgb(color);
         return {
           type: 'Rectangle',
           radius: 10,
-          fill: new ol.style.Fill({
+          fillOptions: {
             color: 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)'
-          }),
-          stroke: new ol.style.Stroke({
+          },
+          strokeOptions: {
             color: color,
             width: 3
-          })
+          }
         };
       }
     ),
@@ -227,13 +223,13 @@ export class Drawings {
         return {
           type: 'Circle',
           radius: 10,
-          fill: new ol.style.Fill({
+          fillOptions: {
             color: 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.5)'
-          }),
-          stroke: new ol.style.Stroke({
+          },
+          strokeOptions: {
             color: color,
             width: 3
-          })
+          }
         };
       }
     )

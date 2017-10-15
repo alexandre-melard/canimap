@@ -112,15 +112,6 @@ export class FileService implements OnDestroy {
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
     ));
-    this.subscriptions.push(this.menuEventService.getObservable('fileReceived').subscribe(
-      (file: File) => {
-        me.parseFile(file, (content) => {
-          me.menuEventService.callEvent('addLayersFromJson', content);
-        });
-      },
-      e => console.log('onError: %s', e),
-      () => console.log('onCompleted')
-    ));
   }
 
   parseFile(file: File, success: Function): void {

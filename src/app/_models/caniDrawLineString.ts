@@ -4,13 +4,13 @@ import { CaniDrawIconOptions } from './caniDrawIcon';
 
 export interface CaniDrawTextOptions extends olx.style.TextOptions {
   fillOptions?: olx.style.FillOptions;
-  strockeOptions?: olx.style.StrokeOptions;
+  strokeOptions?: olx.style.StrokeOptions;
 }
 
 export interface CaniDrawLineStringOptions extends olx.style.StyleOptions {
-  type: string;
+  type?: string;
   fillOptions?: olx.style.FillOptions;
-  strockeOptions?: olx.style.StrokeOptions;
+  strokeOptions?: olx.style.StrokeOptions;
   textOptions?: CaniDrawTextOptions;
   imageOptions?: CaniDrawIconOptions;
 }

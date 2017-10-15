@@ -4,7 +4,8 @@ import * as ol from 'openlayers';
 import { formatLength } from '../_utils/map-format-length';
 import { hexToRgb } from '../_utils/color-hex-to-rgb';
 import { colorGetBrightness } from '../_utils/color-brightness';
-
+import { fillOptions } from '../_utils/map-style-options-fill';
+import { strokeOptions } from '../_utils/map-style-options-stroke';
 
 export function styleFunction(feature: ol.Feature) {
   const geometry: ol.geom.LineString = <ol.geom.LineString>feature.getGeometry();
@@ -15,7 +16,10 @@ export function styleFunction(feature: ol.Feature) {
   } else if (geometry.getType() === 'Point') {
     styles.push(new ol.style.Style({ image: new ol.style.Icon(feature.get('style')) }));
   } else {
-    styles.push(new ol.style.Style(feature.get('style')));
+    const style = feature.get('style');
+    style.fill = new ol.style.Fill(style.fillOptions);
+    style.stroke = new ol.style.Stroke(style.strokeOptions);
+    styles.push(new ol.style.Style(style));
   }
   return styles;
 }

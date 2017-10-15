@@ -224,12 +224,39 @@ export class DrawService implements OnDestroy {
     ));
     this.subscriptions.push(this.menuEventService.getObservable('addLayersFromJson').subscribe(
       (json) => {
-        console.log('importing json as draw');
+        json = JSON.parse(json);
+        let features = new Array<ol.Feature>();
+        console.log('importing 1json as draw');
+        // TODO Implements load features from JSON for Circle
+        let i = 0;
+        const toDelete = new Array();
+        json.features.forEach((f) => {
+          if (f.geometry.type === 'Circle') {
+            const feature = new ol.Feature(new ol.geom.Circle(f.geometry.coordinates.center, f.geometry.coordinates.radius));
+            feature.set('style', f.properties.style);
+            features.push(feature);
+            toDelete.push(i++);
+          }
+        });
+        // Delete circles features
+        while (toDelete.length > 0) {
+          json.features.splice(toDelete.pop(), 1);
+        }
+
         const geojsonFormat = new format.GeoJSON();
-        const features = geojsonFormat.readFeatures(json);
-        const style = drawInteractions.find((draw) => (draw.type === 'LineString')).style;
-        features.forEach((f) => {
-          f.set('style', style(this.color));
+        features = features.concat(geojsonFormat.readFeatures(json));
+        features.forEach((f: Feature) => {
+          const properties = f.getProperties();
+          let style;
+          drawInteractions.forEach((draw) => {
+            if (
+              (draw.type === f.getGeometry().getType())
+              ||
+              ((properties.style.type !== undefined) && (draw.type === properties.style.type))) {
+              style = properties.style;
+            }
+          });
+          f.set('style', style);
         });
         me.source.addFeatures(features);
         me.map.getView().fit(me.source.getExtent());
@@ -239,8 +266,22 @@ export class DrawService implements OnDestroy {
       (success: Function) => {
         console.log('converting drawings to geoJson');
         const geojsonFormat = new format.GeoJSON();
-        const json = geojsonFormat.writeFeatures(me.source.getFeatures());
-        success(json);
+        const jsonStr = geojsonFormat.writeFeatures(me.source.getFeatures());
+        const json = JSON.parse(jsonStr);
+        const circles = json.features.filter((f) => (f.properties.style.type === 'Circle'));
+        const featCircles = me.source.getFeatures().filter((f) => (f.getGeometry().getType() === 'Circle'));
+        const coords = new Array();
+        featCircles.map((f) => coords.push(
+          {
+            center: (<ol.geom.Circle>f.getGeometry()).getCenter(),
+            radius: (<ol.geom.Circle>f.getGeometry()).getRadius()
+          }
+        ));
+        let i;
+        for (i = 0; i < featCircles.length; i++) {
+          circles[i].geometry = { type: 'Circle', coordinates: coords[i] };
+        }
+        success(JSON.stringify(json));
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('saveAsPng').subscribe(

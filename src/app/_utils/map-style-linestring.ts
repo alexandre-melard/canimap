@@ -10,9 +10,9 @@ export function lineStringStyle(feature: ol.Feature): ol.style.Style[] {
 
   configuredStyle.textOptions.text = formatLength(geometry);
   configuredStyle.fill = new ol.style.Fill(configuredStyle.fillOptions);
-  configuredStyle.stroke = new ol.style.Stroke(configuredStyle.strockeOptions);
+  configuredStyle.stroke = new ol.style.Stroke(configuredStyle.strokeOptions);
   configuredStyle.textOptions.fill = new ol.style.Fill(configuredStyle.textOptions.fillOptions);
-  configuredStyle.textOptions.stroke = new ol.style.Stroke(configuredStyle.strockeOptions);
+  configuredStyle.textOptions.stroke = new ol.style.Stroke(configuredStyle.textOptions.strokeOptions);
   configuredStyle.text = new ol.style.Text(configuredStyle.textOptions);
   styles.push(new ol.style.Style(configuredStyle));
 
