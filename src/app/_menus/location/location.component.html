@@ -1,6 +1,11 @@
-﻿<div class="btn-group menu-bar">
+﻿<button md-icon-button #menuTrigger="mdMenuTrigger" [mdMenuTriggerFor]="appMenu" mdTooltipPosition="right" mdTooltip="Recherche">
+  <md-icon class="md-24">
+    search
+  </md-icon>
+</button>
+<md-menu #appMenu="mdMenu" [overlapTrigger]="true">
   <form>
-    <input mdInput mdPlaceholder="&nbsp;Rechercher une adresse" mdTooltip="Entrez une adresse ou nom de ville" autocorrect="off" autocapitalize="off" spellcheck="off" type="text"
-    #search [formControl]="searchControl">
+    <input (click)="$event.stopPropagation()" mdInput mdPlaceholder="&nbsp;Rechercher une adresse" mdTooltip="Entrez une adresse ou nom de ville"
+      autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search [formControl]="searchControl">
   </form>
-</div>
+</md-menu>

@@ -24,6 +24,14 @@ button.mat-icon-button {
 
 .mat-menu-content {
   padding: 0!important;
+  background-color: rgba(255,255,255,0.7)!important;
+}
+.mat-menu-content > form > input[type="text"]{
+  height: 40px;
+  width: 350px;
+  background-color:rgba(255,255,255,0.7)!important;
+  padding-left: 10px;
+  border: none;
 }
 
 .menu-bar, .pac-container {
@@ -54,12 +62,6 @@ app-canimap-alert {
   top: 10px;
   text-align: center;
   z-index: 1000;
-}
-
-app-canimap-location {
-  position: absolute;
-  top: 10px;
-  right: 10px;
 }
 
 .ol-popup {
