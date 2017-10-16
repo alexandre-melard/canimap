@@ -89,6 +89,7 @@ export class Drawings {
             width: 3
           },
           textOptions: {
+            text: ' ',
             offsetY: -20,
             font: '18px Calibri,sans-serif',
             fillOptions: {
@@ -146,6 +147,7 @@ export class Drawings {
             width: 3
           },
           textOptions: {
+            text: ' ',
             offsetY: -20,
             font: '18px Calibri,sans-serif',
             fillOptions: {

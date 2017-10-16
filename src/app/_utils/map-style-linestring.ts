@@ -8,7 +8,9 @@ export function lineStringStyle(feature: ol.Feature): ol.style.Style[] {
 
   const configuredStyle = <CaniDrawLineStringOptions>feature.get('style');
 
-  configuredStyle.textOptions.text = formatLength(geometry);
+  if (configuredStyle.textOptions.text !== ' ') {
+    configuredStyle.textOptions.text = formatLength(geometry);
+  }
   configuredStyle.fill = new ol.style.Fill(configuredStyle.fillOptions);
   configuredStyle.stroke = new ol.style.Stroke(configuredStyle.strokeOptions);
   configuredStyle.textOptions.fill = new ol.style.Fill(configuredStyle.textOptions.fillOptions);

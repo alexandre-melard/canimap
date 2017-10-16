@@ -5,7 +5,7 @@
 </button>
 <md-menu #appMenu="mdMenu" [overlapTrigger]="true">
   <form>
-    <input (click)="$event.stopPropagation()" mdInput mdPlaceholder="&nbsp;Rechercher une adresse" mdTooltip="Entrez une adresse ou nom de ville"
+    <input (click)="$event.stopPropagation()" placeholder="Rechercher une adresse ou une coordonnée GPS" mdTooltip="Entrez une adresse ou nom de ville"
       autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search [formControl]="searchControl">
   </form>
 </md-menu>
