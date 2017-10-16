@@ -25,6 +25,10 @@ export class UserService {
     return this.http.put('/api/users/' + user.id, user, this.jwt()).map((response: Response) => response.json());
   }
 
+  modifyPassword(id: any, password: string) {
+    return this.http.put('/api/user/password/' + id, password, this.jwt()).map((response: Response) => response.json());
+  }
+
   delete(id: number) {
     return this.http.delete('/api/users/' + id, this.jwt()).map((response: Response) => response.json());
   }

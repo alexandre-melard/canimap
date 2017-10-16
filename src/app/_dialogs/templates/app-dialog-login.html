@@ -14,6 +14,13 @@
     </div>
     <button *ngIf="showForm" md-button color="primary" type="submit" [disabled]="loading">Se connecter</button>
 </form>
+<div md-dialog-content *ngIf="!showForm" class="intro">
+    <h2 md-dialog-title>Canimap</h2>
+    <p><span class="brand">Canimap</span> est votre application internet pour la création et l'édition de parcours de Recherche Utilitaire.</p>
+    <p>Avec <span class="brand">Canimap</span>, vous pourrez afficher des fonds de carte IGN, Google, Bing et les supperposer.</p>
+    <p>Vous pourrez partir de zéro pour créer un parcours, poser des objets, vous saurez la longueur exacte de ce parcours.</p>
+    <p>vous pouvez également importer des traces GPX ou KLM et ainsi vérifier le parcours éffectif de vos chiens. Ou bien reconnaitre les pistes et importer ces reconnaissances directement dans le logiciel <span class="brand">Canimap</span>.</p>
+</div>
 <div md-dialog-actions>
     <button *ngIf="!showForm" md-button (click)="register()">S'inscrire</button>
     <button *ngIf="showReset" md-button (click)="register()">Réinitialiser le compte</button>

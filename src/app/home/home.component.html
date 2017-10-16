@@ -3,38 +3,77 @@
         <div class="col-3"></div>
         <div class="canimap-main col-6">
             <h1>bonjour {{currentUser.firstName}}!</h1>
-            <p>Vous êtes bien connectés à l'application Canimap, vous pouvez aller sur <a [routerLink]="['/map']">la carte</a></p>
-            <button md-raised-button color="primary" routerLink="/register" >Modifier</button>
-            <button md-raised-button (click)="logout()">Deconnexion</button>
-            <button md-raised-button color="accent" (click)="deleteUser()">Effacer</button>
+            <p>Vous êtes bien connectés à l'application Canimap, vous pouvez aller sur
+                <a [routerLink]="['/map']">la carte</a>
+            </p>
         </div>
-        <hr/>
     </div>
     <div class="row">
         <div class="col-3"></div>
-        <div class="canimap-main col-6">
-            <h2>Journal des modifications</h2>
-            <hr/>
-            <div class="changelog" data-include="../assets/changelogs/4.8.3.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.8.2.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.8.1.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.8.0.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.7.1.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.6.0.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.5.0.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.4.0.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.3.3.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.3.2.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.3.1.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.3.0.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.2.3.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.2.2.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.2.1.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.2.0.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.1.1.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.1.0.html" width="100%" height="100%"></div>
-            <div class="changelog" data-include="../assets/changelogs/4.0.0.html" width="100%" height="100%"></div>
-            <hr/>
+        <div class="col-6">
+            <md-tab-group class="home-tab-group" (selectedIndexChange)="change($event)">
+                <md-tab label="Gestion de l'utilisateur">
+                    <div class="home-tab-content">
+                        <p>
+                            <button md-raised-button color="primary" routerLink="/register">Modifier</button>
+                            <button md-raised-button (click)="logout()">Deconnexion</button>
+                            <button md-raised-button color="accent" (click)="deleteUser()">Effacer</button>
+                        </p>
+                    </div>
+                </md-tab>
+                <md-tab label="Liste des modifications">
+                    <div class="home-tab-content">
+                        <h2>Journal des modifications</h2>
+                        <hr/>
+                        <div class="changelog" data-include="../assets/changelogs/4.8.4.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.8.3.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.8.2.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.8.1.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.8.0.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.7.1.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.6.0.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.5.0.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.4.0.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.3.3.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.3.2.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.3.1.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.3.0.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.2.3.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.2.2.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.2.1.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.2.0.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.1.1.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.1.0.html" width="100%" height="100%"></div>
+                        <div class="changelog" data-include="../assets/changelogs/4.0.0.html" width="100%" height="100%"></div>
+                        <hr/>
+                    </div>
+                </md-tab>
+                <md-tab label="Changement de mot de passe">
+                    <div class="home-tab-content">
+                        <form name="form" class="register" (ngSubmit)="f.form.valid && save()" #f="ngForm" novalidate>
+                            <div class="no-break">
+                                <md-form-field>
+                                    <input mdInput type="password" name="password" [(ngModel)]="model.password" #password="ngModel" placeholder="Mot de passe"
+                                        required>
+                                </md-form-field>
+                                <md-form-field>
+                                    <input mdInput type="password" name="passwordConfirm" [(ngModel)]="model.passwordConfirm" #password="ngModel" placeholder="Confirmer le mot de passe"
+                                        required>
+                                </md-form-field>
+                            </div>
+                            <div class="form-group">
+                                <button md-button color="primary" [disabled]="loading">Enregistrer</button>
+                            </div>
+                            <div [hidden]="!error" class="alert alert-danger">
+                                {{error}}
+                            </div>
+                            <div [hidden]="!success" class="alert alert-success">
+                                {{success}}
+                            </div>
+                        </form>
+                    </div>
+                </md-tab>   
+            </md-tab-group>
         </div>
     </div>
 </div>

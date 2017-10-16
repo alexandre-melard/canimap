@@ -12,6 +12,27 @@ button.mat-icon-button {
   margin-top: 100px;
 }
 
+.intro {
+  background-image: url("../assets/carte.jpg");
+  background-size: contain;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat; 
+}
+
+.intro p, .intro h2 {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.brand {
+  color: rgb(224, 152, 6);
+  font: impact;
+}
+
+.home-tab-content {
+  margin-top: 50px;
+}
+
 .mat-menu-panel {
   border: 2px solid gray!important;
   border-radius: 10px!important;
