@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { AlertService, UserService } from '../_services/index';
 import { User } from '../_models/user';
+import { checkPassword } from '../_utils/password-checker';
 import * as $ from 'jquery';
 
 @Component({
@@ -36,10 +37,17 @@ export class RegisterComponent {
     }
   }
   save() {
-    if (this.udpate) {
-      this.edit();
+    this.success = '';
+    this.error = '';
+    const res = checkPassword(this.model.password, this.model.passwordConfirm);
+    if (res.error) {
+      this.error = res.error;
     } else {
-      this.register();
+      if (this.udpate) {
+        this.edit();
+      } else {
+        this.register();
+      }
     }
   }
 

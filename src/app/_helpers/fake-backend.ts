@@ -128,6 +128,35 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
         return;
       }
 
+      // update user by id
+      if (connection.request.url.match(/\/api\/user\/password\/\d+$/) && connection.request.method === RequestMethod.Put) {
+        // check for fake auth token in header and return user if valid, this security
+        // is implemented server side in a real application
+        if (connection.request.headers.get('Authorization') === 'Bearer fake-jwt-token') {
+          // find user by id in users array
+          const urlParts = connection.request.url.split('/');
+          const id = parseInt(urlParts[urlParts.length - 1], 10);
+          const password = connection.request.getBody();
+
+          const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+          currentUser.password = password;
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+          const users = JSON.parse(localStorage.getItem('users'));
+          const index = users.findIndex(user => user.id === id);
+          users[index] = currentUser;
+          localStorage.setItem('users', JSON.stringify(users));
+
+          // respond 200 OK with user
+          connection.mockRespond(new Response(new ResponseOptions({ status: 200, body: currentUser })));
+        } else {
+          // return 401 not authorised if token is null or invalid
+          connection.mockRespond(new Response(new ResponseOptions({ status: 401 })));
+        }
+
+        return;
+      }
+
       // create user
       if (connection.request.url.endsWith('/api/users') && connection.request.method === RequestMethod.Post) {
         // get new user object from post body

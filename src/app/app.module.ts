@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   MdDialogModule, MdButtonModule, MdButtonToggleModule, MdIconModule, MdTooltipModule,
-  MdInputModule, MdSliderModule, MdExpansionModule, MdTableModule, MdMenuModule
+  MdInputModule, MdSliderModule, MdExpansionModule, MdTableModule, MdMenuModule, MdTabsModule
 } from '@angular/material';
 import { AgmCoreModule } from '@agm/core';
 import { routing } from './app.routing';
@@ -82,6 +82,7 @@ import { FileService } from './_services/file.service';
     MdTooltipModule,
     MdInputModule,
     MdSliderModule,
+    MdTabsModule,
     FormsModule,
     HttpModule,
     ReactiveFormsModule,
