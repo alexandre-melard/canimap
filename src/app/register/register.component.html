@@ -27,15 +27,13 @@
                 </md-form-field>
                 <div class="no-break" [hidden]="udpate">
                     <md-form-field>
-                        <input mdInput type="text" name="username" [(ngModel)]="model.username" #username="ngModel" placeholder="Login" required>
+                        <input mdInput type="text" name="username" [(ngModel)]="model.username" #username="ngModel" placeholder="Login">
                     </md-form-field>
                     <md-form-field>
-                        <input mdInput type="password" name="password" [(ngModel)]="model.password" #password="ngModel" placeholder="Mot de passe"
-                            required>
+                        <input mdInput type="password" name="password" [(ngModel)]="model.password" #password="ngModel" placeholder="Mot de passe">
                     </md-form-field>
                     <md-form-field>
-                        <input mdInput type="password" name="passwordConfirm" [(ngModel)]="model.passwordConfirm" #password="ngModel" placeholder="Confirmer le mot de passe"
-                            required>
+                        <input mdInput type="password" name="passwordConfirm" [(ngModel)]="model.passwordConfirm" #password="ngModel" placeholder="Confirmer le mot de passe">
                     </md-form-field>
                 </div>
                 <div [hidden]="!error" class="alert alert-danger">
@@ -45,7 +43,7 @@
                     {{success}}
                 </div>
                 <div class="form-group">
-                    <button md-button color="primary" [disabled]="loading">Enregistrer</button>
+                    <button md-button color="primary" type="submit" [disabled]="loading">Enregistrer</button>
                 </div>
             </form>
         </div>

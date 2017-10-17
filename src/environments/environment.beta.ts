@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  google: 'UA-66590854-1'
+  google: 'UA-106820417-1'
 };

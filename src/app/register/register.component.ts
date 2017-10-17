@@ -39,12 +39,12 @@ export class RegisterComponent {
   save() {
     this.success = '';
     this.error = '';
-    const res = checkPassword(this.model.password, this.model.passwordConfirm);
-    if (res.error) {
-      this.error = res.error;
+    if (this.udpate) {
+      this.edit();
     } else {
-      if (this.udpate) {
-        this.edit();
+      const res = checkPassword(this.model.password, this.model.passwordConfirm);
+      if (res.error) {
+        this.error = res.error;
       } else {
         this.register();
       }
@@ -54,8 +54,7 @@ export class RegisterComponent {
   edit() {
     this.loading = true;
     $('.loading').css('visibility', 'visible');
-    this.userService.update(this.model)
-      .subscribe(
+    this.userService.update(this.model).subscribe(
       data => {
         this.success = 'Enregistrement réussit';
         this.loading = false;
@@ -71,8 +70,7 @@ export class RegisterComponent {
   register() {
     this.loading = true;
     $('.loading').css('visibility', 'visible');
-    this.userService.create(this.model)
-      .subscribe(
+    this.userService.create(this.model).subscribe(
       data => {
         this.success = 'Votre utilisateur a été créé avec succès';
         this.router.navigate(['/']);

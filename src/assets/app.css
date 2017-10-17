@@ -5,19 +5,25 @@ html, body, app-canimap, app-canimap-map, .map {
   height: 100%;
 }
 
+body {
+  background-image: url("../assets/carte.jpg");
+  background-size: auto;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
 button.mat-icon-button {
   font-weight: bold!important;
+	outline: none;
 }
+
 .canimap-main {
   margin-top: 100px;
 }
 
-.intro {
-  background-image: url("../assets/carte.jpg");
-  background-size: contain;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat; 
+.col-6 {
+  background-color: rgba(255,255,255,0.8);
 }
 
 .intro p, .intro h2 {
@@ -47,19 +53,13 @@ button.mat-icon-button {
   padding: 0!important;
   background-color: rgba(255,255,255,0.7)!important;
 }
-.mat-menu-content > form > input[type="text"]{
-  height: 40px;
-  width: 400px;
-  background-color:rgba(255,255,255,0.7)!important;
-  padding-left: 10px;
-  border: none;
-}
+
 
 .menu-bar, .pac-container {
   -moz-border-radius:10px;  /* for Firefox */
   -webkit-border-radius:10px; /* for Webkit-Browsers */
   border-radius:10px; /* regular */
-  background:rgba(255,255,255,0.8); /* Transparent Background 50% */
+  background:rgba(255,255,255,0.9); /* Transparent Background 50% */
   border: 2px solid gray;
   float: left;
 }
@@ -77,7 +77,7 @@ button.mat-icon-button {
 .ol-zoomslider {
   top: 70px;
   left: unset;
-  right: 10px;  
+  right: 10px;
 }
 
 app-canimap-alert {
@@ -154,12 +154,73 @@ app-canimap-alert {
   cursor: pointer;
 }
 
+/* LOCATION */
+app-canimap-location {
+  position: absolute;
+  right: 50px;
+  top: 10px;
+}
+
+app-canimap-location > form > input[type=search] {
+	outline: none;
+}
+
+app-canimap-location > form > input[type=search] {
+	-webkit-appearance: textfield;
+	-webkit-box-sizing: content-box;
+	font-family: inherit;
+	font-size: 100%;
+}
+
+app-canimap-location > form > input::-webkit-search-decoration,
+app-canimap-location > form > input::-webkit-search-cancel-button {
+	display: none;
+}
+
+
+app-canimap-location > form > input[type=search] {
+  background: #ededed url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+  background-color: rgba(255,255,255,0.8);
+	border: solid 2px gray;
+	padding: 9px 10px 9px 32px;
+	width: 80px;
+
+	-webkit-border-radius: 10em;
+	-moz-border-radius: 10em;
+	border-radius: 10em;
+
+	-webkit-transition: all .5s;
+	-moz-transition: all .5s;
+	transition: all .5s;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+app-canimap-location > form > input[type=search]:focus {
+	width: 350px;
+  background-color: rgba(255,255,255,0.9);
+	border-color: #66CC75;
+
+	-webkit-box-shadow: 0 0 5px rgba(109,207,246,.5);
+	-moz-box-shadow: 0 0 5px rgba(109,207,246,.5);
+	box-shadow: 0 0 5px rgba(109,207,246,.5);
+}
+
+app-canimap-location > form > input:-moz-placeholder {
+	color: #999;
+}
+
+app-canimap-location > form > input::-webkit-input-placeholder {
+	color: #999;
+}
+
+/* LOCATION */
 
 @media (max-width : 1024px) {
   .canimap-menu {
-    display: none;
+    display: block;
   }
   .canimap-menu-mobile {
-    display: block;
+    display: none;
   }
 }
