@@ -68,7 +68,9 @@ export class LocationComponent implements OnInit {
             latitude = place.geometry.location.lat();
             longitude = place.geometry.location.lng();
           }
-          me.menuEventService.callEvent('mapMove', { lat: latitude, lng: longitude });
+          me.menuEventService.callEvent('mapMove', { lat: latitude, lng: longitude, success: () => {
+            me.menuEventService.callEvent('addMarker', { lat: latitude, lng: longitude });
+          } });
         });
       });
     });

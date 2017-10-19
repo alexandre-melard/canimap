@@ -9,6 +9,7 @@ import * as ol from 'openlayers';
 import { MapBox } from '../_models/mapBox';
 import { LayerBox } from '../_models/layerBox';
 import { User } from '../_models/user';
+import * as $ from 'jquery';
 
 @Injectable()
 export class MapService implements OnDestroy {
@@ -16,6 +17,8 @@ export class MapService implements OnDestroy {
   private subject = new Subject<any>();
   private keepAfterNavigationChange = false;
   private subscriptions = new Array<Subscription>();
+  private overlay: ol.Overlay;
+  private gpsHandler: ol.EventsKey;
 
   get layerBoxes(): LayerBox[] {
     return [this.ignPlan, this.ignSatellite, this.googleSatellite, this.bingSatellite, this.bingHybride];
@@ -64,6 +67,66 @@ export class MapService implements OnDestroy {
       (coords) => {
         console.log('map move to :', JSON.stringify(coords));
         this.map.getView().setCenter(ol.proj.fromLonLat([coords.lng, coords.lat]));
+        coords.success();
+      }
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('addMarker').subscribe(
+      (coords) => {
+        console.log('map add marker to :', JSON.stringify(coords));
+        const iconFeature = new ol.Feature({
+          geometry: new ol.geom.Point(ol.proj.fromLonLat([coords.lng, coords.lat])),
+        });
+        iconFeature.setStyle(new ol.style.Style({
+          image: new ol.style.Circle({
+            radius: 10,
+            stroke: new ol.style.Stroke({
+              color: 'purple',
+              width: 2
+            }),
+            fill: new ol.style.Fill({
+              color: 'rgba(255,0,0,0.5)'
+            })
+          })
+        }));
+        this.map.addLayer(new ol.layer.Vector({ source: new ol.source.Vector({ features: [iconFeature] }) }));
+      }
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('gpsMarker').subscribe(
+      () => {
+        console.log('drawing gpsMarker start');
+        this.menuEventService.callEvent('disableInteractions');
+        const options = {
+          element: $('#popup').get(0),
+          autoPan: true,
+          offset: [0, -25],
+          autoPanAnimation: {
+            duration: 250,
+            source: null
+          }
+        };
+        const overlay = new ol.Overlay(options);
+        this.map.addOverlay(overlay);
+        $('#map').css('cursor', 'crosshair');
+        const me = this;
+        this.gpsHandler = <ol.EventsKey>me.map.on('singleclick', function (evt) {
+          const coordinate = evt.coordinate;
+          let hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
+            coordinate, 'EPSG:3857', 'EPSG:4326'));
+          hdms = hdms.split(' ').join('');
+          hdms = hdms.replace('N', 'N ');
+          hdms = hdms.replace('S', 'S ');
+          $('#popup-content').html('<code>' + hdms + '</code>');
+          overlay.setPosition(coordinate);
+        });
+        this.overlay = overlay;
+      }
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('gpsMarkerDismiss').subscribe(
+      () => {
+        console.log('drawing gpsMarkerDismiss start');
+        $('#map').css('cursor', '');
+        ol.Observable.unByKey(this.gpsHandler);
+        this.overlay.setPosition(undefined);
       }
     ));
   }

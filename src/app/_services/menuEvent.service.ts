@@ -5,8 +5,8 @@ import { Subject } from 'rxjs/Subject';
 
 class Call {
   key: string;
-  value: { data: any, success: Function, error: Function };
-  constructor(key: string, value: any) {
+  value?: { data: any, success: Function, error: Function };
+  constructor(key: string, value?: any) {
     this.key = key;
     this.value = value;
   }
@@ -40,7 +40,7 @@ export class MenuEventService {
     return this.getEvent(key).asObservable();
   }
 
-  prepareEvent(key: string, value: any, success?: Function, error?: Function) {
+  prepareEvent(key: string, value?: any, success?: Function, error?: Function) {
     this.current.key = key;
     this.current.value = { data: value, success: success, error: error };
   }
@@ -49,7 +49,7 @@ export class MenuEventService {
     this.callEvent(this.current.key, this.current.value);
   }
 
-  callEvent(key: string, value: any) {
+  callEvent(key: string, value?: any) {
     this.state = key;
     if (!this.isEvent(key)) {
       this.waitingCalls.push(new Call(key, value));

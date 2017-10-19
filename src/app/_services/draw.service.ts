@@ -32,8 +32,6 @@ export class DrawService implements OnDestroy {
   delete: interaction.Select;
   snap: interaction.Snap;
   tooltip = new Tooltip();
-  overlay: ol.Overlay;
-  gpsHandler: ol.EventsKey;
 
   private subscriptions = new Array<Subscription>();
   public color = '#F00';
@@ -172,54 +170,22 @@ export class DrawService implements OnDestroy {
         }
       ));
     });
-    this.subscriptions.push(this.menuEventService.getObservable('gpsMarker').subscribe(
+    this.subscriptions.push(this.menuEventService.getObservable('disableInteractions').subscribe(
       () => {
-        console.log('drawing gpsMarker start');
-        me.disableInteractions();
-        const options = {
-          element: $('#popup').get(0),
-          autoPan: true,
-          offset: [0, -25],
-          autoPanAnimation: {
-            duration: 250,
-            source: null
-          }
-        };
-        const overlay = new ol.Overlay(options);
-        me.map.addOverlay(overlay);
-        $('#map').css('cursor', 'crosshair');
-        me.gpsHandler = <ol.EventsKey>me.map.on('singleclick', function (evt) {
-          const coordinate = evt.coordinate;
-          let hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
-            coordinate, 'EPSG:3857', 'EPSG:4326'));
-          hdms = hdms.split(' ').join('');
-          hdms = hdms.replace('N', 'N ');
-          hdms = hdms.replace('S', 'S ');
-          $('#popup-content').html('<code>' + hdms + '</code>');
-          overlay.setPosition(coordinate);
-        });
-        me.overlay = overlay;
-      }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('gpsMarkerDismiss').subscribe(
-      () => {
-        console.log('drawing gpsMarkerDismiss start');
-        $('#map').css('cursor', '');
-        ol.Observable.unByKey(me.gpsHandler);
-        me.overlay.setPosition(undefined);
+        this.disableInteractions();
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('edit').subscribe(
       () => {
-        me.disableInteractions();
-        me.select.setActive(true);
-        me.modify.setActive(true);
+        this.disableInteractions();
+        this.select.setActive(true);
+        this.modify.setActive(true);
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('delete').subscribe(
       () => {
-        me.disableInteractions();
-        me.delete.setActive(true);
+        this.disableInteractions();
+        this.delete.setActive(true);
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('addLayersFromJson').subscribe(

@@ -5,5 +5,5 @@
 
 export const environment = {
   production: false,
-  facebook_api: '133634944031998'
+  google: 'UA-106820417-1'
 };
