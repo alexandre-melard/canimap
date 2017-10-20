@@ -6,6 +6,9 @@
             <h2 *ngIf="udpate">Mettre à jour</h2>
             <form name="form" class="register" (ngSubmit)="f.form.valid && save()" #f="ngForm" novalidate>
                 <md-form-field>
+                    <input mdInput type="email" name="email" [(ngModel)]="model.email" #lastName="ngModel" placeholder="Email" required>
+                </md-form-field>
+                <md-form-field>
                     <input mdInput type="text" name="lastName" [(ngModel)]="model.lastName" #lastName="ngModel" placeholder="Nom" required>
                 </md-form-field>
                 <md-form-field>

@@ -3,6 +3,7 @@ import { Helper } from './helper';
 
 export class User {
     id: number;
+    email: string;
     username: string;
     password: string;
     firstName: string;

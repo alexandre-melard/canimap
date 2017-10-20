@@ -33,6 +33,7 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
             status: 200,
             body: {
               id: user.id,
+              email: user.email,
               username: user.username,
               firstName: user.firstName,
               lastName: user.lastName,
