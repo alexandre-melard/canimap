@@ -1,50 +1,77 @@
 ﻿import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
+import { AuthHttp } from 'angular2-jwt';
+
+import 'rxjs/add/operator/toPromise';
 
 import { User } from '../_models/index';
 
 @Injectable()
 export class UserService {
   private _user;
+  private promise;
 
-  constructor(private http: Http) { }
-
-  getAll() {
-    return this.http.get('/api/users', this.jwt()).map((response: Response) => response.json());
-  }
-
-  getById(id: number) {
-    return this.http.get('/api/users/' + id, this.jwt()).map((response: Response) => response.json());
-  }
+  constructor(private http: Http, private authHttp: AuthHttp) { }
 
   create(user: User) {
-    return this.http.post('/api/users', user, this.jwt()).map((response: Response) => response.json());
+    return this.authHttp.post('https://beta.melard.fr' + '/api/users', user)
+      .toPromise()
+      .then(response => response.json() as User)
+      .catch(this.handleError);
   }
 
   update(user: User) {
-    return this.http.put('/api/users/' + user.id, user, this.jwt()).map((response: Response) => response.json());
+    return this.authHttp.put('https://beta.melard.fr' + '/api/users/' + user.email, user)
+      .toPromise()
+      .then(() => {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        return user;
+      })
+      .catch(this.handleError);
   }
 
-  modifyPassword(id: any, password: string) {
-    return this.http.put('/api/user/password/' + id, password, this.jwt()).map((response: Response) => response.json());
+  modifyPassword(email: any, password: string) {
+    return this.http.put('/api/user/password/' + email, password)
+      .toPromise()
+      .then(response => response.json() as User)
+      .catch(this.handleError);
   }
 
-  delete(id: number) {
-    return this.http.delete('/api/users/' + id, this.jwt()).map((response: Response) => response.json());
+  delete(email: string) {
+    return this.authHttp.delete('/api/users/' + email)
+      .toPromise()
+      .then(response => response.json() as User)
+      .catch(this.handleError);
   }
 
-  currentUser(): User {
-    return JSON.parse(localStorage.getItem('currentUser'));
+  get(email: string) {
+    return this.authHttp.get('https://beta.melard.fr' + '/api/users/' + email)
+      .toPromise()
+      .then(response => response.json() as User)
+      .catch(this.handleError);
   }
 
-  // private helper methods
-
-  private jwt() {
-    // create authorization header with jwt token
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (currentUser && currentUser.token) {
-      const headers = new Headers({ 'Authorization': 'Bearer ' + currentUser.token });
-      return new RequestOptions({ headers: headers });
+  currentUser(): Promise<User> {
+    if (this.promise === undefined) {
+      this.promise = new Promise<User>((resolve, reject) => {
+        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (currentUser === undefined || currentUser === null) {
+          currentUser = this.get(localStorage.getItem('email'))
+            .then(result => {
+              localStorage.setItem('currentUser', JSON.stringify(result));
+              resolve(result);
+            })
+            .catch((error) => reject('error while retrieving user with error: ' + JSON.stringify(error)));
+        } else {
+          resolve(currentUser);
+        }
+      });
     }
+    return this.promise;
+  }
+
+  private handleError(error: any): Promise<any> {
+    console.error('An error occurred', error);
+    return Promise.reject(error.message || error);
   }
 }

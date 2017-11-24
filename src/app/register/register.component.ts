@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 
 import { AlertService, UserService } from '../_services/index';
 import { User } from '../_models/user';
-import { checkPassword } from '../_utils/password-checker';
 import * as $ from 'jquery';
 
 @Component({
@@ -18,23 +17,26 @@ export class RegisterComponent {
   error: string;
   success: string;
   udpate: boolean;
-  private _user: User;
-
-  get user(): User {
-    return this.userService.currentUser();
-  }
 
   constructor(
     private router: Router,
     private userService: UserService,
     private alertService: AlertService) {
-    const user = this.userService.currentUser();
-    if (user !== undefined && user !== null) {
-      this.model = user;
-      this.udpate = true;
-    } else {
-      this.model = new User();
-    }
+    userService.currentUser()
+      .then(user => {
+        if (user === null) {
+          this.model = new User();
+          this.model.email = localStorage.getItem('email');
+          console.log('creating new user with email:' + this.model.email);
+        } else {
+          this.model = user;
+          this.udpate = true;
+          console.log('editing user with email:' + this.model.email);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
   save() {
     this.success = '';
@@ -42,25 +44,20 @@ export class RegisterComponent {
     if (this.udpate) {
       this.edit();
     } else {
-      const res = checkPassword(this.model.password, this.model.passwordConfirm);
-      if (res.error) {
-        this.error = res.error;
-      } else {
-        this.register();
-      }
+      this.register();
     }
   }
 
   edit() {
     this.loading = true;
     $('.loading').css('visibility', 'visible');
-    this.userService.update(this.model).subscribe(
-      data => {
+    this.userService.update(this.model)
+      .then((user: User) => {
         this.success = 'Enregistrement réussit';
         this.loading = false;
         $('.loading').css('visibility', 'hidden');
-      },
-      error => {
+      })
+      .catch(error => {
         this.error = error;
         this.loading = false;
         $('.loading').css('visibility', 'hidden');
@@ -70,13 +67,12 @@ export class RegisterComponent {
   register() {
     this.loading = true;
     $('.loading').css('visibility', 'visible');
-    this.userService.create(this.model).subscribe(
-      data => {
+    this.userService.create(this.model)
+      .then((user: User) => {
         this.success = 'Votre utilisateur a été créé avec succès';
         this.router.navigate(['/']);
         $('.loading').css('visibility', 'hidden');
-      },
-      error => {
+      }).catch(error => {
         this.error = error;
         this.loading = false;
         $('.loading').css('visibility', 'hidden');

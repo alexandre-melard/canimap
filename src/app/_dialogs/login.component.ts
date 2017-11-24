@@ -1,8 +1,7 @@
 ﻿import { Inject, Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AlertService, AuthenticationService } from '../_services/index';
+import { AuthService } from '../_services/auth.service';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
-import { UserService } from '../_services/user.service';
 
 import * as $ from 'jquery';
 
@@ -21,9 +20,7 @@ export class DialogLoginComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: AuthenticationService,
-    private userService: UserService,
-    private alertService: AlertService,
+    private authenticationService: AuthService,
     public dialogRef: MdDialogRef<DialogLoginComponent>) { }
 
   ngOnInit() {
@@ -47,19 +44,6 @@ export class DialogLoginComponent implements OnInit {
     this.loading = true;
     const me = this;
     $('.loading').css('visibility', 'visible');
-    this.authenticationService.login(this.model.username, this.model.password)
-      .subscribe(
-      data => {
-        me.loading = false;
-        me.router.navigate([this.returnUrl]);
-        me.dialogRef.close();
-        $('.loading').css('visibility', 'hidden');
-      },
-      error => {
-        this.showReset = true;
-        me.error = error;
-        me.loading = false;
-        $('.loading').css('visibility', 'hidden');
-      });
+    this.authenticationService.login();
   }
 }

@@ -45,6 +45,7 @@ export class DrawService implements OnDestroy {
       feature.set('style', draw.style(this.color));
       this.tooltip.sketch = null;
       this.tooltip.resetTooltips(this.map);
+      this.menuEventService.callEvent('move', null);
     });
     $(document).keydown((e) => {
       if (e.which === 27) {

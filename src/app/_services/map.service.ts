@@ -13,6 +13,7 @@ import * as $ from 'jquery';
 
 @Injectable()
 export class MapService implements OnDestroy {
+  private user: User;
   private map: ol.Map;
   private subject = new Subject<any>();
   private keepAfterNavigationChange = false;
@@ -50,19 +51,20 @@ export class MapService implements OnDestroy {
     this.getIgnLayer('ignSatellite', 'ORTHOIMAGERY.ORTHOPHOTOS', 0, false)
   );
 
-  _user: User;
-
-  get user(): User {
-    if (this._user === undefined || this._user === null) {
-      this._user = this.userService.currentUser();
-    }
-    return this._user;
-  }
-
   constructor(
     private menuEventService: MenuEventService,
     private userService: UserService
   ) {
+    userService.currentUser()
+      .then(user => {
+        this.user = user;
+        this.setMapFromUserPreferences();
+      })
+      .catch(() => {
+        this.user = new User();
+        this.setMapFromUserPreferences();
+      });
+
     this.subscriptions.push(this.menuEventService.getObservable('mapMove').subscribe(
       (coords) => {
         console.log('map move to :', JSON.stringify(coords));
@@ -165,8 +167,6 @@ export class MapService implements OnDestroy {
         center: ol.proj.transform([5.347022, 45.419364], 'EPSG:4326', 'EPSG:3857')
       })
     });
-
-    this.setMapFromUserPreferences();
 
     this.layerBoxes.map(layerBox => map.addLayer(layerBox.layer));
 

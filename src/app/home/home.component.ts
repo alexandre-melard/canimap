@@ -3,8 +3,7 @@ import { Router } from '@angular/router';
 
 import { User } from '../_models/index';
 import { UserService } from '../_services/index';
-import { AuthenticationService } from '../_services/authentication.service';
-import { checkPassword } from '../_utils/password-checker';
+import { AuthService } from '../_services/auth.service';
 
 import * as $ from 'jquery';
 
@@ -14,7 +13,7 @@ import * as $ from 'jquery';
 })
 
 export class HomeComponent implements OnInit {
-  currentUser: User;
+  currentUser = new User();
   model = { password: '1', passwordConfirm: '2' };
   success;
   error;
@@ -22,8 +21,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private userService: UserService,
     private router: Router,
-    private authenticationService: AuthenticationService) {
-    this.currentUser = userService.currentUser();
+    private authenticationService: AuthService) {
+    userService.currentUser().then(user => this.currentUser = user);
   }
   loadChanges() {
     const changelog = $('.changelog');
@@ -48,14 +47,8 @@ export class HomeComponent implements OnInit {
   save() {
     this.success = '';
     this.error = '';
-    const res = checkPassword(this.model.password, this.model.passwordConfirm);
-    if (res.success) {
-      this.userService.modifyPassword(this.userService.currentUser().id, this.model.password);
-      this.success = res.success;
-    }
-    if (res.error) {
-      this.error = res.error;
-    }
+    this.userService.modifyPassword(this.currentUser.email, this.model.password);
+    this.success = 'Modification du mot de passe enregistrée';
   }
 
   ngOnInit() {
@@ -67,7 +60,7 @@ export class HomeComponent implements OnInit {
   }
 
   deleteUser() {
-    this.userService.delete(this.currentUser.id).subscribe(() => {
+    this.userService.delete(this.currentUser.email).then((user: User) => {
       this.logout();
     });
   }

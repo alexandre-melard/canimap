@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 
 import { User } from '../_models/index';
 import { UserService } from '../_services/index';
-import { AuthenticationService } from '../_services/authentication.service';
 
 import * as $ from 'jquery';
 
@@ -25,10 +24,9 @@ export class HelpComponent implements OnInit {
   };
 
   constructor(private userService: UserService,
-    private router: Router,
-    private authenticationService: AuthenticationService) {
-    this.currentUser = userService.currentUser();
-  }
+    private router: Router) {
+      userService.currentUser().then(user => this.currentUser = user as User);
+    }
 
   ngOnInit() {
     ['fileSave', 'filesOpen', 'loadGPS', 'polyline', 'marker', 'gps'].forEach((what) => {

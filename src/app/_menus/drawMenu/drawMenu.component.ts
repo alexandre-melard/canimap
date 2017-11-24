@@ -1,7 +1,6 @@
 ﻿import { Inject, Component, OnInit } from '@angular/core';
 import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
-import { AlertService, AuthenticationService } from '../../_services/index';
 import { MapService } from '../../_services/map.service';
 import { DrawService } from '../../_services/draw.service';
 import { MenuEventService } from '../../_services/menuEvent.service';

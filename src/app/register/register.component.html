@@ -28,18 +28,6 @@
                 <md-form-field>
                     <input mdInput type="text" name="club" [(ngModel)]="model.club" #club="ngModel" placeholder="Club" required>
                 </md-form-field>
-                <div class="no-break" [hidden]="udpate">
-                    <md-form-field>
-                        <input mdInput type="text" name="username" [(ngModel)]="model.username" #username="ngModel" placeholder="Login">
-                    </md-form-field>
-                    <md-form-field>
-                        <input mdInput type="password" name="password" [(ngModel)]="model.password" #password="ngModel" placeholder="Mot de passe">
-                    </md-form-field>
-                    <md-form-field>
-                        <input mdInput type="password" name="passwordConfirm" [(ngModel)]="model.passwordConfirm" #password="ngModel" placeholder="Confirmer le mot de passe"
-                            required>
-                    </md-form-field>
-                </div>
                 <div [hidden]="!error" class="alert alert-danger">
                     {{error}}
                 </div>

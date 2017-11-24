@@ -11,7 +11,6 @@ import { AgmCoreModule } from '@agm/core';
 import { routing } from './app.routing';
 
 // used to create fake backend
-import { fakeBackendProvider } from './_helpers/index';
 import { MockBackend, MockConnection } from '@angular/http/testing';
 import { BaseRequestOptions } from '@angular/http';
 
@@ -30,6 +29,7 @@ import { TrackMenuComponent } from './_menus/tracksMenu';
 import { MapMenuComponent } from './_menus/mapMenu';
 import { DrawMenuComponent } from './_menus/drawMenu';
 import { HelpComponent } from './help/index';
+import { CallbackComponent } from './_guards/callback.component';
 
 import { DialogChooseLayersComponent } from './_dialogs/chooseLayer.component';
 import { DialogChooseColorComponent } from './_dialogs/chooseColor.component';
@@ -39,13 +39,24 @@ import { DialogFileSaveComponent } from './_dialogs/fileSave.component';
 import { DialogFilesOpenComponent } from './_dialogs/filesOpen.component';
 import { DialogLoginComponent } from './_dialogs/login.component';
 
-import { AuthGuard } from './_guards/index';
-import { AlertService, AuthenticationService, UserService } from './_services/index';
+import { AuthGuard } from './_services/auth-guard.service';
+import { AuthService } from './_services/auth.service';
+import { AlertService, UserService } from './_services/index';
 import { MenuEventService } from './_services/menuEvent.service';
 import { MapService } from './_services/map.service';
 import { DrawService } from './_services/draw.service';
 import { HelperEventService } from './_services/helperEvent.service';
 import { FileService } from './_services/file.service';
+
+import { Http, RequestOptions } from '@angular/http';
+import { AuthHttp, AuthConfig } from 'angular2-jwt';
+
+export function authHttpServiceFactory(http: Http, options: RequestOptions) {
+  return new AuthHttp(new AuthConfig({
+    tokenName: 'id_token',
+    tokenGetter: (() => localStorage.getItem('id_token')),
+  }), http, options);
+}
 
 @NgModule({
   declarations: [
@@ -62,6 +73,7 @@ import { FileService } from './_services/file.service';
     DrawMenuComponent,
     CanimapComponent,
     HelpComponent,
+    CallbackComponent,
     DialogChooseLayersComponent,
     DialogChooseColorComponent,
     DialogHelperComponent,
@@ -93,9 +105,14 @@ import { FileService } from './_services/file.service';
     routing
   ],
   providers: [
+    {
+      provide: AuthHttp,
+      useFactory: authHttpServiceFactory,
+      deps: [Http, RequestOptions]
+    },
     AuthGuard,
+    AuthService,
     AlertService,
-    AuthenticationService,
     UserService,
     MenuEventService,
     MapService,
@@ -104,7 +121,6 @@ import { FileService } from './_services/file.service';
     FileService,
 
     // providers used to create fake backend
-    fakeBackendProvider,
     MockBackend,
     BaseRequestOptions
   ],
