@@ -1,3 +1,5 @@
+import { environment } from '../../environments/environment';
+
 interface AuthConfig {
     CLIENT_ID: string;
     CLIENT_DOMAIN: string;
@@ -8,10 +10,10 @@ interface AuthConfig {
 }
 
 export const AUTH_CONFIG: AuthConfig = {
-    CLIENT_ID: 'HXGX610IWqnjdjz3EgF0O4qXHuL4ZSbJ',
+    CLIENT_ID: environment.auth.id,
     CLIENT_DOMAIN: 'canimap.eu.auth0.com',
     RESPONSE_TYPE: 'token id_token',
     AUDIENCE: 'https://canimap.eu.auth0.com/api/v2/',
-    REDIRECT: 'http://localhost:4200/callback',
+    REDIRECT: environment.auth.redirect,
     SCOPE: 'openid email'
 };

@@ -1,6 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { AuthHttp } from 'angular2-jwt';
+import { environment } from '../../environments/environment';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -14,14 +15,14 @@ export class UserService {
   constructor(private http: Http, private authHttp: AuthHttp) { }
 
   create(user: User) {
-    return this.authHttp.post('https://beta.melard.fr' + '/api/users', user)
+    return this.authHttp.post(environment.backend + '/api/users', user)
       .toPromise()
       .then(response => response.json() as User)
       .catch(this.handleError);
   }
 
   update(user: User) {
-    return this.authHttp.put('https://beta.melard.fr' + '/api/users/' + user.email, user)
+    return this.authHttp.put(environment.backend + '/api/users/' + user.email, user)
       .toPromise()
       .then(() => {
         localStorage.setItem('currentUser', JSON.stringify(user));
@@ -31,21 +32,21 @@ export class UserService {
   }
 
   modifyPassword(email: any, password: string) {
-    return this.http.put('/api/user/password/' + email, password)
+    return this.http.put(environment.backend + '/api/user/password/' + email, password)
       .toPromise()
       .then(response => response.json() as User)
       .catch(this.handleError);
   }
 
   delete(email: string) {
-    return this.authHttp.delete('/api/users/' + email)
+    return this.authHttp.delete(environment.backend + '/api/users/' + email)
       .toPromise()
       .then(response => response.json() as User)
       .catch(this.handleError);
   }
 
   get(email: string) {
-    return this.authHttp.get('https://beta.melard.fr' + '/api/users/' + email)
+    return this.authHttp.get(environment.backend + '/api/users/' + email)
       .toPromise()
       .then(response => response.json() as User)
       .catch(this.handleError);
