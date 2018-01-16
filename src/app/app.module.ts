@@ -40,6 +40,7 @@ import { DialogFilesOpenComponent } from './_dialogs/filesOpen.component';
 import { DialogLoginComponent } from './_dialogs/login.component';
 
 import { AuthGuard } from './_services/auth-guard.service';
+import { CheckEnv } from './_services/check-env.service';
 import { AuthService } from './_services/auth.service';
 import { AlertService, UserService } from './_services/index';
 import { MenuEventService } from './_services/menuEvent.service';
@@ -111,6 +112,7 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
       deps: [Http, RequestOptions]
     },
     AuthGuard,
+    CheckEnv,
     AuthService,
     AlertService,
     UserService,

@@ -36,6 +36,20 @@ export class FileMenuComponent implements OnInit {
     });
   }
 
+  gpx(e: MouseEvent) {
+    this.menuEventService.prepareEvent('fileExport', 'gpx');
+    this.helperEventService.showHelper('fileExport', () => {
+      this.menuEventService.proceed();
+    });
+  }
+
+  kml(e: MouseEvent) {
+    this.menuEventService.prepareEvent('fileExport', 'kml');
+    this.helperEventService.showHelper('fileExport', () => {
+      this.menuEventService.proceed();
+    });
+  }
+
   filesOpen(e: MouseEvent) {
     this.menuEventService.prepareEvent('filesOpen', null);
     this.helperEventService.showHelper('filesOpen', () => {

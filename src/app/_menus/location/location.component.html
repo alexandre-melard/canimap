@@ -1,4 +1,11 @@
-﻿<form>
-  <input (click)="$event.stopPropagation()" placeholder="Rechercher une adresse ou une coordonnée GPS" mdTooltip="Entrez une adresse ou nom de ville"
+﻿<form>  
+      <input (click)="$event.stopPropagation()" placeholder="Rechercher une adresse ou une coordonnée GPS" mdTooltip="Entrez une adresse ou nom de ville"
     autocorrect="off" autocapitalize="off" spellcheck="off" type="search" #search [formControl]="searchControl">
 </form>
+<button md-icon-button aria-label="Carte" mdTooltip="Centrer la carte sur votre position"
+i18n="Localisation|Center the map on your location"
+(click)="gps()">
+<md-icon class="md-24">
+  explore
+</md-icon>
+</button>

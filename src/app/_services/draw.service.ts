@@ -194,7 +194,6 @@ export class DrawService implements OnDestroy {
         json = JSON.parse(json);
         let features = new Array<ol.Feature>();
         console.log('importing 1json as draw');
-        // TODO Implements load features from JSON for Circle
         let i = 0;
         const toDelete = new Array();
         json.features.forEach((f) => {
@@ -227,6 +226,30 @@ export class DrawService implements OnDestroy {
         });
         me.source.addFeatures(features);
         me.map.getView().fit(me.source.getExtent());
+      }
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('getKML').subscribe(
+      (success: Function) => {
+        console.log('converting drawings to KML');
+        const kmlFormat = new format.KML();
+        const kml = kmlFormat.writeFeatures(me.source.getFeatures(), 
+        {
+          dataProjection: 'EPSG:4326',
+          featureProjection: 'EPSG:3857'
+        });
+        success(kml);
+      }
+    ));
+    this.subscriptions.push(this.menuEventService.getObservable('getGPX').subscribe(
+      (success: Function) => {
+        console.log('converting drawings to GPX');
+        const gpxFormat = new format.GPX();
+        const gpx = gpxFormat.writeFeatures(me.source.getFeatures(), 
+        {
+          dataProjection: 'EPSG:4326',
+          featureProjection: 'EPSG:3857'
+        });
+        success(gpx);
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('getGeoJson').subscribe(

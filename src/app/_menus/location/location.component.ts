@@ -26,6 +26,14 @@ export class LocationComponent implements OnInit {
     private mapsAPILoader: MapsAPILoader,
     private ngZone: NgZone) { }
 
+  gps() {
+    navigator.geolocation.getCurrentPosition((position) => {
+      this.menuEventService.callEvent('mapMove', { lat: position.coords.latitude, lng: position.coords.longitude, success: () => {
+        this.menuEventService.callEvent('addMarker', { lat: position.coords.latitude, lng: position.coords.longitude });
+      } });
+    });
+  }
+
   ngOnInit() {
     const me = this;
     // create search FormControl

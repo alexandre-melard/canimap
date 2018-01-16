@@ -23,6 +23,14 @@
     </button>
   <button md-icon-button aria-label="Load GPS" mdTooltipPosition="below" mdTooltip="Charger une trace GPS" i18n="Gps|load GPS file"
     (click)="gps($event)">
-      GPS
+    <img src="../assets/icons/gps.png" width=32/>
+  </button>
+    <button md-icon-button aria-label="Export GPX" mdTooltipPosition="below" mdTooltip="Exporter une trace GPX" i18n="Gps|export to GPX file"
+    (click)="gpx($event)">
+    <img src="../assets/icons/gpx.png" width=32/>
+  </button>
+    <button md-icon-button aria-label="Export KML" mdTooltipPosition="below" mdTooltip="Exporter une trace KML" i18n="Kml|export to KML file"
+    (click)="kml($event)">
+      <img src="../assets/icons/kml.png" width=32/>
     </button>
 </md-menu>

@@ -45,6 +45,33 @@ export class FileService implements OnDestroy {
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
     ));
+    this.subscriptions.push(this.menuEventService.getObservable('fileExport').subscribe(
+      (type: any) => {
+        let fileName = 'piste';
+        const dialogRef = this.dialog.open(DialogFileSaveComponent, {
+          width: '320px',
+          data: { name: fileName }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('The dialog was closed');
+          if (result !== undefined) {
+            fileName = result;
+
+            if (type.data === 'kml') {
+              me.menuEventService.callEvent('getKML', (kml) => {
+                saveAs(new Blob([kml]), fileName + '.kml');
+              });
+            } else {
+              me.menuEventService.callEvent('getGPX', (gpx) => {
+                saveAs(new Blob([gpx]), fileName + '.gpx');
+              });
+            }
+          }
+        });
+      },
+      e => console.log('onError: %s', e),
+      () => console.log('onCompleted')
+    ));
     this.subscriptions.push(this.menuEventService.getObservable('printScreen').subscribe(
       () => {
         let fileName = 'carte';

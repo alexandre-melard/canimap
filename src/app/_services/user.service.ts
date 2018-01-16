@@ -60,9 +60,14 @@ export class UserService {
           currentUser = this.get(localStorage.getItem('email'))
             .then(result => {
               localStorage.setItem('currentUser', JSON.stringify(result));
+              this.promise = undefined;
               resolve(result);
             })
-            .catch((error) => reject('error while retrieving user with error: ' + JSON.stringify(error)));
+            .catch((error) => {
+              this.promise = undefined;
+              reject('error while retrieving user with error: ' + JSON.stringify(error));
+            }
+          );
         } else {
           resolve(currentUser);
         }
