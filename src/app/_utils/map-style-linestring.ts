@@ -1,8 +1,8 @@
 import * as ol from 'openlayers';
-import { formatLength } from '../_utils/map-format-length';
+import { formatLength, getLength } from '../_utils/map-format-length';
 import { CaniDrawLineStringOptions } from '../_models/caniDrawLineString';
 
-export function lineStringStyle(feature: ol.Feature): ol.style.Style[] {
+export function lineStringStyle(feature: ol.Feature, resolution: number): ol.style.Style[] {
   const styles = new Array<ol.style.Style>();
   const geometry: ol.geom.LineString = <ol.geom.LineString>feature.getGeometry();
 
@@ -19,13 +19,15 @@ export function lineStringStyle(feature: ol.Feature): ol.style.Style[] {
   styles.push(new ol.style.Style(configuredStyle));
 
   if (configuredStyle.imageOptions) {
-    const frequency = configuredStyle.imageOptions.frequency;
-    let i = 0, j = 0;
+    let frequency = configuredStyle.imageOptions.frequency;
+    const length = getLength(geometry);
+    let cursor = 0, segments = 0;
     geometry.forEachSegment(function (start, end) {
-      ++j;
+      ++segments;
     });
+    frequency = Math.round((frequency * resolution) / (length / segments));
     geometry.forEachSegment(function (start, end) {
-      if (j > 12 && frequency && ((++i % frequency) === 0)) {
+      if ((++cursor % frequency) !== 0) {
         return;
       }
       const dx = end[0] - start[0];

@@ -12,3 +12,7 @@ export function formatLength(line: geom.Geometry) {
     }
     return output;
 }
+
+export function getLength(line: geom.Geometry) {
+    return Sphere.getLength(line);
+}

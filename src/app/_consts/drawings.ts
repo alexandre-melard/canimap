@@ -134,7 +134,7 @@ export class Drawings {
             src: '../assets/icons/arrow_20.png',
             anchor: [0.75, 0.5],
             rotateWithView: true,
-            frequency: 5
+            frequency: 25
           }
         };
       }
