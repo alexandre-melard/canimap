@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 import { MenuEventService } from './menuEvent.service';
 import { MapService } from './map.service';
+import { CaniDrawObjectService } from './caniDrawObject.service';
 import {
   Attribution, Feature, Map, Sphere, geom, style, StyleFunction, View, format,
   tilegrid, proj, extent, control, interaction, source, layer
@@ -145,6 +146,7 @@ export class DrawService implements OnDestroy {
 
   constructor(
     private menuEventService: MenuEventService,
+    private caniDrawObjectService: CaniDrawObjectService,
     private mapService: MapService
   ) {
     const me = this;
@@ -232,7 +234,7 @@ export class DrawService implements OnDestroy {
       (success: Function) => {
         console.log('converting drawings to KML');
         const kmlFormat = new format.KML();
-        const kml = kmlFormat.writeFeatures(me.source.getFeatures(), 
+        const kml = kmlFormat.writeFeatures(me.source.getFeatures(),
         {
           dataProjection: 'EPSG:4326',
           featureProjection: 'EPSG:3857'
@@ -244,7 +246,7 @@ export class DrawService implements OnDestroy {
       (success: Function) => {
         console.log('converting drawings to GPX');
         const gpxFormat = new format.GPX();
-        const gpx = gpxFormat.writeFeatures(me.source.getFeatures(), 
+        const gpx = gpxFormat.writeFeatures(me.source.getFeatures(),
         {
           dataProjection: 'EPSG:4326',
           featureProjection: 'EPSG:3857'
@@ -289,7 +291,7 @@ export class DrawService implements OnDestroy {
     ));
     this.subscriptions.push(this.menuEventService.getObservable('loadGPS').subscribe(
       (gps: { content, type }) => {
-        console.log('importing json as draw');
+        console.log('importing gps path as draw');
         let f;
         switch (gps.type) {
           case 'gpx':
@@ -312,6 +314,12 @@ export class DrawService implements OnDestroy {
           } else {
             feature.set('style', style(this.color));
             me.source.addFeature(feature);
+          }
+          if ((feature.getGeometry().getType() === 'Point') &&
+          (feature.getProperties().type !== undefined) &&
+          (feature.getProperties().type === 'RuObject')) {
+            console.log('found object');
+            me.menuEventService.callEvent('registerObject', feature.getProperties());
           }
         });
         me.map.getView().fit(me.source.getExtent());

@@ -28,10 +28,16 @@
   </button>
   <button md-icon-button aria-label="Suspendus" mdTooltipPosition="below" mdTooltip="Objet suspendu" i18n="Hanging|put a suspended object"
     (click)="draw('SuspenduMarker')">
-  <img src="../assets/icons/dot_blue.png"/>
-</button>
+    <img src="../assets/icons/dot_blue.png"/>
+  </button>
   <button md-icon-button aria-label="Cache" mdTooltipPosition="below" mdTooltip="Objet caché" i18n="Hidden|put a hidden object"
     (click)="draw('CacheMarker')">
-  <img src="../assets/icons/dot_purple.png"/>
-</button>
+    <img src="../assets/icons/dot_purple.png"/>
+  </button>
+  <button md-icon-button aria-label="Objets" mdTooltipPosition="below" mdTooltip="Liste des objets" i18n="Object list|Display a list of objects"
+  (click)="objects()">
+  <md-icon class="md-24">
+      assignment
+    </md-icon>
+  </button>
 </md-menu>
