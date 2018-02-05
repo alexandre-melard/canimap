@@ -76,7 +76,8 @@ export class Drawings {
             crossOrigin: 'anonymous',
             src: '../assets/icons/arrow_20.png',
             anchor: [0.75, 0.5],
-            rotateWithView: true
+            rotateWithView: true,
+            frequency: 25
           }
         };
       }
@@ -105,7 +106,8 @@ export class Drawings {
             crossOrigin: 'anonymous',
             src: '../assets/icons/arrow_20.png',
             anchor: [0.75, 0.5],
-            rotateWithView: true
+            rotateWithView: true,
+            frequency: 25
           }
         };
       }
@@ -164,6 +166,7 @@ export class Drawings {
             src: '../assets/icons/arrow_20.png',
             anchor: [0.75, 0.5],
             rotateWithView: true,
+            frequency: 25
           }
         };
       }

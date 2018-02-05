@@ -25,7 +25,7 @@ export function lineStringStyle(feature: ol.Feature, resolution: number): ol.sty
     geometry.forEachSegment(function (start, end) {
       ++segments;
     });
-    frequency = Math.round((frequency * resolution) / (length / segments));
+    frequency = Math.ceil((frequency * resolution) / (length / segments));
     geometry.forEachSegment(function (start, end) {
       if ((++cursor % frequency) !== 0) {
         return;
