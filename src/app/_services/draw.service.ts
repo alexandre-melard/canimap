@@ -47,6 +47,7 @@ export class DrawService implements OnDestroy {
       this.tooltip.sketch = null;
       this.tooltip.resetTooltips(this.map);
       this.menuEventService.callEvent('move', null);
+      this.menuEventService.callEvent('drawend', feature);
     });
     $(document).keydown((e) => {
       if (e.which === 27) {
@@ -303,7 +304,7 @@ export class DrawService implements OnDestroy {
         }
         const features = f.readFeatures(gps.content, { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' });
         const rgb = hexToRgb(me.color);
-        features.forEach((feature) => {
+        features.forEach((feature: ol.Feature) => {
           const style = drawInteractions.find((draw) => (draw.type === 'LineStringGps')).style;
           if (feature.getGeometry().getType() === 'MultiLineString') {
             (<geom.MultiLineString>feature.getGeometry()).getLineStrings().forEach((lineStringGeom: geom.LineString) => {
@@ -319,7 +320,7 @@ export class DrawService implements OnDestroy {
           (feature.getProperties().type !== undefined) &&
           (feature.getProperties().type === 'RuObject')) {
             console.log('found object');
-            me.menuEventService.callEvent('registerObject', feature.getProperties());
+            me.menuEventService.callEvent('registerObject', feature);
           }
         });
         me.map.getView().fit(me.source.getExtent());

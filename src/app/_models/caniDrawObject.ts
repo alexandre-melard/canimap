@@ -5,4 +5,5 @@
     fabric: string;
     specificity: string;
     wind: string;
+    feature: any;
 }
