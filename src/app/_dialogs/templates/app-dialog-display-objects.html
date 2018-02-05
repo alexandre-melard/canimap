@@ -1,0 +1,26 @@
+<h2 md-dialog-title>Liste des objets</h2>
+<div md-dialog-content>
+  <table width="100%" class="table table-sm table-striped table-hover table-responsive">
+    <tr>
+      <th>index</th>
+      <th>Nom</th>
+      <th>Position</th>
+      <th>Couleur</th>
+      <th>Matière</th>
+      <th>Vent</th>
+      <th>Commentaire</th>
+    </tr>
+    <tr *ngFor="let caniDrawObject of objects; let  i=index">
+      <td>{{ i + 1 }}</td>
+      <td>{{caniDrawObject.name}}</td>
+      <td>{{caniDrawObject.position}}</td>
+      <td [style.background-color]="getColor(caniDrawObject.color)"></td>
+      <td>{{caniDrawObject.fabric}}</td>
+      <td>{{caniDrawObject.wind}}</td>
+      <td>{{caniDrawObject.specificity}}</td>
+    </tr>
+  </table>
+</div>
+<div md-dialog-actions>
+    <button md-button (click)="confirm()" tabindex="-1">Ok</button>
+</div>

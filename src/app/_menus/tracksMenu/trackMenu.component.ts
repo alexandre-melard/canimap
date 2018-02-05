@@ -19,4 +19,8 @@ export class TrackMenuComponent extends BaseMenuComponent {
     public helperEventService: HelperEventService) {
     super(menuEventService, helperEventService);
   }
+
+  objects(e: MouseEvent) {
+    this.menuEventService.callEvent('displayObjects', null);
+  }
 }

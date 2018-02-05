@@ -37,6 +37,7 @@ import { DialogHelperComponent } from './_dialogs/helper.component';
 import { DialogFileOpenComponent } from './_dialogs/fileOpen.component';
 import { DialogFileSaveComponent } from './_dialogs/fileSave.component';
 import { DialogFilesOpenComponent } from './_dialogs/filesOpen.component';
+import { DialogDisplayObjectsComponent } from './_dialogs/displayObjects.component';
 import { DialogLoginComponent } from './_dialogs/login.component';
 
 import { AuthGuard } from './_services/auth-guard.service';
@@ -45,6 +46,7 @@ import { AuthService } from './_services/auth.service';
 import { AlertService, UserService } from './_services/index';
 import { MenuEventService } from './_services/menuEvent.service';
 import { MapService } from './_services/map.service';
+import { CaniDrawObjectService } from './_services/caniDrawObject.service';
 import { DrawService } from './_services/draw.service';
 import { HelperEventService } from './_services/helperEvent.service';
 import { FileService } from './_services/file.service';
@@ -81,6 +83,7 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     DialogFileOpenComponent,
     DialogFilesOpenComponent,
     DialogFileSaveComponent,
+    DialogDisplayObjectsComponent,
     DialogLoginComponent,
     RegisterComponent
   ],
@@ -119,6 +122,7 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     MenuEventService,
     MapService,
     DrawService,
+    CaniDrawObjectService,
     HelperEventService,
     FileService,
 
@@ -130,6 +134,7 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     DialogFileSaveComponent,
     DialogFileOpenComponent,
     DialogFilesOpenComponent,
+    DialogDisplayObjectsComponent,
     DialogChooseLayersComponent,
     DialogChooseColorComponent,
     DialogLoginComponent,
