@@ -230,8 +230,6 @@ app-canimap-location > form > input::-webkit-input-placeholder {
   }
 }
 
-
-
 /* INLINE EDITOR */
 a.c-inline-editor {
   text-decoration: none;
@@ -284,4 +282,18 @@ a.c-inline-editor {
 
 [hidden].c-inline-editor {
   display: none;
+}
+
+.fa.fa-check:after {
+  content: "OK";  
+}
+
+.fa.fa-remove:after {
+  content: "X";  
+}
+
+button.c-inline-editor {
+  padding: .5rem 0.3rem;
+  font-size: 12px;
+  line-height: 0.25;
 }
