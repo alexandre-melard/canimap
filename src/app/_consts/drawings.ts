@@ -33,9 +33,10 @@ export class Drawings {
       () => {
         return {
           type: 'Marker',
-          src: '../assets/icons/dot_green.png'
+          src: '../assets/icons/dot_green.png',
         };
-      }
+      },
+      { specificity: 'Posé' }
     ),
     new CaniDrawPoint('SuspenduMarker', 'marker',
       () => {
@@ -43,7 +44,8 @@ export class Drawings {
           type: 'Marker',
           src: '../assets/icons/dot_blue.png'
         };
-      }
+      },
+      { specificity: 'Suspendu' }
     ),
     new CaniDrawPoint('CacheMarker', 'marker',
       () => {
@@ -51,7 +53,8 @@ export class Drawings {
           type: 'Marker',
           src: '../assets/icons/dot_purple.png'
         };
-      }
+      },
+      { specificity: 'Caché' }
     ),
     new CaniDrawLineString('VictimPath', 'polyline',
       () => {

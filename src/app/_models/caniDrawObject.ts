@@ -6,4 +6,5 @@
     specificity: string;
     wind: string;
     feature: any;
+    type: 'RUObject';
 }

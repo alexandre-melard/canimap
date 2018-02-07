@@ -47,7 +47,7 @@ export class DrawService implements OnDestroy {
       this.tooltip.sketch = null;
       this.tooltip.resetTooltips(this.map);
       this.menuEventService.callEvent('move', null);
-      this.menuEventService.callEvent('drawend', feature);
+      this.menuEventService.callEvent('drawend', {feature: feature, draw: draw});
     });
     $(document).keydown((e) => {
       if (e.which === 27) {
@@ -84,9 +84,9 @@ export class DrawService implements OnDestroy {
     map.addInteraction(this.select);
     this.select.setActive(false);
     const selectedFeatures = this.select.getFeatures();
-    this.select.on('change:active', () => {
-      selectedFeatures.forEach(selectedFeatures.remove, selectedFeatures);
-    });
+    // this.select.on('change:active', () => {
+    //   selectedFeatures.forEach(selectedFeatures.remove, selectedFeatures);
+    // });
     this.select.on('select', (selectEvent: interaction.Select.Event) => {
       const selected = selectEvent.selected;
       $(document).keydown((e) => {
@@ -163,7 +163,7 @@ export class DrawService implements OnDestroy {
     this.subscriptions.push(this.menuEventService.getObservable('move').subscribe(
       () => {
         console.log('drawing stop');
-        me.disableInteractions();
+        me.menuEventService.callEvent('disableInteractions', null);
       }
     ));
     drawInteractions.forEach((drawInteraction) => {
@@ -226,6 +226,13 @@ export class DrawService implements OnDestroy {
             }
           });
           f.set('style', style);
+          if ((f.getGeometry().getType() === 'Point') &&
+          (f.getProperties().type !== undefined) &&
+          (f.getProperties().type === 'RuObject')) {
+            console.log('found object');
+            me.menuEventService.callEvent('registerObject', f);
+          }
+
         });
         me.source.addFeatures(features);
         me.map.getView().fit(me.source.getExtent());

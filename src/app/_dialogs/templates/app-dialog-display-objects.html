@@ -12,12 +12,42 @@
     </tr>
     <tr *ngFor="let caniDrawObject of objects; let  i=index">
       <td>{{ i + 1 }}</td>
-      <td>{{caniDrawObject.name}}</td>
-      <td>{{caniDrawObject.position}}</td>
-      <td [style.background-color]="getColor(caniDrawObject.color)"></td>
-      <td>{{caniDrawObject.fabric}}</td>
-      <td>{{caniDrawObject.wind}}</td>
-      <td>{{caniDrawObject.specificity}}</td>
+      <td>
+        <inline-editor empty="Pas de donné" placeholder="Entrez une valeur" type="text" [(ngModel)]="caniDrawObject.name" (onSave)="caniDrawObject.name = $event" name="name" size="8"></inline-editor>
+      </td>
+      <td>
+        <inline-editor 
+          empty="Pas de donné" 
+          placeholder="Entrez une valeur" 
+          type="select" 
+          [(ngModel)]="caniDrawObject.position" 
+          (onSave)="caniDrawObject.position = $event" 
+          name="position"
+          [options]="[{value:'Gauche', text:'Gauche'},{value:'Droite', text:'Droite'}]"></inline-editor>
+      </td>
+      <td [style.background-color]="getColor(caniDrawObject.color)" (click)="chooseColor(caniDrawObject)">&nbsp;</td>
+      <td>
+        <inline-editor 
+          empty="Pas de donné" 
+          placeholder="Entrez une valeur" 
+          type="select" 
+          [(ngModel)]="caniDrawObject.fabric" 
+          (onSave)="caniDrawObject.fabric = $event" 
+          name="fabric"
+          [options]="[{value:'Tissu', text:'Tissu'},{value:'Carton', text:'Carton'},{value:'Cuir', text:'Cuir'},{value:'Plastique', text:'Plastique'},{value:'Bois', text:'Bois'}]"></inline-editor>
+      <td>
+          <inline-editor 
+          empty="Pas de donné" 
+          placeholder="Entrez une valeur" 
+          type="select" 
+          [(ngModel)]="caniDrawObject.wind" 
+          (onSave)="caniDrawObject.wind = $event" 
+          name="wind"
+          [options]="[{value:'Gauche', text:'Gauche'},{value:'Droite', text:'Droite'},{value:'Face', text:'Face'},{value:'Dos', text:'Dos'}]"></inline-editor>
+      </td>
+      <td>
+          <inline-editor empty="Pas de donné" placeholder="Entrez une valeur" type="text" [(ngModel)]="caniDrawObject.specificity" (onSave)="caniDrawObject.specificity = $event" name="specificity" size="8"></inline-editor>
+      </td>
     </tr>
   </table>
 </div>

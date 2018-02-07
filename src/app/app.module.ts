@@ -16,6 +16,8 @@ import { BaseRequestOptions } from '@angular/http';
 
 import { AppComponent } from './app.component';
 
+import {InlineEditorModule} from '@qontu/ngx-inline-editor';
+
 import { AlertComponent } from './_directives/index';
 import { HomeComponent } from './home/index';
 import { LocationComponent } from './_menus/location/index';
@@ -102,6 +104,7 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     FormsModule,
     HttpModule,
     ReactiveFormsModule,
+    InlineEditorModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyBb1BipElNZJQPhdkSUdX5DxZpPnQV_D3k',
       libraries: ['places']
