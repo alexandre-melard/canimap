@@ -23,7 +23,6 @@ import * as $ from 'jquery';
 })
 
 export class MapMenuComponent extends BaseMenuComponent implements OnInit {
-  gpsMarkerToggle = true;
   constructor(
     private router: Router,
     public menuEventService: MenuEventService,
@@ -55,20 +54,11 @@ export class MapMenuComponent extends BaseMenuComponent implements OnInit {
     this.menuEventService.callEvent('move', null);
   }
 
-  gpsColor() {
-    return this.gpsMarkerToggle ? 'black' : 'red';
-  }
-
   gpsMarker(e: MouseEvent) {
-    if (this.gpsMarkerToggle) {
-      this.menuEventService.prepareEvent('gpsMarker', null, null);
-      this.helperEventService.showHelper('gps', () => {
-        this.menuEventService.proceed();
-      });
-    } else {
-      this.menuEventService.callEvent('gpsMarkerDismiss', null);
-    }
-    this.gpsMarkerToggle = !this.gpsMarkerToggle;
+    this.menuEventService.prepareEvent('gpsMarker', null, null);
+    this.helperEventService.showHelper('gps', () => {
+      this.menuEventService.proceed();
+    });
   }
 
   chooseLayers(event: any) {

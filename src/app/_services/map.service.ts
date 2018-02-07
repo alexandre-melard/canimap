@@ -18,8 +18,6 @@ export class MapService implements OnDestroy {
   private subject = new Subject<any>();
   private keepAfterNavigationChange = false;
   private subscriptions = new Array<Subscription>();
-  private overlay: ol.Overlay;
-  private gpsHandler: ol.EventsKey;
 
   get layerBoxes(): LayerBox[] {
     return [this.ignPlan, this.ignSatellite, this.googleSatellite, this.bingSatellite, this.bingHybride];
@@ -97,8 +95,9 @@ export class MapService implements OnDestroy {
       () => {
         console.log('drawing gpsMarker start');
         this.menuEventService.callEvent('disableInteractions');
+        const popup = $('.ol-popup').clone().get(0);
         const options = {
-          element: $('#popup').get(0),
+          element: popup,
           autoPan: true,
           offset: [0, -25],
           autoPanAnimation: {
@@ -107,28 +106,27 @@ export class MapService implements OnDestroy {
           }
         };
         const overlay = new ol.Overlay(options);
+        const closer = $(popup).find('a');
         this.map.addOverlay(overlay);
         $('#map').css('cursor', 'crosshair');
         const me = this;
-        this.gpsHandler = <ol.EventsKey>me.map.on('singleclick', function (evt) {
+        this.map.once('singleclick', function (evt) {
           const coordinate = evt.coordinate;
-          let hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
-            coordinate, 'EPSG:3857', 'EPSG:4326'));
+          let hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
           hdms = hdms.split(' ').join('');
           hdms = hdms.replace('N', 'N ');
           hdms = hdms.replace('S', 'S ');
-          $('#popup-content').html('<code>' + hdms + '</code>');
+          const content = $(popup).find('.ol-popup-content');
+          content.html('<code>' + hdms + '</code>');
           overlay.setPosition(coordinate);
+          $('#map').css('cursor', 'default');
+          me.menuEventService.callEvent('move');
         });
-        this.overlay = overlay;
-      }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('gpsMarkerDismiss').subscribe(
-      () => {
-        console.log('drawing gpsMarkerDismiss start');
-        $('#map').css('cursor', '');
-        ol.Observable.unByKey(this.gpsHandler);
-        this.overlay.setPosition(undefined);
+        closer.on('click', (event) => {
+          overlay.setPosition(undefined);
+          closer.blur();
+          return false;
+        });
       }
     ));
   }
