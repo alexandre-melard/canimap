@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, HostListener } from '@angular/core';
 import { MapService } from '../_services/map.service';
 import { FileService } from '../_services/file.service';
 
@@ -14,5 +14,15 @@ export class CanimapComponent implements OnInit {
   ) { }
   ngOnInit(): void {
     this.mapService.loadMap();
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  beforeunloadHandler(event) {
+      return false;
+  }
+
+  @HostListener('window:unload', ['$event'])
+  unloadHandler(event) {
+      return false;
   }
 }
