@@ -15,8 +15,9 @@ export class CheckEnv implements CanActivate {
             user === 'null' ||
             user.email === undefined ||
             user.email === null ||
-            user.email === '') {
-            localStorage.removeItem('currentUser');
+            user.email === '' ||
+            user.currentUser !== undefined) {
+            localStorage.clear();
             console.log('removing current user, bad format');
         }
         return true;
