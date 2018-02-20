@@ -1,55 +1,117 @@
 <h2 mat-dialog-title>Liste des objets</h2>
 <div mat-dialog-content>
-  <table width="100%" class="table table-sm table-striped table-hover table-responsive">
-    <tr>
-      <th>index</th>
-      <th>Nom</th>
-      <th>Position</th>
-      <th>Couleur</th>
-      <th>Matière</th>
-      <th>Vent</th>
-      <th>Commentaire</th>
-    </tr>
-    <tr *ngFor="let caniDrawObject of objects; let  i=index">
-      <td>{{ i + 1 }}</td>
-      <td>
-        <!-- <inline-editor empty="Pas de donné" placeholder="Entrez une valeur" type="text" [(ngModel)]="caniDrawObject.name" (onSave)="caniDrawObject.name = $event" name="name" size="8"></inline-editor> -->
-      </td>
-      <td>
-        <!-- <inline-editor 
-          empty="Pas de donné" 
-          placeholder="Entrez une valeur" 
-          type="select" 
-          [(ngModel)]="caniDrawObject.position" 
-          (onSave)="caniDrawObject.position = $event" 
-          name="position"
-          [options]="[{value:'Gauche', text:'Gauche'},{value:'Droite', text:'Droite'}]"></inline-editor> -->
-      </td>
-      <td [style.background-color]="getColor(caniDrawObject.color)" (click)="chooseColor(caniDrawObject)">&nbsp;</td>
-      <td>
-        <!-- <inline-editor 
-          empty="Pas de donné" 
-          placeholder="Entrez une valeur" 
-          type="select" 
-          [(ngModel)]="caniDrawObject.fabric" 
-          (onSave)="caniDrawObject.fabric = $event" 
-          name="fabric"
-          [options]="[{value:'Tissu', text:'Tissu'},{value:'Carton', text:'Carton'},{value:'Cuir', text:'Cuir'},{value:'Plastique', text:'Plastique'},{value:'Bois', text:'Bois'}]"></inline-editor> -->
-      <td>
-          <!-- <inline-editor 
-          empty="Pas de donné" 
-          placeholder="Entrez une valeur" 
-          type="select" 
-          [(ngModel)]="caniDrawObject.wind" 
-          (onSave)="caniDrawObject.wind = $event" 
-          name="wind"
-          [options]="[{value:'Gauche', text:'Gauche'},{value:'Droite', text:'Droite'},{value:'Face', text:'Face'},{value:'Dos', text:'Dos'}]"></inline-editor> -->
-      </td>
-      <td>
-          <!-- <inline-editor empty="Pas de donné" placeholder="Entrez une valeur" type="text" [(ngModel)]="caniDrawObject.specificity" (onSave)="caniDrawObject.specificity = $event" name="specificity" size="8"></inline-editor> -->
-      </td>
-    </tr>
-  </table>
+  <mat-table #table [dataSource]="dataSource">
+    <ng-container matColumnDef="index">
+      <mat-header-cell *matHeaderCellDef> Index </mat-header-cell>
+      <mat-cell *matCellDef="let element; let i = index"> {{i}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef> Nom </mat-header-cell>
+      <mat-cell *matCellDef="let element" [satPopoverAnchorFor]="p" (click)="p.open()">
+        <ng-container *ngIf="element.name">
+          <span class="editable-cell">
+            {{element.name}}
+          </span>
+          </ng-container>
+          <span class="editable-cell" *ngIf="!element.name">
+            nom
+          </span>
+          <sat-popover #p
+              hasBackdrop
+              xAlign="start"
+              yAlign="start"
+              (closed)="update(element, 'name', $event)">
+            <app-inline-edit key="Entrez un nom pour l'objet" [value]="element.name"></app-inline-edit>
+          </sat-popover>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="position">
+      <mat-header-cell *matHeaderCellDef> Position </mat-header-cell>
+      <mat-cell *matCellDef="let element" [satPopoverAnchorFor]="p" (click)="p.open()">
+          <ng-container *ngIf="element.position">
+            <span class="editable-cell">
+              {{element.position}}
+            </span>
+            </ng-container>
+            <span class="editable-cell" *ngIf="!element.position">
+              position
+            </span>
+            <sat-popover #p
+                hasBackdrop
+                xAlign="start"
+                yAlign="start"
+                (closed)="update(element, 'position', $event)">
+              <app-inline-edit key="Entrez la position de l'objet" [value]="element.position"></app-inline-edit>
+            </sat-popover>
+        </mat-cell> 
+    </ng-container>
+    <ng-container matColumnDef="color">
+      <mat-header-cell *matHeaderCellDef> Couleur </mat-header-cell>
+      <mat-cell *matCellDef="let element" [style.background-color]="getColor(element.color)" (click)="chooseColor(element)">&nbsp;</mat-cell>
+    </ng-container>  
+    <ng-container matColumnDef="fabric">
+      <mat-header-cell *matHeaderCellDef> Matière </mat-header-cell>
+      <mat-cell *matCellDef="let element" [satPopoverAnchorFor]="p" (click)="p.open()">
+          <ng-container *ngIf="element.fabric">
+            <span class="editable-cell">
+              {{element.fabric}}
+            </span>
+            </ng-container>
+            <span class="editable-cell" *ngIf="!element.fabric">
+                matière
+            </span>
+            <sat-popover #p
+                hasBackdrop
+                xAlign="start"
+                yAlign="start"
+                (closed)="update(element, 'fabric', $event)">
+              <app-inline-edit key="Entrez la matière de l'objet" [value]="element.fabric"></app-inline-edit>
+            </sat-popover>
+        </mat-cell> 
+    </ng-container>    
+    <ng-container matColumnDef="wind">
+      <mat-header-cell *matHeaderCellDef> Vent </mat-header-cell>
+      <mat-cell *matCellDef="let element" [satPopoverAnchorFor]="p" (click)="p.open()">
+          <ng-container *ngIf="element.wind">
+            <span class="editable-cell">
+              {{element.wind}}
+            </span>
+            </ng-container>
+            <span class="editable-cell" *ngIf="!element.wind">
+                vent
+            </span>
+            <sat-popover #p
+                hasBackdrop
+                xAlign="start"
+                yAlign="start"
+                (closed)="update(element, 'wind', $event)">
+              <app-inline-edit key="Entrez le sens du vent" [value]="element.wind"></app-inline-edit>
+            </sat-popover>
+        </mat-cell> 
+    </ng-container>    
+    <ng-container matColumnDef="specificity">
+      <mat-header-cell *matHeaderCellDef> Commentaire </mat-header-cell>
+      <mat-cell *matCellDef="let element" [satPopoverAnchorFor]="p" (click)="p.open()">
+        <ng-container *ngIf="element.specificity">
+          <span class="editable-cell">
+            {{element.specificity}}
+          </span>
+        </ng-container>
+        <span class="editable-cell" *ngIf="!element.specificity">
+          Commentaire
+        </span>
+        <sat-popover #p
+          hasBackdrop
+          xAlign="start"
+          yAlign="start"
+          (closed)="update(element, 'specificity', $event)">
+          <app-inline-edit key="Entrez un commentaire" [value]="element.specificity"></app-inline-edit>
+        </sat-popover>
+      </mat-cell> 
+    </ng-container>    
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>    
+  </mat-table>
 </div>
 <div mat-dialog-actions>
     <button mat-button (click)="confirm()" tabindex="-1">Ok</button>

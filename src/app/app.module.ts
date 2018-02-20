@@ -2,11 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SatPopoverModule } from '@ncstate/sat-popover';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  MatDialogModule, MatButtonModule, MatButtonToggleModule, MatIconModule, MatTooltipModule,
-  MatInputModule, MatSliderModule, MatExpansionModule, MatTableModule, MatMenuModule, MatTabsModule
-} from '@angular/material';
+import { AppMaterialModules } from './material.module';
 import { AgmCoreModule } from '@agm/core';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 
@@ -14,7 +12,6 @@ import { AppRoutingModule } from './app-routing/app-routing.module';
 
 import { AppComponent } from './app.component';
 
-// import {InlineEditorModule} from '@qontu/ngx-inline-editor';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 
 import { AlertComponent } from './_directives/index';
@@ -31,6 +28,7 @@ import { MapMenuComponent } from './_menus/mapMenu';
 import { DrawMenuComponent } from './_menus/drawMenu';
 import { HelpComponent } from './help/index';
 import { LoginComponent } from './_guards/login.component';
+import { InlineEditComponent } from './_directives/inline-edit.component';
 
 import { DialogChooseLayersComponent } from './_dialogs/chooseLayer.component';
 import { DialogChooseColorComponent } from './_dialogs/chooseColor.component';
@@ -79,7 +77,8 @@ import { JwtModule } from '@auth0/angular-jwt';
     DialogFileSaveComponent,
     DialogDisplayObjectsComponent,
     DialogLoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    InlineEditComponent
   ],
   imports: [
     HttpClientModule,
@@ -91,18 +90,10 @@ import { JwtModule } from '@auth0/angular-jwt';
     }),
     BrowserModule,
     BrowserAnimationsModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatButtonToggleModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatInputModule,
-    MatSliderModule,
-    MatTabsModule,
+    AppMaterialModules,
     FormsModule,
     ReactiveFormsModule,
-    // InlineEditorModule,
+    SatPopoverModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyBb1BipElNZJQPhdkSUdX5DxZpPnQV_D3k',
       libraries: ['places']
