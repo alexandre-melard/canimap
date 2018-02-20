@@ -1,4 +1,5 @@
 import * as ol from 'openlayers';
+import * as olx from 'openlayers/externs/olx';
 
 /**
  * @typedef {{

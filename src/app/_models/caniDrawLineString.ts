@@ -1,4 +1,5 @@
 import * as ol from 'openlayers';
+
 import { CaniDraw } from './caniDraw';
 import { CaniDrawIconOptions } from './caniDrawIcon';
 
