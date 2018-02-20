@@ -1,5 +1,5 @@
 ﻿import { Inject, Optional, Component } from '@angular/core';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 
 @Component({
@@ -9,8 +9,8 @@ import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 export class DialogChooseColorComponent {
   dataSource;
   constructor(
-    public dialogRef: MdDialogRef<DialogChooseColorComponent>,
-    @Optional() @Inject(MD_DIALOG_DATA) public data: any) {
+    public dialogRef: MatDialogRef<DialogChooseColorComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
       this.data = data;
   }
 

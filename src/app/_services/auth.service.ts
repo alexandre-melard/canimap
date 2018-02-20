@@ -4,30 +4,19 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { AUTH_CONFIG } from '../_consts/settings';
 import { UserService } from '../_services/user.service';
 
-import * as auth0 from 'auth0-js';
+import { Auth0Lock } from 'auth0-lock';
 
 @Injectable()
 export class AuthService {
-  // Create Auth0 web auth instance
-  // @TODO: Update AUTH_CONFIG and remove .example extension in src/app/auth/auth0-variables.ts.example
-  auth0 = new auth0.WebAuth({
-    clientID: AUTH_CONFIG.CLIENT_ID,
-    domain: AUTH_CONFIG.CLIENT_DOMAIN,
-    responseType: AUTH_CONFIG.RESPONSE_TYPE,
-    audience: AUTH_CONFIG.AUDIENCE,
-    redirectUri: AUTH_CONFIG.REDIRECT,
-    scope: AUTH_CONFIG.SCOPE
-  });
 
   // Create a stream of logged in status to communicate throughout app
   loggedIn: boolean;
   loggedIn$ = new BehaviorSubject<boolean>(this.loggedIn);
 
-  constructor(private router: Router, private userService: UserService) {
-    // If authenticated, set local profile property and update login status subject
-    if (this.authenticated) {
-      this.setLoggedIn(true);
-    }
+  constructor(
+    private router: Router,
+    private userService: UserService
+  ) {
   }
 
   setLoggedIn(value: boolean) {
@@ -37,48 +26,77 @@ export class AuthService {
   }
 
   login() {
-    // Auth0 authorize request
-    // Note: nonce is automatically generated: https://auth0.com/docs/libraries/auth0js/v8#using-nonce
-    this.auth0.authorize();
-  }
-
-  handleAuth() {
-    // When Auth0 hash parsed, get profile
-    this.auth0.parseHash((err, authResult) => {
-      if (authResult && authResult.accessToken && authResult.idToken) {
-        window.location.hash = '';
-        this._setSession(authResult);
-        this.userService.currentUser()
-          .then(user => {
-            if (user === null) {
-              this.router.navigate(['/register']);
-            } else {
-              this.router.navigate(['/map']);
-            }
-          })
-          .catch((error) => console.log(error));
-      } else if (err) {
-        console.error(`Error: ${err.error}`);
-        this.router.navigate(['/']);
-      } else {
-        this.router.navigate(['/']);  
-      }
+    const lock = new Auth0Lock(
+      AUTH_CONFIG.CLIENT_ID,
+      AUTH_CONFIG.CLIENT_DOMAIN,
+      {
+        language: 'fr',
+        auth: {
+          responseType: AUTH_CONFIG.RESPONSE_TYPE,
+          audience: AUTH_CONFIG.AUDIENCE,
+          params: {
+            scope: AUTH_CONFIG.SCOPE
+          }
+        },
+        theme: {
+          logo: AUTH_CONFIG.LOGO,
+          primaryColor: AUTH_CONFIG.PRIMARY_COLOR
+        },
+        languageDictionary: {
+          emailInputPlaceholder: 'votre email',
+          title: 'Connectez vous!'
+        },
+      },
+      (error, result) => console.log(error, result)
+    );
+    lock.on('show', () => console.log('lock is shown'));
+    lock.on('hide', () => console.log('lock is hidden'));
+    lock.on('unrecoverable_error', error => {
+      console.log('lock unrecoverable_error: ');
+      console.log(error);
     });
+    lock.on('authorization_error', error => {
+      console.log('lock authorization_error: ');
+      console.log(error);
+    });
+    const me = this;
+    lock.on('authenticated', authResult => {
+      lock.hide();
+      me.setLoggedIn(true);
+      lock.getUserInfo(authResult.accessToken, function(error, profile) {
+        if (error) {
+          console.log(error);
+          me.router.navigate(['/']);
+          return;
+        }
+        // window.location.hash = '';
+        me._setSession(authResult, profile);
+        me.userService.currentUser().subscribe(
+          user => {
+          if (user === null) {
+            me.router.navigate(['/register']);
+          } else {
+            me.router.navigate(['/map']);
+          }
+        });
+      });
+    });
+    lock.show();
   }
 
-
-  private _setSession(authResult) {
+  private _setSession(authResult, profile) {
+    const expTime = authResult.expiresIn * 1000 + Date.now();
     // Save session data and update login status subject
-    const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
     localStorage.setItem('access_token', authResult.accessToken);
     localStorage.setItem('id_token', authResult.idToken);
-    localStorage.setItem('email', authResult.idTokenPayload.email);
-    localStorage.setItem('expires_at', expiresAt);
+    localStorage.setItem('profile', JSON.stringify(profile));
+    localStorage.setItem('expires_at', JSON.stringify(expTime));
+    localStorage.setItem('email', profile.email);
     this.setLoggedIn(true);
   }
 
   logout() {
-    // Remove tokens and update login status subject
+    // Remove tokens and profile and update login status subject
     localStorage.removeItem('access_token');
     localStorage.removeItem('id_token');
     localStorage.removeItem('profile');
@@ -88,8 +106,9 @@ export class AuthService {
     this.setLoggedIn(false);
   }
 
-  get authenticated() {
+  get authenticated(): boolean {
+    // Check if current date is greater than expiration
     const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
-    return new Date().getTime() < expiresAt;
+    return Date.now() < expiresAt;
   }
 }

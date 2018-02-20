@@ -1,5 +1,5 @@
 ﻿import { Inject, Component } from '@angular/core';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'app-dialog-helper',
@@ -8,8 +8,8 @@ import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 export class DialogHelperComponent {
 
   constructor(
-    public dialogRef: MdDialogRef<DialogHelperComponent>,
-    @Inject(MD_DIALOG_DATA) public data: any) {
+    public dialogRef: MatDialogRef<DialogHelperComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any) {
       this.data = data;
   }
 

@@ -1,39 +1,40 @@
 import { Injectable } from '@angular/core';
 import { DialogHelperComponent } from '../_dialogs/helper.component';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
-import { Http, Response, Headers, RequestOptions } from '@angular/http';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { HttpClient } from '@angular/common/http';
 import { User } from '../_models/user';
 import { Helper } from '../_models/helper';
 import { UserService } from '../_services/user.service';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class HelperEventService {
 
   constructor(
-    public dialog: MdDialog,
+    public dialog: MatDialog,
     private userService: UserService,
-    private http: Http) {
+    private http: HttpClient) {
   }
 
 
-  getHelper(key: string): Promise<Helper> {
-    let helper: Helper;
-    return new Promise<Helper>((resolve, reject) => {
-      this.userService.currentUser()
-        .then(user => {
-          if (user.helpers === undefined) {
-            user.helpers = new Array<Helper>();
-          }
-          if ((helper = user.helpers.find((h) => h.key === key)) === undefined) {
-            helper = new Helper();
-            helper.key = key;
-            helper.visible = true;
-            user.helpers.push(helper);
-          }
-          resolve(helper);
-        })
-        .catch(err => reject(err));
+  getHelper(key: string): Observable<Helper> {
+    const helperObs = new Observable<Helper>((observer) => {
+      const currentUser = this.userService.currentUser();
+      currentUser.subscribe(user => {
+        if (user.helpers === undefined) {
+          user.helpers = new Array<Helper>();
+        }
+        let helper;
+        if ((helper = user.helpers.find((h) => h.key === key)) === undefined) {
+          helper = new Helper();
+          helper.key = key;
+          helper.visible = true;
+          user.helpers.push(helper);
+        }
+        observer.next(helper);
+      });
     });
+    return helperObs;
   }
 
   isHelper(key: string): boolean {
@@ -42,7 +43,7 @@ export class HelperEventService {
 
   showHelper(key: string, proceed: Function): void {
     this.getHelper(key)
-      .then(helper => {
+      .subscribe(helper => {
         if ((helper !== undefined) && helper.visible) {
           this.http.get('../assets/helpers/' + key + '.json')
             .subscribe((data: any) => {
@@ -64,14 +65,13 @@ export class HelperEventService {
         } else {
           proceed();
         }
-      })
-      .catch(err => console.log(err));
+      });
   }
 
   dismissHelp(key: string) {
-    this.getHelper(key).then(helper => {
+    this.getHelper(key).subscribe(helper => {
       helper.visible = false;
-      this.userService.currentUser().then(user => this.userService.update(user));
+      this.userService.currentUser().subscribe(user => this.userService.update(user).subscribe());
     });
   }
 }

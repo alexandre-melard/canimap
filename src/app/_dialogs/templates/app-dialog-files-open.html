@@ -1,4 +1,4 @@
-<div md-dialog-content>
+<div mat-dialog-content>
     <p>Sélectionner les cartes à ouvrir : </p>
     <div id="drop_zone" (dragover)="dragover($event)" (drop)="drop($event)">Déposer le(s) fichier(s) ici ou <a (click)="upload()">uploadez le(s)</a></div>
     <br/>
@@ -20,7 +20,7 @@
     </output>
   </div>
   <input #filesOpen (change)="fileReceived($event)" type="file" id="files" name="files[]" multiple accept=".geojson" style="display:none" />
-  <div md-dialog-actions>
-    <button md-button color="primary" [md-dialog-close]="data" tabindex="2">Ok</button>
-    <button md-button (click)="onNoClick()" tabindex="-1">Non merci!</button>
+  <div mat-dialog-actions>
+    <button mat-button color="primary" [mat-dialog-close]="data" tabindex="2">Ok</button>
+    <button mat-button (click)="onNoClick()" tabindex="-1">Non merci!</button>
   </div>

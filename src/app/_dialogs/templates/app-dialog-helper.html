@@ -1,6 +1,6 @@
-<h2 md-dialog-title [innerHTML]="data.title"></h2>
+<h2 mat-dialog-title [innerHTML]="data.title"></h2>
 <hr/>
-<div md-dialog-content [innerHTML]="data.body"></div>
+<div mat-dialog-content [innerHTML]="data.body"></div>
 <hr/>
 <div class="form-check">
   <label class="form-check-label">
@@ -9,6 +9,6 @@
   </label>
 </div>
 <hr/>
-<div md-dialog-actions>
-    <button md-button #dismiss (click)="close()">OK</button>
+<div mat-dialog-actions>
+    <button mat-button #dismiss (click)="close()">OK</button>
 </div>

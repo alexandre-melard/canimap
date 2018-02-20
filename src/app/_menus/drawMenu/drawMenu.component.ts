@@ -1,5 +1,5 @@
 ﻿import { Inject, Component, OnInit } from '@angular/core';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { MapService } from '../../_services/map.service';
 import { DrawService } from '../../_services/draw.service';
@@ -25,7 +25,7 @@ export class DrawMenuComponent extends BaseMenuComponent implements OnInit {
     private drawService: DrawService,
     public menuEventService: MenuEventService,
     public helperEventService: HelperEventService,
-    public dialog: MdDialog
+    public dialog: MatDialog
   ) {
     super(menuEventService, helperEventService);
   }

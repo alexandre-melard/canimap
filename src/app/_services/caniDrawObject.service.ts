@@ -1,5 +1,5 @@
 import { Injectable, Inject, Component, OnInit, OnDestroy } from '@angular/core';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 
 import { MenuEventService } from '../_services/menuEvent.service';
 
@@ -23,7 +23,7 @@ export class CaniDrawObjectService implements OnDestroy {
 
   constructor(
     private menuEventService: MenuEventService,
-    public dialog: MdDialog
+    public dialog: MatDialog
   ) {
     const me = this;
     this.subscriptions.push(this.menuEventService.getObservable('mapLoaded').subscribe(

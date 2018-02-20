@@ -23,7 +23,7 @@ export class RegisterComponent {
     private userService: UserService,
     private alertService: AlertService) {
     userService.currentUser()
-      .then(user => {
+      .subscribe(user => {
         if (user === null) {
           this.model = new User();
           this.model.email = localStorage.getItem('email');
@@ -33,9 +33,6 @@ export class RegisterComponent {
           this.udpate = true;
           console.log('editing user with email:' + this.model.email);
         }
-      })
-      .catch((err) => {
-        console.log(err);
       });
   }
   save() {
@@ -52,12 +49,11 @@ export class RegisterComponent {
     this.loading = true;
     $('.loading').css('visibility', 'visible');
     this.userService.update(this.model)
-      .then((user: User) => {
+      .subscribe((user: User) => {
         this.success = 'Enregistrement réussit';
         this.loading = false;
         $('.loading').css('visibility', 'hidden');
-      })
-      .catch(error => {
+      }, error => {
         this.error = error;
         this.loading = false;
         $('.loading').css('visibility', 'hidden');
@@ -68,11 +64,11 @@ export class RegisterComponent {
     this.loading = true;
     $('.loading').css('visibility', 'visible');
     this.userService.create(this.model)
-      .then((user: User) => {
+      .subscribe((user: User) => {
         this.success = 'Votre utilisateur a été créé avec succès';
         this.router.navigate(['/']);
         $('.loading').css('visibility', 'hidden');
-      }).catch(error => {
+      }, error => {
         this.error = error;
         this.loading = false;
         $('.loading').css('visibility', 'hidden');

@@ -25,7 +25,7 @@ export class HelpComponent implements OnInit {
 
   constructor(private userService: UserService,
     private router: Router) {
-      userService.currentUser().then(user => this.currentUser = user as User);
+      userService.currentUser().subscribe(user => this.currentUser = user as User);
     }
 
   ngOnInit() {

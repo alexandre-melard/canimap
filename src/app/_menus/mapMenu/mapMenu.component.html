@@ -1,25 +1,25 @@
-﻿<button md-icon-button #menuTrigger="mdMenuTrigger" [mdMenuTriggerFor]="appMenu" mdTooltipPosition="right" mdTooltip="Outils de carte">
-  <md-icon class="md-24">
+﻿<button mat-icon-button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="appMenu" matTooltipPosition="right" matTooltip="Outils de carte">
+  <mat-icon class="mat-24">
     photo
-  </md-icon>
+  </mat-icon>
 </button>
-<md-menu #appMenu="mdMenu" [overlapTrigger]="true">
-  <button md-icon-button (click)="chooseLayers($event)" aria-label="Layers" mdTooltipPosition="below" mdTooltip="Choisir le fond de carte"
+<mat-menu #appMenu="matMenu" [overlapTrigger]="true">
+  <button mat-icon-button (click)="chooseLayers($event)" aria-label="Layers" matTooltipPosition="below" matTooltip="Choisir le fond de carte"
     i18n="Layers|Choose the map layers">
-    <md-icon class="md-24" color="default">
+    <mat-icon class="mat-24" color="default">
       layers
-    </md-icon>
+    </mat-icon>
   </button>
-  <button md-icon-button aria-label="Coordinates" mdTooltipPosition="below" mdTooltip="Position GPS" i18n="GPG|Add GPS marker"
+  <button mat-icon-button aria-label="Coordinates" matTooltipPosition="below" matTooltip="Position GPS" i18n="GPG|Add GPS marker"
     (click)="gpsMarker($event)">
-    <md-icon class="md-24">
+    <mat-icon class="mat-24">
       location_searching
-    </md-icon>
+    </mat-icon>
   </button>
-  <button md-icon-button aria-label="Move" mdTooltipPosition="below" mdTooltip="Déplacer la carte" i18n="Move|Move the map"
+  <button mat-icon-button aria-label="Move" matTooltipPosition="below" matTooltip="Déplacer la carte" i18n="Move|Move the map"
     (click)="move($event)">
-    <md-icon class="md-24" [style.color]="color('move')">
+    <mat-icon class="mat-24" [style.color]="color('move')">
       zoom_out_map
-    </md-icon>
+    </mat-icon>
   </button>
-</md-menu>
+</mat-menu>

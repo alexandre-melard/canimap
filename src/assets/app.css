@@ -133,14 +133,6 @@ app-canimap-alert {
   cursor: pointer;
 }
 
-.canimap-menu-mobile {
-  display: none;
-  position: absolute;
-  left: 50px;
-  top: 10px;
-  z-index: 9999;
-}
-
 .app-canimap-tooltip-help, .app-canimap-tooltip-measure {
   position: relative;
   background: rgba(0, 0, 0, 0.4);
@@ -154,16 +146,13 @@ app-canimap-alert {
 .app-canimap-tooltip-measure {
   background: rgba(200, 100, 100, 0.6);
 }
-.canimap-menu-mobile button {
-  background-color: rgba(255,255,255,0.9);
-  cursor: pointer;
-}
 
 /* LOCATION */
 app-canimap-location {
   position: absolute;
   right: 50px;
-  top: 10px;
+  top: 12px;
+  z-index: 9999;
 }
 
 app-canimap-location > form > input[type=search] {
@@ -202,7 +191,7 @@ app-canimap-location > form > input[type=search] {
   right: 0;
 }
 app-canimap-location > form > input[type=search]:focus {
-	width: 350px;
+	width: 250px;
   background-color: rgba(255,255,255,0.9);
 	border-color: #66CC75;
 
@@ -219,21 +208,17 @@ app-canimap-location > form > input::-webkit-input-placeholder {
 	color: #999;
 }
 
-/* LOCATION */
-
-@media (max-width : 1024px) {
-  .canimap-menu {
-    display: block;
-  }
-  .canimap-menu-mobile {
-    display: none;
-  }
+app-canimap-menu-mobile {
+  position: absolute;
+  right: 5px;
+  top: 10px;  
+  z-index: 9999;
 }
-
-
+  
 /* OL POPUP */
 .ol-popup {
   position: absolute;
+  visibility: hidden;
   background-color: rgba(0,0,0,0.4);
   -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
   filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));

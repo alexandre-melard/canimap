@@ -10,15 +10,9 @@ import { MenuEventService } from '../../_services/menuEvent.service';
 })
 
 export class MenuMobileComponent implements OnInit {
-    onTrackStatus = false;
     recordTrackStatus = false;
 
     constructor(private menuEventService: MenuEventService) {
-    }
-
-    onTrack() {
-        this.onTrackStatus = !this.onTrackStatus;
-        this.menuEventService.callEvent('onTrack', this.onTrackStatus);
     }
 
     recordTrack() {

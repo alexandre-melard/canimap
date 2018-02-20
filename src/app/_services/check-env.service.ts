@@ -9,15 +9,21 @@ export class CheckEnv implements CanActivate {
 
     canActivate() {
         console.log('checking env');
-        const user: any = JSON.parse(localStorage.getItem('currentUser'));
-        if (user === undefined ||
-            user === null ||
-            user === 'null' ||
-            user.email === undefined ||
-            user.email === null ||
-            user.email === '' ||
-            user.currentUser !== undefined) {
-            localStorage.clear();
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser !== null && currentUser.startsWith('{') && currentUser.endsWith('}')) {
+            const user: any = JSON.parse(currentUser);
+            if (user === undefined ||
+                user === null ||
+                user === 'null' ||
+                user.email === undefined ||
+                user.email === null ||
+                user.email === '' ||
+                user.currentUser !== undefined) {
+                localStorage.removeItem('currentUser');
+                console.log('removing current user, bad format');
+            }
+        } else if (currentUser !== null) {
+            localStorage.removeItem('currentUser');
             console.log('removing current user, bad format');
         }
         return true;

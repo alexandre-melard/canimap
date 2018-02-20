@@ -1,83 +1,113 @@
 ﻿import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions, Response } from '@angular/http';
-import { AuthHttp } from 'angular2-jwt';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-
-import 'rxjs/add/operator/toPromise';
+import { Observable } from 'rxjs/Observable';
+import { of } from 'rxjs/observable/of';
+import { catchError, map, tap } from 'rxjs/operators';
 
 import { User } from '../_models/index';
 
 @Injectable()
 export class UserService {
   private _user;
-  private promise;
 
-  constructor(private http: Http, private authHttp: AuthHttp) { }
+  constructor(private http: HttpClient) { }
 
+  private get httpOptions() {
+    return {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + localStorage.getItem('id_token') })
+    };
+  }
   create(user: User) {
-    return this.authHttp.post(environment.backend + '/api/users', user)
-      .toPromise()
-      .then(response => response.json() as User)
-      .catch(this.handleError);
+    return this.http
+      .post<User>(environment.backend + '/api/users', user, this.httpOptions)
+      .pipe(
+        tap((userResult: User) => console.log(`added user w/ id=${userResult._id}`)),
+        catchError(this.handleError('create'))
+      );
   }
 
   update(user: User) {
-    return this.authHttp.put(environment.backend + '/api/users/' + user.email, user)
-      .toPromise()
-      .then(() => {
+    return this.http
+    .put<User>(environment.backend + '/api/users/' + user.email, user, this.httpOptions)
+    .pipe(
+      tap((userResult: User) => {
+        console.log(`updated user w/ id=${userResult._id}`);
         localStorage.setItem('currentUser', JSON.stringify(user));
         return user;
-      })
-      .catch(this.handleError);
+      }),
+      catchError(this.handleError('update'))
+    );
   }
 
   modifyPassword(email: any, password: string) {
-    return this.http.put(environment.backend + '/api/user/password/' + email, password)
-      .toPromise()
-      .then(response => response.json() as User)
-      .catch(this.handleError);
+    return this.http
+    .put<User>(environment.backend + '/api/users/' + email, password, this.httpOptions)
+    .pipe(
+      tap((userResult: User) => {
+        console.log(`updated user w/ id=${userResult._id}`);
+        localStorage.setItem('currentUser', JSON.stringify(userResult));
+        return userResult;
+      }),
+      catchError(this.handleError('password'))
+    );
   }
 
   delete(email: string) {
-    return this.authHttp.delete(environment.backend + '/api/users/' + email)
-      .toPromise()
-      .then(response => response.json() as User)
-      .catch(this.handleError);
+    return this.http
+    .delete<User>(environment.backend + '/api/users/' + email, this.httpOptions)
+    .pipe(
+      tap((userResult: User) => {
+        console.log(`deleted user w/ id=${userResult._id}`);
+        return userResult;
+      }),
+      catchError(this.handleError('delete'))
+    );
   }
 
   get(email: string) {
-    return this.authHttp.get(environment.backend + '/api/users/' + email)
-      .toPromise()
-      .then(response => response.json() as User)
-      .catch(this.handleError);
+    return this.http
+    .get<User>(environment.backend + '/api/users/' + email, this.httpOptions)
+    .pipe(
+      tap((userResult: User) => {
+        console.log(`get user w/ id=${userResult._id}`);
+        return userResult;
+      }),
+      catchError(this.handleError('get'))
+    );
   }
 
-  currentUser(): Promise<User> {
-    if (this.promise === undefined) {
-      this.promise = new Promise<User>((resolve, reject) => {
-        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        if (currentUser === undefined || currentUser === null) {
-          currentUser = this.get(localStorage.getItem('email'))
-            .then(result => {
-              localStorage.setItem('currentUser', JSON.stringify(result));
-              this.promise = undefined;
-              resolve(result);
-            })
-            .catch((error) => {
-              this.promise = undefined;
-              reject('error while retrieving user with error: ' + JSON.stringify(error));
-            }
-          );
-        } else {
-          resolve(currentUser);
-        }
-      });
+  currentUser(): Observable<User> {
+    if (this._user === undefined) {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (currentUser === undefined || currentUser === null) {
+        this._user = this.get(localStorage.getItem('email'));
+        this._user.subscribe(user => {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+        });
+      } else {
+        this._user = new Observable<User>((observer) => {
+          observer.next(currentUser);
+        });
+      }
     }
-    return this.promise;
+    return this._user;
   }
+/**
+ * Handle Http operation that failed.
+ * Let the app continue.
+ * @param operation - name of the operation that failed
+ * @param result - optional value to return as the observable result
+ */
+private handleError<T> (operation = 'operation', result?: T) {
+  return (error: any): Observable<T> => {
 
-  private handleError(error: any): Promise<any> {
-    console.error('An error occurred', error);
-    return Promise.reject(error.message || error);
-  }
-}
+    console.error(error); // log to console instead
+
+    console.log(`${operation} failed: ${error.message}`);
+
+    // Let the app keep running by returning an empty result.
+    return of(result as T);
+  };
+}}

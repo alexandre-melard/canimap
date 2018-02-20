@@ -5,6 +5,7 @@ import { Subject } from 'rxjs/Subject';
 import { MenuEventService } from './menuEvent.service';
 import { UserService } from './user.service';
 import * as ol from 'openlayers';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 import { MapBox } from '../_models/mapBox';
 import { LayerBox } from '../_models/layerBox';
@@ -51,14 +52,14 @@ export class MapService implements OnDestroy {
 
   constructor(
     private menuEventService: MenuEventService,
-    private userService: UserService
+    private userService: UserService,
+    private deviceService: DeviceDetectorService
   ) {
     userService.currentUser()
-      .then(user => {
+      .subscribe(user => {
         this.user = user;
         this.setMapFromUserPreferences();
-      })
-      .catch(() => {
+      }, () => {
         this.user = new User();
         this.setMapFromUserPreferences();
       });
@@ -96,6 +97,7 @@ export class MapService implements OnDestroy {
         console.log('drawing gpsMarker start');
         this.menuEventService.callEvent('disableInteractions');
         const popup = $('.ol-popup').clone().get(0);
+        $(popup).css('visibility', 'visible');
         const options = {
           element: popup,
           autoPan: true,
@@ -169,7 +171,12 @@ export class MapService implements OnDestroy {
     this.layerBoxes.map(layerBox => map.addLayer(layerBox.layer));
 
     // add slider
-    map.addControl(new ol.control.ZoomSlider());
+    if (!this.deviceService.isMobile()) {
+      map.addControl(new ol.control.ZoomSlider());
+    } else {
+      $('.ol-zoom-in').css('display', 'none');
+      $('.ol-zoom-out').css('display', 'none');
+    }
 
     this.map = map;
     this.menuEventService.callEvent('mapLoaded', map);
@@ -276,7 +283,7 @@ export class MapService implements OnDestroy {
       mapBox.opacity = layerBox.layer.getOpacity();
       mapBox.visible = layerBox.layer.getVisible();
     });
-    this.userService.update(this.user);
+    this.userService.update(this.user).subscribe((user) => console.log('setting pushed to server'));
   }
 
   setOpacity(layerBox: LayerBox, opacity: number) {

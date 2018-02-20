@@ -2,6 +2,7 @@
 import { Helper } from './helper';
 
 export class User {
+    _id: String;
     email: string;
     firstName: string;
     lastName: string;

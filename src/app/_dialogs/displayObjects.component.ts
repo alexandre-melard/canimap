@@ -1,5 +1,5 @@
 ﻿import { Inject, Component } from '@angular/core';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MapService } from '../_services/map.service';
 import { LayerBox } from '../_models/layerBox';
 import { CaniDrawObject } from '../_models/caniDrawObject';
@@ -11,18 +11,17 @@ import * as $ from 'jquery';
   templateUrl: './templates/app-dialog-display-objects.html',
 })
 export class DialogDisplayObjectsComponent {
-  private objects;
+  objects;
   constructor(
-    public dialogRef: MdDialogRef<DialogDisplayObjectsComponent>,
-    public dialog: MdDialog,
-    @Inject(MD_DIALOG_DATA) public data: any) {
+    public dialogRef: MatDialogRef<DialogDisplayObjectsComponent>,
+    public dialog: MatDialog,
+    @Inject(MAT_DIALOG_DATA) public data: any) {
       this.objects = data.objects;
     }
 
   confirm(): void {
     this.dialogRef.close();
   }
-
   getColor(color: string) {
     if (color && !color.startsWith('#')) {
       color = '#' + color;

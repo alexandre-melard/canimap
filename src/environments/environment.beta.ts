@@ -3,7 +3,7 @@ export const environment = {
   google: 'UA-106820417-1',
   backend: 'https://beta.melard.fr',
   auth: {
-    redirect: 'https://beta.melard.fr/callback',
+    redirect: 'https://beta.melard.fr/login',
     id: 'HXGX610IWqnjdjz3EgF0O4qXHuL4ZSbJ'
   }
 };

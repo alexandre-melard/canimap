@@ -5,29 +5,29 @@
             <h2 *ngIf="!udpate">S'inscrire</h2>
             <h2 *ngIf="udpate">Mettre à jour</h2>
             <form name="form" class="register" (ngSubmit)="f.form.valid && save()" #f="ngForm" novalidate>
-                <md-form-field>
-                    <input mdInput type="email" name="email" [(ngModel)]="model.email" #lastName="ngModel" placeholder="Email" required>
-                </md-form-field>
-                <md-form-field>
-                    <input mdInput type="text" name="lastName" [(ngModel)]="model.lastName" #lastName="ngModel" placeholder="Nom" required>
-                </md-form-field>
-                <md-form-field>
-                    <input mdInput type="text" name="firstName" [(ngModel)]="model.firstName" #firstName="ngModel" placeholder="Prénom" required>
-                </md-form-field>
+                <mat-form-field>
+                    <input matInput type="email" name="email" [(ngModel)]="model.email" #lastName="ngModel" placeholder="Email" required>
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="text" name="lastName" [(ngModel)]="model.lastName" #lastName="ngModel" placeholder="Nom" required>
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="text" name="firstName" [(ngModel)]="model.firstName" #firstName="ngModel" placeholder="Prénom" required>
+                </mat-form-field>
                 <div class="no-break">
-                    <md-form-field>
-                        <input mdInput type="text" name="street" [(ngModel)]="model.street" #street="ngModel" placeholder="Rue" required>
-                    </md-form-field>
-                    <md-form-field>
-                        <input mdInput type="text" name="cp" [(ngModel)]="model.cp" #cp="ngModel" placeholder="Code Postal" required>
-                    </md-form-field>
-                    <md-form-field>
-                        <input mdInput type="text" name="city" [(ngModel)]="model.city" #city="ngModel" placeholder="Ville" required>
-                    </md-form-field>
+                    <mat-form-field>
+                        <input matInput type="text" name="street" [(ngModel)]="model.street" #street="ngModel" placeholder="Rue" required>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput type="text" name="cp" [(ngModel)]="model.cp" #cp="ngModel" placeholder="Code Postal" required>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput type="text" name="city" [(ngModel)]="model.city" #city="ngModel" placeholder="Ville" required>
+                    </mat-form-field>
                 </div>
-                <md-form-field>
-                    <input mdInput type="text" name="club" [(ngModel)]="model.club" #club="ngModel" placeholder="Club" required>
-                </md-form-field>
+                <mat-form-field>
+                    <input matInput type="text" name="club" [(ngModel)]="model.club" #club="ngModel" placeholder="Club" required>
+                </mat-form-field>
                 <div [hidden]="!error" class="alert alert-danger">
                     {{error}}
                 </div>
@@ -35,7 +35,7 @@
                     {{success}}
                 </div>
                 <div class="form-group">
-                    <button md-button color="primary" type="submit" [disabled]="loading">Enregistrer</button>
+                    <button mat-button color="primary" type="submit" [disabled]="loading">Enregistrer</button>
                 </div>
             </form>
         </div>

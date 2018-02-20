@@ -3,7 +3,7 @@ export const environment = {
   google: 'UA-66590854-1',
   backend: 'https://canimap.melard.fr',
   auth: {
-    redirect: 'https://canimap.melard.fr/callback',
+    redirect: 'https://canimap.melard.fr/login',
     id: 'HXGX610IWqnjdjz3EgF0O4qXHuL4ZSbJ'
   }
 };

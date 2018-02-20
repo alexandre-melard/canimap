@@ -1,5 +1,5 @@
 import { Inject, ElementRef, ViewChild, Component } from '@angular/core';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'app-dialog-files-open',
@@ -11,7 +11,7 @@ export class DialogFilesOpenComponent {
   @ViewChild('filesOpen')
   public uploadElement: ElementRef;
 
-  constructor(public dialogRef: MdDialogRef<DialogFilesOpenComponent>) { }
+  constructor(public dialogRef: MatDialogRef<DialogFilesOpenComponent>) { }
 
   upload() {
     this.uploadElement.nativeElement.click();

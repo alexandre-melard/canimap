@@ -1,26 +1,27 @@
 ﻿<div class="canimap-menu">
   <div class="btn-group-vertical menu-bar">
-    <button *ngIf="!isMapVisible" md-icon-button routerLink="/map" aria-label="Carte" mdTooltipPosition="right" mdTooltip="Affichez la carte"
+    <button *ngIf="!isMapVisible" mat-icon-button routerLink="/map" aria-label="Carte" matTooltipPosition="right" matTooltip="Affichez la carte"
       i18n="Map|The mapping tools and display">
-      <md-icon class="md-24">
+      <mat-icon class="mat-24">
         photo
-      </md-icon>
+      </mat-icon>
     </button>
-    <button *ngIf="isMapVisible || isRegisterVisible" md-icon-button routerLink="/user" mdTooltipPosition="right" mdTooltip="Gérez votre compte"
+    <button *ngIf="isMapVisible || isRegisterVisible" mat-icon-button routerLink="/user" matTooltipPosition="right" matTooltip="Gérez votre compte"
       i18n="Account|Account management">
-      <md-icon class="md-24">
+      <mat-icon class="mat-24">
         face
-      </md-icon>
+      </mat-icon>
     </button>
-    <button md-icon-button routerLink="/help" mdTooltipPosition="right" mdTooltip="Aide" i18n="Help|Help">
-      <md-icon class="md-24">
+    <button mat-icon-button routerLink="/help" matTooltipPosition="right" matTooltip="Aide" i18n="Help|Help">
+      <mat-icon class="mat-24">
         help
-      </md-icon>
+      </mat-icon>
     </button>
     <app-canimap-file-menu *ngIf="isMapVisible"></app-canimap-file-menu>
-    <app-canimap-track-menu *ngIf="isMapVisible"></app-canimap-track-menu>
+    <app-canimap-track-menu *ngIf="isMapVisible && !isMobileApp"></app-canimap-track-menu>
     <app-canimap-map-menu *ngIf="isMapVisible"></app-canimap-map-menu>
-    <app-canimap-draw-menu *ngIf="isMapVisible"></app-canimap-draw-menu>
+    <app-canimap-draw-menu *ngIf="isMapVisible && !isMobileApp"></app-canimap-draw-menu>
   </div>
 </div>
 <app-canimap-location *ngIf="isMapVisible"></app-canimap-location>
+<app-canimap-menu-mobile *ngIf="isMapVisible && isMobileApp"></app-canimap-menu-mobile>

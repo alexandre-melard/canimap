@@ -1,12 +1,12 @@
-<h2 md-dialog-title>Opacité des cartes</h2>
-<div md-dialog-content>
+<h2 mat-dialog-title>Opacité des cartes</h2>
+<div mat-dialog-content>
   <table width="100%">
     <tr *ngFor="let layerBox of layerBoxes">
         <td>{{layerBox.name}}</td>
-        <td><md-slider step="0.01" min="0" max="1" (input)="onInputChange($event, layerBox)" [value]="layerBox.layer.getOpacity()"></md-slider></td>
+        <td><mat-slider step="0.01" min="0" max="1" (input)="onInputChange($event, layerBox)" [value]="layerBox.layer.getOpacity()"></mat-slider></td>
     </tr>
   </table>
 </div>
-<div md-dialog-actions>
-    <button md-button (click)="confirm()" tabindex="-1">Ok</button>
+<div mat-dialog-actions>
+    <button mat-button (click)="confirm()" tabindex="-1">Ok</button>
 </div>

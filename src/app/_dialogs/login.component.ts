@@ -1,7 +1,7 @@
 ﻿import { Inject, Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../_services/auth.service';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import * as $ from 'jquery';
 
@@ -21,7 +21,7 @@ export class DialogLoginComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthService,
-    public dialogRef: MdDialogRef<DialogLoginComponent>) { }
+    public dialogRef: MatDialogRef<DialogLoginComponent>) { }
 
   ngOnInit() {
     const users = JSON.parse(localStorage.getItem('users'));

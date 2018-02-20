@@ -1,22 +1,21 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpModule } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
-  MdDialogModule, MdButtonModule, MdButtonToggleModule, MdIconModule, MdTooltipModule,
-  MdInputModule, MdSliderModule, MdExpansionModule, MdTableModule, MdMenuModule, MdTabsModule
+  MatDialogModule, MatButtonModule, MatButtonToggleModule, MatIconModule, MatTooltipModule,
+  MatInputModule, MatSliderModule, MatExpansionModule, MatTableModule, MatMenuModule, MatTabsModule
 } from '@angular/material';
 import { AgmCoreModule } from '@agm/core';
-import { routing } from './app.routing';
+import { AppRoutingModule } from './app-routing/app-routing.module';
 
 // used to create fake backend
-import { MockBackend, MockConnection } from '@angular/http/testing';
-import { BaseRequestOptions } from '@angular/http';
 
 import { AppComponent } from './app.component';
 
-import {InlineEditorModule} from '@qontu/ngx-inline-editor';
+// import {InlineEditorModule} from '@qontu/ngx-inline-editor';
+import { DeviceDetectorModule } from 'ngx-device-detector';
 
 import { AlertComponent } from './_directives/index';
 import { HomeComponent } from './home/index';
@@ -31,7 +30,7 @@ import { TrackMenuComponent } from './_menus/tracksMenu';
 import { MapMenuComponent } from './_menus/mapMenu';
 import { DrawMenuComponent } from './_menus/drawMenu';
 import { HelpComponent } from './help/index';
-import { CallbackComponent } from './_guards/callback.component';
+import { LoginComponent } from './_guards/login.component';
 
 import { DialogChooseLayersComponent } from './_dialogs/chooseLayer.component';
 import { DialogChooseColorComponent } from './_dialogs/chooseColor.component';
@@ -52,16 +51,9 @@ import { CaniDrawObjectService } from './_services/caniDrawObject.service';
 import { DrawService } from './_services/draw.service';
 import { HelperEventService } from './_services/helperEvent.service';
 import { FileService } from './_services/file.service';
+import { HttpClientModule } from '@angular/common/http';
+import { JwtModule } from '@auth0/angular-jwt';
 
-import { Http, RequestOptions } from '@angular/http';
-import { AuthHttp, AuthConfig } from 'angular2-jwt';
-
-export function authHttpServiceFactory(http: Http, options: RequestOptions) {
-  return new AuthHttp(new AuthConfig({
-    tokenName: 'id_token',
-    tokenGetter: (() => localStorage.getItem('id_token')),
-  }), http, options);
-}
 
 @NgModule({
   declarations: [
@@ -78,7 +70,7 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     DrawMenuComponent,
     CanimapComponent,
     HelpComponent,
-    CallbackComponent,
+    LoginComponent,
     DialogChooseLayersComponent,
     DialogChooseColorComponent,
     DialogHelperComponent,
@@ -90,33 +82,35 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     RegisterComponent
   ],
   imports: [
+    HttpClientModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: () => localStorage.getItem('token'),
+        whitelistedDomains: ['localhost:4200']
+      }
+    }),
     BrowserModule,
     BrowserAnimationsModule,
-    MdDialogModule,
-    MdButtonModule,
-    MdMenuModule,
-    MdButtonToggleModule,
-    MdIconModule,
-    MdTooltipModule,
-    MdInputModule,
-    MdSliderModule,
-    MdTabsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatMenuModule,
+    MatButtonToggleModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatInputModule,
+    MatSliderModule,
+    MatTabsModule,
     FormsModule,
-    HttpModule,
     ReactiveFormsModule,
-    InlineEditorModule,
+    // InlineEditorModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyBb1BipElNZJQPhdkSUdX5DxZpPnQV_D3k',
       libraries: ['places']
     }),
-    routing
+    DeviceDetectorModule.forRoot(),
+    AppRoutingModule
   ],
   providers: [
-    {
-      provide: AuthHttp,
-      useFactory: authHttpServiceFactory,
-      deps: [Http, RequestOptions]
-    },
     AuthGuard,
     CheckEnv,
     AuthService,
@@ -127,11 +121,7 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     DrawService,
     CaniDrawObjectService,
     HelperEventService,
-    FileService,
-
-    // providers used to create fake backend
-    MockBackend,
-    BaseRequestOptions
+    FileService
   ],
   entryComponents: [
     DialogFileSaveComponent,

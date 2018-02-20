@@ -1,5 +1,5 @@
 ﻿import { Inject, Component } from '@angular/core';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { MapService } from '../_services/map.service';
 import { LayerBox } from '../_models/layerBox';
 
@@ -11,7 +11,7 @@ export class DialogChooseLayersComponent {
   layerBoxes;
   constructor(
     private mapService: MapService,
-    public dialogRef: MdDialogRef<DialogChooseLayersComponent>) {
+    public dialogRef: MatDialogRef<DialogChooseLayersComponent>) {
       this.layerBoxes = this.mapService.layerBoxes;
   }
 

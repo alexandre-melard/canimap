@@ -1,10 +1,10 @@
-<div md-dialog-content>
+<div mat-dialog-content>
     <p>Choisissez un nom pour votre carte: </p>
-    <md-form-field>
-      <input mdInput tabindex="1" [(ngModel)]="data.name">
-    </md-form-field>
+    <mat-form-field>
+      <input matInput tabindex="1" [(ngModel)]="data.name">
+    </mat-form-field>
   </div>
-  <div md-dialog-actions>
-    <button md-button [md-dialog-close]="data.name" tabindex="2">Ok</button>
-    <button md-button (click)="onNoClick()" tabindex="-1">Non merci</button>
+  <div mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="data.name" tabindex="2">Ok</button>
+    <button mat-button (click)="onNoClick()" tabindex="-1">Non merci</button>
   </div>

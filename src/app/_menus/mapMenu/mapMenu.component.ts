@@ -1,5 +1,5 @@
 ﻿import { Inject, Component, OnInit } from '@angular/core';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DataSource } from '@angular/cdk/collections';
@@ -27,7 +27,7 @@ export class MapMenuComponent extends BaseMenuComponent implements OnInit {
     private router: Router,
     public menuEventService: MenuEventService,
     public helperEventService: HelperEventService,
-    public dialog: MdDialog) {
+    public dialog: MatDialog) {
     super(menuEventService, helperEventService);
   }
 

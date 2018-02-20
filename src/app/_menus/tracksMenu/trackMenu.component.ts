@@ -20,7 +20,7 @@ export class TrackMenuComponent extends BaseMenuComponent {
     super(menuEventService, helperEventService);
   }
 
-  objects(e: MouseEvent) {
+  objects() {
     this.menuEventService.callEvent('displayObjects', null);
   }
 }

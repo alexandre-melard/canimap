@@ -1,5 +1,5 @@
 import { Inject, Component } from '@angular/core';
-import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'app-dialog-file-save',
@@ -7,8 +7,8 @@ import { MdDialog, MdDialogRef, MD_DIALOG_DATA } from '@angular/material';
 })
 export class DialogFileSaveComponent {
   constructor(
-    public dialogRef: MdDialogRef<DialogFileSaveComponent>,
-    @Inject(MD_DIALOG_DATA) public data: any) { }
+    public dialogRef: MatDialogRef<DialogFileSaveComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   onNoClick(): void {
     this.dialogRef.close();

@@ -8,7 +8,7 @@ export const environment = {
   google: 'UA-106820417-1',
   backend: 'https://canimap.melard.fr',
   auth: {
-    redirect: 'http://localhost:4200/callback',
+    redirect: 'http://localhost:4200/login',
     id: 'HXGX610IWqnjdjz3EgF0O4qXHuL4ZSbJ'
   }
 };

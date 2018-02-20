@@ -7,13 +7,17 @@ interface AuthConfig {
     AUDIENCE: string;
     REDIRECT: string;
     SCOPE: string;
+    LOGO: string;
+    PRIMARY_COLOR: string;
 }
 
 export const AUTH_CONFIG: AuthConfig = {
     CLIENT_ID: environment.auth.id,
     CLIENT_DOMAIN: 'canimap.eu.auth0.com',
-    RESPONSE_TYPE: 'token id_token',
+    RESPONSE_TYPE: 'id_token token',
     AUDIENCE: 'https://canimap.eu.auth0.com/api/v2/',
     REDIRECT: environment.auth.redirect,
-    SCOPE: 'openid email'
+    SCOPE: 'openid profile email',
+    LOGO: 'https://canimap.melard.fr/assets/cropped-logo-180x180.png',
+    PRIMARY_COLOR: 'orange'
 };

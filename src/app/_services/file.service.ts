@@ -1,5 +1,5 @@
 import { Injectable, Inject, Component, OnInit, OnDestroy } from '@angular/core';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 
 import { MenuEventService } from '../_services/menuEvent.service';
 import { DrawService } from '../_services/draw.service';
@@ -19,7 +19,7 @@ export class FileService implements OnDestroy {
   constructor(
     private menuEventService: MenuEventService,
     private drawService: DrawService,
-    public dialog: MdDialog
+    public dialog: MatDialog
   ) {
     const me = this;
     this.subscriptions.push(this.menuEventService.getObservable('fileSave').subscribe(
