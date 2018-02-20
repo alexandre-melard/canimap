@@ -97,7 +97,7 @@ export class MapService implements OnDestroy {
         console.log('drawing gpsMarker start');
         this.menuEventService.callEvent('disableInteractions');
         const popup = $('.ol-popup').clone().get(0);
-        $(popup).css('visibility', 'visible');
+        $(popup).css('display', 'block');
         const options = {
           element: popup,
           autoPan: true,
