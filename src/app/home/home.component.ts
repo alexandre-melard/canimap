@@ -59,12 +59,8 @@ export class HomeComponent implements OnInit {
     }
   }
 
-
-  save() {
-    this.success = '';
-    this.error = '';
-    this.userService.modifyPassword(this.currentUser.email, this.model.password);
-    this.success = 'Modification du mot de passe enregistrée';
+  resetPassword() {
+    this.authenticationService.login();
   }
 
   ngOnInit() {
