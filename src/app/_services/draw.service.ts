@@ -33,6 +33,8 @@ export class DrawService implements OnDestroy {
   delete: interaction.Select;
   snap: interaction.Snap;
   tooltip = new Tooltip();
+  private watchId;
+  private track: ol.geom.LineString;
 
   private subscriptions = new Array<Subscription>();
   public color = '#F00';
@@ -333,36 +335,39 @@ export class DrawService implements OnDestroy {
         me.map.getView().fit(me.source.getExtent());
       }
     ));
-    let watchId;
-    let track;
     this.subscriptions.push(this.menuEventService.getObservable('recordTrack').subscribe(
       (status: Function) => {
         if (status) {
           console.log('starting track recording');
-          watchId = navigator.geolocation.watchPosition((position) => {
+          me.watchId = navigator.geolocation.watchPosition((position) => {
             console.log(position.coords);
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
             const coords = ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:3857');
-            this.map.getView().setCenter(coords);
-            if (track !== undefined && track.getCoordinates().length > 1) {
-              const lastCoordinates = track.getCoordinates().lastCoordinates;
-              const tmpLine = new ol.geom.LineString([lastCoordinates, coords]);
+            me.map.getView().setCenter(coords);
+            if (me.track !== undefined && me.track.getCoordinates().length > 0) {
+              const coordinates = me.track.getCoordinates();
+              const lastCoordinates = coordinates[coordinates.length - 1];
+              let tmpLine = new ol.geom.LineString([lastCoordinates, coords]);
               if (tmpLine.getLength() > 5) {
-                track.push(coords);
+                coordinates.push(coords);
+                me.track.setCoordinates(coordinates);
               }
+              tmpLine = undefined;
             } else {
               // First coordinates
-              track = new ol.geom.LineString([coords]);
-              const style = drawInteractions.find((draw) => (draw.type === 'LineStringGps')).style;
-              const feature = new ol.Feature({geometry: track});
-              feature.set('style', style(this.color));
+              me.track = new ol.geom.LineString([coords]);
+              const cStyle = drawInteractions.find((draw) => (draw.type === 'LineStringGps')).style;
+              const feature = new ol.Feature({geometry: me.track});
+              feature.set('style', cStyle(me.color));
               me.source.addFeature(feature);
             }
           });
         } else {
           console.log('stopping track recording');
-          navigator.geolocation.clearWatch(watchId);
+          navigator.geolocation.clearWatch(this.watchId);
+          this.menuEventService.callEvent('fileSave', null);
+          this.track = undefined;
         }
       },
       (failure) => {

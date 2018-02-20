@@ -245,7 +245,7 @@ export class MapService implements OnDestroy {
       projection: 'EPSG:3857',
       tileGrid: tileGrid,
       style: 'normal',
-      attributions: '<a href="http://www.geoportail.fr/" target="_blank">' +
+      attributions: 'v4.12.3 <a href="http://www.geoportail.fr/" target="_blank">' +
         '<img src="https://api.ign.fr/geoportail/api/js/latest/' +
         'theme/geoportal/img/logo_gp.gif"></a>',
       crossOrigin: ''

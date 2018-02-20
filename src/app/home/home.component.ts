@@ -8,6 +8,8 @@ import { MatTabChangeEvent } from '@angular/material';
 import * as $ from 'jquery';
 
 const CHANGES = [
+  '4.13.0',
+  '4.12.0',
   '4.11.4', '4.11.3', '4.11.2', '4.11.1', '4.11.0',
   '4.10.4', '4.10.3', '4.10.2', '4.10.1', '4.10.0',
   '4.9.2', '4.9.1', '4.9.0',

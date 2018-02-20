@@ -47,7 +47,6 @@ export class HelperEventService {
         if ((helper !== undefined) && helper.visible) {
           this.http.get('../assets/helpers/' + key + '.json')
             .subscribe((data: any) => {
-              data = data.json();
               const dialogRef = this.dialog.open(DialogHelperComponent, {
                 width: '700px',
                 data: { title: data.title, body: data.body, key: key, dismissHelp: false }

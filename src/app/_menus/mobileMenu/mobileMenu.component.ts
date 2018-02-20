@@ -20,6 +20,10 @@ export class MenuMobileComponent implements OnInit {
         this.menuEventService.callEvent('recordTrack', this.recordTrackStatus);
     }
 
+    get color(): string {
+        return  this.recordTrackStatus ? 'warn' : 'primary';
+    }
+
     ngOnInit() {
     }
 }
