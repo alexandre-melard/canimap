@@ -17,11 +17,13 @@ import { CaniDraw } from '../_models/caniDraw';
 import { CaniStyle } from '../_models/caniStyle';
 import { Tooltip } from '../_utils/map-tooltip';
 import { drawInteractions } from '../_consts/drawings';
-
+import { SETTINGS } from '../_consts/settings';
 import { styleFunction } from '../_utils/map-style';
 import { hexToRgb } from '../_utils/color-hex-to-rgb';
-import * as $ from 'jquery';
+import { CaniDrawObject } from '../_models/caniDrawObject';
+import { LogService } from '../_services/log.service';
 
+import * as $ from 'jquery';
 
 @Injectable()
 export class DrawService implements OnDestroy {
@@ -150,7 +152,8 @@ export class DrawService implements OnDestroy {
   constructor(
     private menuEventService: MenuEventService,
     private caniDrawObjectService: CaniDrawObjectService,
-    private mapService: MapService
+    private mapService: MapService,
+    private logService: LogService
   ) {
     const me = this;
     const menuEventServiceMapLoaded = this.menuEventService.getObservableAndMissedEvents('mapLoaded');
@@ -218,16 +221,16 @@ export class DrawService implements OnDestroy {
         features = features.concat(geojsonFormat.readFeatures(json));
         features.forEach((f: Feature) => {
           const properties = f.getProperties();
-          let style;
+          let lStyle;
           drawInteractions.forEach((draw) => {
             if (
               (draw.type === f.getGeometry().getType())
               ||
               ((properties.style.type !== undefined) && (draw.type === properties.style.type))) {
-              style = properties.style;
+                lStyle = properties.style;
             }
           });
-          f.set('style', style);
+          f.set('style', lStyle);
           if ((f.getGeometry().getType() === 'Point') &&
           (f.getProperties().type !== undefined) &&
           (f.getProperties().type === 'RuObject')) {
@@ -314,15 +317,15 @@ export class DrawService implements OnDestroy {
         const features = f.readFeatures(gps.content, { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' });
         const rgb = hexToRgb(me.color);
         features.forEach((feature: ol.Feature) => {
-          const style = drawInteractions.find((draw) => (draw.type === 'LineStringGps')).style;
+          const lStyle = drawInteractions.find((draw) => (draw.type === 'LineStringGps')).style;
           if (feature.getGeometry().getType() === 'MultiLineString') {
             (<geom.MultiLineString>feature.getGeometry()).getLineStrings().forEach((lineStringGeom: geom.LineString) => {
               const feat = new Feature(lineStringGeom);
-              feat.set('style', style(this.color));
+              feat.set('style', lStyle(this.color));
               me.source.addFeature(feat);
             });
           } else {
-            feature.set('style', style(this.color));
+            feature.set('style', lStyle(this.color));
             me.source.addFeature(feature);
           }
           if ((feature.getGeometry().getType() === 'Point') &&
@@ -338,7 +341,7 @@ export class DrawService implements OnDestroy {
     this.subscriptions.push(this.menuEventService.getObservable('recordTrack').subscribe(
       (status: Function) => {
         if (status) {
-          console.log('starting track recording');
+          this.logService.info('starting track recording');
           me.watchId = navigator.geolocation.watchPosition((position) => {
             console.log(position.coords);
             const lat = position.coords.latitude;
@@ -349,7 +352,7 @@ export class DrawService implements OnDestroy {
               const coordinates = me.track.getCoordinates();
               const lastCoordinates = coordinates[coordinates.length - 1];
               let tmpLine = new ol.geom.LineString([lastCoordinates, coords]);
-              if (tmpLine.getLength() > 5) {
+              if (tmpLine.getLength() > SETTINGS.TRACK.FREQUENCY) {
                 coordinates.push(coords);
                 me.track.setCoordinates(coordinates);
               }
@@ -357,26 +360,42 @@ export class DrawService implements OnDestroy {
             } else {
               // First coordinates
               me.track = new ol.geom.LineString([coords]);
-              const cStyle = drawInteractions.find((draw) => (draw.type === 'LineStringGps')).style;
+              const lStyle = drawInteractions.find((draw) => (draw.type === 'LineStringGps')).style;
               const feature = new ol.Feature({geometry: me.track});
-              feature.set('style', cStyle(me.color));
+              feature.set('style', lStyle(SETTINGS.TRACK.COLOR));
               me.source.addFeature(feature);
             }
+          },
+          (failure) => {
+          },
+          {
+            enableHighAccuracy: true
           });
         } else {
-          console.log('stopping track recording');
+          this.logService.success('stopping track recording');
           navigator.geolocation.clearWatch(this.watchId);
           this.menuEventService.callEvent('fileSave', null);
           this.track = undefined;
         }
-      },
-      (failure) => {
-
-      },
-      {
-        enableHighAccuracy: true
       }
     ));
+    this.subscriptions.push(this.menuEventService.getObservable('addObjectToTrack').subscribe(
+      () => {
+        console.log('add object on track');
+        navigator.geolocation.getCurrentPosition((position) => {
+          console.log(position.coords);
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          const coords = ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:3857');
+          me.map.getView().setCenter(coords);
+          const feature = new ol.Feature(new ol.geom.Point(coords));
+          this.caniDrawObjectService.createObject(feature).subscribe((object: CaniDrawObject) => {
+            const lStyle = drawInteractions.find((drawInteraction) => drawInteraction.type === object.type).style;
+            feature.set('style', lStyle(this.color));
+            this.source.addFeature(feature);
+          });
+        });
+    }));
   }
 
   ngOnDestroy() {

@@ -1,6 +1,5 @@
 import { Inject, ElementRef, ViewChild, Component } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { AlertService } from '../_services/alert.service';
 
 @Component({
   selector: 'app-dialog-file-open',
@@ -13,7 +12,6 @@ export class DialogFileOpenComponent {
   public uploadElement: ElementRef;
 
   constructor(public dialogRef: MatDialogRef<DialogFileOpenComponent>,
-    private alertService: AlertService,
     @Inject(MAT_DIALOG_DATA) public data: any) {
     this.types = '.' + (<string[]>this.data.types.data).join(',.');
     this.data = undefined;
@@ -36,7 +34,7 @@ export class DialogFileOpenComponent {
     evt.preventDefault();
     const files = evt.dataTransfer.files;
     if (files.length > 1) {
-      this.alertService.error(('Vous ne pouvez charger qu\'un fichier à la fois!'));
+      console.log('Vous ne pouvez charger qu\'un fichier à la fois!');
     }
     this.data = files[0]; // FileList object.
   }

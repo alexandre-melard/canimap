@@ -11,6 +11,7 @@ import { MapBox } from '../_models/mapBox';
 import { LayerBox } from '../_models/layerBox';
 import { User } from '../_models/user';
 import * as $ from 'jquery';
+import { SETTINGS } from '../_consts/settings';
 
 @Injectable()
 export class MapService implements OnDestroy {
@@ -245,7 +246,7 @@ export class MapService implements OnDestroy {
       projection: 'EPSG:3857',
       tileGrid: tileGrid,
       style: 'normal',
-      attributions: 'v4.12.3 <a href="http://www.geoportail.fr/" target="_blank">' +
+      attributions: SETTINGS.VERSION + ' <a href="http://www.geoportail.fr/" target="_blank">' +
         '<img src="https://api.ign.fr/geoportail/api/js/latest/' +
         'theme/geoportal/img/logo_gp.gif"></a>',
       crossOrigin: ''

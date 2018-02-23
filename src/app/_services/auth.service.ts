@@ -61,7 +61,7 @@ export class AuthService {
     });
     const me = this;
     lock.on('authenticated', authResult => {
-      lock.hide();
+      lock.hide ();
       me.setLoggedIn(true);
       lock.getUserInfo(authResult.accessToken, function(error, profile) {
         if (error) {

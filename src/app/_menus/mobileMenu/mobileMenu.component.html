@@ -1,9 +1,13 @@
 <div class="canimap-menu-mobile">
   <div class="btn-group-vertical menu-bar">
-    <button mat-icon-button aria-label="Track" matTooltipPosition="below" matTooltip="Enregistrer le parcours"
-    i18n="Record|Record the track" (click)="recordTrack()">
+    <button mat-icon-button aria-label="Track" i18n="Record|Record the track" (click)="recordTrack()">
       <mat-icon class="mat-24" [color]="color">
         fiber_manual_record
+      </mat-icon>
+    </button>
+    <button mat-icon-button aria-label="Object" i18n="Object|Add an object to the track" (click)="addObject()">
+      <mat-icon class="mat-24">
+        location_on
       </mat-icon>
     </button>
   </div>

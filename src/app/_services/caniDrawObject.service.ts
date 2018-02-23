@@ -3,16 +3,14 @@ import { MatDialog } from '@angular/material';
 
 import { MenuEventService } from '../_services/menuEvent.service';
 
+import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
-import { saveAs } from 'file-saver';
-import { DialogFileOpenComponent } from '../_dialogs/fileOpen.component';
-import { DialogFilesOpenComponent } from '../_dialogs/filesOpen.component';
-import { DialogFileSaveComponent } from '../_dialogs/fileSave.component';
-import { DialogDisplayObjectsComponent } from '../_dialogs/displayObjects.component';
-import { environment } from '../../environments/environment';
+import { DialogObjectsDisplayComponent } from '../_dialogs/objectsDisplay.component';
 import { CaniDrawPoint } from '../_models/caniDrawPoint';
 import { CaniDrawObject } from '../_models/caniDrawObject';
 import * as ol from 'openlayers';
+import { DialogObjectsAddComponent } from '../_dialogs/ObjectsAdd.component';
+import { Observer } from 'rxjs/Observer';
 
 @Injectable()
 export class CaniDrawObjectService implements OnDestroy {
@@ -75,7 +73,7 @@ export class CaniDrawObjectService implements OnDestroy {
 
     this.subscriptions.push(this.menuEventService.getObservable('displayObjects').subscribe(
       () => {
-        const dialogRef = this.dialog.open(DialogDisplayObjectsComponent, {
+        const dialogRef = this.dialog.open(DialogObjectsDisplayComponent, {
           width: '800px',
           data: { objects: this.objects }
         });
@@ -108,6 +106,21 @@ export class CaniDrawObjectService implements OnDestroy {
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
     ));
+  }
+
+  createObject(feature: ol.Feature) {
+    const obs = new Observable((observer: Observer<CaniDrawObject>) => {
+      const dialogRef = this.dialog.open(DialogObjectsAddComponent, {
+        width: '800px'
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('The dialog was closed');
+        result.feature = feature;
+        this.writeRuObjectToFeature(result);
+        observer.next(result);
+      });
+    });
+    return obs;
   }
 
   writeRuObjectToFeature(ruObject: CaniDrawObject) {

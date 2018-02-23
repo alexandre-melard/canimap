@@ -85,9 +85,13 @@ button.mat-icon-button {
   right: 10px;
 }
 
-app-canimap-alert {
+app-log {
   text-align: center;
-  z-index: 1000;
+  width: 80%;
+  position: absolute;
+  bottom: 5px;
+  left: 10%;
+  z-index: 9999;
 }
 
 .canimap-menu {
@@ -109,6 +113,10 @@ app-canimap-alert {
   left: 50%;
   /* bring your own prefixes */
   transform: translate(-50%, -50%);
+}
+
+mat-dialog-container.mat-dialog-container {
+  background-color: rgba(255,255,255,0.9);
 }
 
 .mat-dialog-content output {

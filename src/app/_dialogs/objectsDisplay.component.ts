@@ -13,14 +13,14 @@ import * as $ from 'jquery';
 
 @Component({
   selector: 'app-dialog-display-objects',
-  templateUrl: './templates/app-dialog-display-objects.html',
+  templateUrl: './templates/app-dialog-objects-display.html',
 })
-export class DialogDisplayObjectsComponent {
+export class DialogObjectsDisplayComponent {
   displayedColumns = ['index', 'name', 'position', 'color', 'fabric', 'wind', 'specificity'];
   dataSource: MatTableDataSource<CaniDrawObject>;
 
   constructor(
-    public dialogRef: MatDialogRef<DialogDisplayObjectsComponent>,
+    public dialogRef: MatDialogRef<DialogObjectsDisplayComponent>,
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any) {
       this.dataSource = new MatTableDataSource<CaniDrawObject>(data.objects);

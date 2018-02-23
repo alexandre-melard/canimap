@@ -1,9 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SatPopoverModule } from '@ncstate/sat-popover';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppMaterialModules } from './material.module';
 import { AgmCoreModule } from '@agm/core';
 import { AppRoutingModule } from './app-routing/app-routing.module';
@@ -14,7 +14,7 @@ import { AppComponent } from './app.component';
 
 import { DeviceDetectorModule } from 'ngx-device-detector';
 
-import { AlertComponent } from './_directives/index';
+import { LogComponent } from './_directives/index';
 import { HomeComponent } from './home/index';
 import { LocationComponent } from './_menus/location/index';
 import { MenuComponent } from './_menus/menu/index';
@@ -36,13 +36,15 @@ import { DialogHelperComponent } from './_dialogs/helper.component';
 import { DialogFileOpenComponent } from './_dialogs/fileOpen.component';
 import { DialogFileSaveComponent } from './_dialogs/fileSave.component';
 import { DialogFilesOpenComponent } from './_dialogs/filesOpen.component';
-import { DialogDisplayObjectsComponent } from './_dialogs/displayObjects.component';
+import { DialogObjectsDisplayComponent } from './_dialogs/objectsDisplay.component';
+import { DialogObjectsAddComponent } from './_dialogs/ObjectsAdd.component';
 import { DialogLoginComponent } from './_dialogs/login.component';
 
 import { AuthGuard } from './_services/auth-guard.service';
 import { CheckEnv } from './_services/check-env.service';
 import { AuthService } from './_services/auth.service';
-import { AlertService, UserService } from './_services/index';
+import { LogService } from './_services/log.service';
+import { UserService } from './_services/user.service';
 import { MenuEventService } from './_services/menuEvent.service';
 import { MapService } from './_services/map.service';
 import { CaniDrawObjectService } from './_services/caniDrawObject.service';
@@ -56,7 +58,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 @NgModule({
   declarations: [
     AppComponent,
-    AlertComponent,
+    LogComponent,
     HomeComponent,
     MenuComponent,
     MenuMobileComponent,
@@ -75,7 +77,8 @@ import { JwtModule } from '@auth0/angular-jwt';
     DialogFileOpenComponent,
     DialogFilesOpenComponent,
     DialogFileSaveComponent,
-    DialogDisplayObjectsComponent,
+    DialogObjectsDisplayComponent,
+    DialogObjectsAddComponent,
     DialogLoginComponent,
     RegisterComponent,
     InlineEditComponent
@@ -105,7 +108,7 @@ import { JwtModule } from '@auth0/angular-jwt';
     AuthGuard,
     CheckEnv,
     AuthService,
-    AlertService,
+    LogService,
     UserService,
     MenuEventService,
     MapService,
@@ -118,7 +121,8 @@ import { JwtModule } from '@auth0/angular-jwt';
     DialogFileSaveComponent,
     DialogFileOpenComponent,
     DialogFilesOpenComponent,
-    DialogDisplayObjectsComponent,
+    DialogObjectsDisplayComponent,
+    DialogObjectsAddComponent,
     DialogChooseLayersComponent,
     DialogChooseColorComponent,
     DialogLoginComponent,

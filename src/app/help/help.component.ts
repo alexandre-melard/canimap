@@ -2,7 +2,7 @@
 import { Router } from '@angular/router';
 
 import { User } from '../_models/index';
-import { UserService } from '../_services/index';
+import { UserService } from '../_services/user.service';
 
 import * as $ from 'jquery';
 

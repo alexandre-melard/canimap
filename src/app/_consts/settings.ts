@@ -21,3 +21,11 @@ export const AUTH_CONFIG: AuthConfig = {
     LOGO: 'https://canimap.melard.fr/assets/cropped-logo-180x180.png',
     PRIMARY_COLOR: 'orange'
 };
+
+export const SETTINGS = {
+    VERSION: 'v4.13.1',
+    TRACK : {
+        FREQUENCY: 5,
+        COLOR: '#00F'
+    }
+};

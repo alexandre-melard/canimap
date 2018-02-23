@@ -1,7 +1,8 @@
 ﻿import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { AlertService, UserService } from '../_services/index';
+import { LogService } from '../_services/log.service';
+import { UserService } from '../_services/user.service';
 import { User } from '../_models/user';
 import * as $ from 'jquery';
 
@@ -21,7 +22,7 @@ export class RegisterComponent {
   constructor(
     private router: Router,
     private userService: UserService,
-    private alertService: AlertService) {
+    private logService: LogService) {
     userService.currentUser()
       .subscribe(user => {
         if (user === null) {

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
 @Injectable()
-export class AlertService {
+export class LogService {
     private subject = new Subject<any>();
     private keepAfterNavigationChange = false;
 
@@ -22,15 +22,25 @@ export class AlertService {
             }
         });
     }
+    log(type: string, message: string, keepAfterNavigationChange = false) {
+        this.keepAfterNavigationChange = keepAfterNavigationChange;
+        this.subject.next({ type: type, text: message });
+        if (!keepAfterNavigationChange) {
+            setTimeout(() => this.subject.next(), 3000);
+        }
+        console.log(type + ': ' + message);
+    }
+
+    info(message: string, keepAfterNavigationChange = false) {
+        this.log('info', message, keepAfterNavigationChange);
+    }
 
     success(message: string, keepAfterNavigationChange = false) {
-        this.keepAfterNavigationChange = keepAfterNavigationChange;
-        this.subject.next({ type: 'success', text: message });
+        this.log('success', message, keepAfterNavigationChange);
     }
 
     error(message: string, keepAfterNavigationChange = false) {
-        this.keepAfterNavigationChange = keepAfterNavigationChange;
-        this.subject.next({ type: 'error', text: message });
+        this.log('error', message, keepAfterNavigationChange);
     }
 
     getMessage(): Observable<any> {
