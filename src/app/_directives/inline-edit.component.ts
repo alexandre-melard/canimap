@@ -46,8 +46,7 @@ export class InlineEditComponent implements OnInit {
   ngOnInit() {
     // subscribe to cancellations and reset form value
     if (this.popover) {
-      this.popover.closed.pipe(filter(val => val == null))
-        .subscribe(() => this.comment = this.value || '');
+      this.popover.closed.pipe(filter(val => val == null)).subscribe(() => this.comment = this.value || '');
     }
   }
 

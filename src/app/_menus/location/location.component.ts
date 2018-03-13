@@ -2,6 +2,7 @@
 import { FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MapsAPILoader } from '@agm/core';
+import { LogService } from '../../_services/log.service';
 import { } from '@types/googlemaps';
 
 import { MenuEventService } from '../../_services/menuEvent.service';
@@ -24,6 +25,7 @@ export class LocationComponent implements OnInit {
     private router: Router,
     private menuEventService: MenuEventService,
     private mapsAPILoader: MapsAPILoader,
+    private log: LogService,
     private ngZone: NgZone) { }
 
   gps() {
@@ -31,6 +33,9 @@ export class LocationComponent implements OnInit {
       this.menuEventService.callEvent('mapMove', { lat: position.coords.latitude, lng: position.coords.longitude, success: () => {
         this.menuEventService.callEvent('addMarker', { lat: position.coords.latitude, lng: position.coords.longitude });
       } });
+    }, (error) => this.log.error('Error while getting current position: ' + JSON.stringify(error)),
+    {
+      enableHighAccuracy: true
     });
   }
 
@@ -51,7 +56,10 @@ export class LocationComponent implements OnInit {
           let longitude;
 
           // verify result
-          if (place.geometry === undefined || place.geometry === null) {
+          if (place.geometry) {
+            latitude = place.geometry.location.lat();
+            longitude = place.geometry.location.lng();
+          } else {
             let output;
             const coords = place.name.split(' ');
             const latlng = coords.map((coord) => {
@@ -60,7 +68,7 @@ export class LocationComponent implements OnInit {
               const minutes = typeof (a[1]) !== 'undefined' ? Number(a[1]) / 60 : 0;
               const seconds = typeof (a[2]) !== 'undefined' ? Number(a[2]) / 3600 : 0;
               const hemisphere = a[3] || null;
-              if (hemisphere !== null && /[SW]/i.test(hemisphere)) {
+              if (hemisphere && /[SW]/i.test(hemisphere)) {
                 degrees = Math.abs(degrees) * -1;
               }
               if (degrees < 0) {
@@ -72,9 +80,6 @@ export class LocationComponent implements OnInit {
             });
             latitude = latlng[0];
             longitude = latlng[1];
-          } else {
-            latitude = place.geometry.location.lat();
-            longitude = place.geometry.location.lng();
           }
           me.menuEventService.callEvent('mapMove', { lat: latitude, lng: longitude, success: () => {
             me.menuEventService.callEvent('addMarker', { lat: latitude, lng: longitude });

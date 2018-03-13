@@ -4,6 +4,21 @@
     <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
+          Type
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-select placeholder="Type" [(ngModel)]="caniDrawObject.type">
+        <mat-option *ngFor="let type of types" [value]="type.value">
+          {{ type.label }}
+        </mat-option>
+      </mat-select>
+      <mat-action-row>
+        <button mat-button color="primary" (click)="nextStep()">Suivant</button>
+      </mat-action-row>
+    </mat-expansion-panel>
+  <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
           Nom
         </mat-panel-title>
       </mat-expansion-panel-header>
@@ -11,10 +26,11 @@
         <input matInput placeholder="Entrez le nom" [(ngModel)]="caniDrawObject.name">
       </mat-form-field>    
         <mat-action-row>
+          <button mat-button color="warn" (click)="prevStep()">Précédent</button>
         <button mat-button color="primary" (click)="nextStep()">Suivant</button>
       </mat-action-row>
     </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle="true">
+    <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle="true">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Position sur le chemin
@@ -32,7 +48,7 @@
           <button mat-button color="primary" (click)="nextStep()">Suivant</button>
         </mat-action-row>
       </mat-expansion-panel>
-      <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle="true">
+      <mat-expansion-panel [expanded]="step === 3" (opened)="setStep(3)" hideToggle="true">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Direction du vent
@@ -50,31 +66,15 @@
           <button mat-button color="primary" (click)="nextStep()">Suivant</button>
         </mat-action-row>
       </mat-expansion-panel>
-      <mat-expansion-panel [expanded]="step === 3" (opened)="setStep(3)" hideToggle="true">
+      <mat-expansion-panel [expanded]="step === 4" (opened)="setStep(4)" hideToggle="true">
         <mat-expansion-panel-header>
           <mat-panel-title>
             Couleur
           </mat-panel-title>
         </mat-expansion-panel-header>
         <mat-action-row>
-          <button mat-button style="width:100%" [style.background-color]="getColor(caniDrawObject.color)" (click)="chooseColor()">Couleur</button>
+          <button mat-button style="width:100%" [style.background-color]="getColor(caniDrawObject.color)" (click)="chooseColor()">cliquez ici</button>
         </mat-action-row>
-        <mat-action-row>
-          <button mat-button color="warn" (click)="prevStep()">Précédent</button>
-          <button mat-button color="primary" (click)="nextStep()">Suivant</button>
-        </mat-action-row>
-      </mat-expansion-panel>
-      <mat-expansion-panel [expanded]="step === 4" (opened)="setStep(4)" hideToggle="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Type de matière
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <mat-select placeholder="Matière" [(ngModel)]="caniDrawObject.fabric">
-          <mat-option *ngFor="let fabric of fabrics" [value]="fabric.value">
-            {{ fabric.label }}
-          </mat-option>
-        </mat-select>
         <mat-action-row>
           <button mat-button color="warn" (click)="prevStep()">Précédent</button>
           <button mat-button color="primary" (click)="nextStep()">Suivant</button>
@@ -83,12 +83,12 @@
       <mat-expansion-panel [expanded]="step === 5" (opened)="setStep(5)" hideToggle="true">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            Commentaire
+            Type de matière
           </mat-panel-title>
         </mat-expansion-panel-header>
-        <mat-select placeholder="Commentaire" [(ngModel)]="caniDrawObject.type">
-          <mat-option *ngFor="let comment of comments" [value]="comment.value">
-            {{ comment.label }}
+        <mat-select placeholder="Matière" [(ngModel)]="caniDrawObject.fabric">
+          <mat-option *ngFor="let fabric of fabrics" [value]="fabric.value">
+            {{ fabric.label }}
           </mat-option>
         </mat-select>
         <mat-action-row>

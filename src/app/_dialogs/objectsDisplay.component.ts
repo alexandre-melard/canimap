@@ -27,7 +27,7 @@ export class DialogObjectsDisplayComponent {
   }
 
   update(el: CaniDrawObject, key: string, value: string) {
-    if (value == null) { return; }
+    if (!value) { return; }
     // copy and mutate
     el[key] = value;
   }
@@ -48,8 +48,7 @@ export class DialogObjectsDisplayComponent {
       data: object.color
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      if (result !== undefined) {
+      if (result) {
         object.color = result;
       }
     });

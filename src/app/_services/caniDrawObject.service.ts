@@ -8,9 +8,9 @@ import { Subscription } from 'rxjs/Subscription';
 import { DialogObjectsDisplayComponent } from '../_dialogs/objectsDisplay.component';
 import { CaniDrawPoint } from '../_models/caniDrawPoint';
 import { CaniDrawObject } from '../_models/caniDrawObject';
-import * as ol from 'openlayers';
 import { DialogObjectsAddComponent } from '../_dialogs/ObjectsAdd.component';
 import { Observer } from 'rxjs/Observer';
+import * as ol from 'openlayers';
 
 @Injectable()
 export class CaniDrawObjectService implements OnDestroy {
@@ -26,22 +26,29 @@ export class CaniDrawObjectService implements OnDestroy {
     const me = this;
     this.subscriptions.push(this.menuEventService.getObservable('mapLoaded').subscribe(
       (map: ol.Map) => {
-        me.map = map;
-        me.selectInteraction = new ol.interaction.Select({
-          condition: ol.events.condition.singleClick,
-          filter: (f: ol.Feature) => {
-            return me.objects.find((object: CaniDrawObject) => (object.feature === f)) !== undefined;
-          }
-        });
-        me.selectInteraction.on('select',
-        (event) => {
-          if (event.selected.length > 0) {
-            console.log('point click detected');
-            me.menuEventService.callEvent('displayObjects', null);
-          }
-        });
-        me.map.addInteraction(this.selectInteraction);
-    }));
+        me.mapLoaded(map);
+      }
+    ));
+  }
+
+
+  mapLoaded(map: ol.Map) {
+    const me = this;
+    me.map = map;
+    me.selectInteraction = new ol.interaction.Select({
+      condition: ol.events.condition.singleClick,
+      filter: (f: ol.Feature) => {
+        return me.objects.find((object: CaniDrawObject) => (object.feature === f)) !== undefined;
+      }
+    });
+    me.selectInteraction.on('select',
+    (event) => {
+      if (event.selected.length > 0) {
+        console.log('point click detected');
+        me.menuEventService.callEvent('displayObjects', null);
+      }
+    });
+    me.map.addInteraction(this.selectInteraction);
 
     this.subscriptions.push(this.menuEventService.getObservable('edit').subscribe(
       () => {
@@ -81,7 +88,7 @@ export class CaniDrawObjectService implements OnDestroy {
         dialogRef.afterClosed().subscribe(result => {
           console.log('The dialog was closed');
           this.objects.forEach((object: CaniDrawObject) => {
-            this.writeRuObjectToFeature(object);
+            me.writeRuObjectToFeature(object);
           });
         });
       },
@@ -96,7 +103,7 @@ export class CaniDrawObjectService implements OnDestroy {
         if (feature.getGeometry().getType() === 'Point') {
           console.log('point draw detected');
           const properties = feature.getProperties();
-          if (draw.properties !== undefined && draw.properties.specificity !== undefined) {
+          if (draw.properties && draw.properties.specificity) {
             properties['specificity'] = draw.properties.specificity;
             feature.setProperties(properties);
             me.menuEventService.callEvent('registerObject', feature);

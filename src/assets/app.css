@@ -31,6 +31,14 @@ button.mat-icon-button {
   background-color: rgba(255,255,255,0.8);
 }
 
+.intro {
+  width: 80%;
+  margin-top: 5%;
+  margin-left: 15%;
+  padding: 10px;
+  background-color: white;
+}
+
 .intro p, .intro h2 {
   background-color: rgba(255, 255, 255, 0.8);
 }
@@ -223,11 +231,27 @@ app-canimap-menu-mobile {
   z-index: 9999;
 }
 
+.log-info {
+  background-color: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.4);
+  color: white;
+}
+
+.log-debug {
+  background-color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.8);
+  color: black;
+}
+
 .editable-cell {
   cursor: pointer;  
 }
 
 /* OL POPUP */
+.ol-selectable {
+  user-select: text;
+}
+
 .ol-popup {
   position: absolute;
   display: none;
@@ -279,6 +303,7 @@ a.ol-popup-closer {
 code {
   background-color: transparent;
   color: white;
+  cursor: text;
 }
 
 /* INLINE EDITOR */

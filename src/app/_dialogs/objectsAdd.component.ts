@@ -30,8 +30,8 @@ export class DialogObjectsAddComponent implements OnInit {
     {value: 'plastique', label: 'En plastique'},
     {value: 'bois', label: 'En bois'},
   ];
-  comment =  {value: 'posé', label: 'Posé'};
-  comments = [
+  type =  {value: 'posé', label: 'Posé'};
+  types = [
     {value: 'PoseMarker', label: 'Posé'},
     {value: 'SuspenduMarker', label: 'Suspendu'},
     {value: 'CacheMarker', label: 'Caché'}
@@ -42,6 +42,7 @@ export class DialogObjectsAddComponent implements OnInit {
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data) {
       this.caniDrawObject = new CaniDrawObject();
+      this.caniDrawObject.type = 'PoseMarker';
   }
 
   ngOnInit() {
@@ -60,7 +61,7 @@ export class DialogObjectsAddComponent implements OnInit {
   }
 
   save(): void {
-    this.caniDrawObject.specificity = this.comments.find((comment) => comment.value === this.caniDrawObject.type).label;
+    this.caniDrawObject.specificity = this.types.find((type) => type.value === this.caniDrawObject.type).label;
     this.dialogRef.close(this.caniDrawObject);
   }
 
@@ -76,8 +77,7 @@ export class DialogObjectsAddComponent implements OnInit {
       width: '500px'
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      if (result !== undefined) {
+      if (result) {
         this.caniDrawObject.color = result;
       }
     });

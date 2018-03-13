@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { AUTH_CONFIG } from '../_consts/settings';
 import { UserService } from '../_services/user.service';
+import { LogService } from '../_services/log.service';
 
 import { Auth0Lock } from 'auth0-lock';
 
@@ -15,7 +16,8 @@ export class AuthService {
 
   constructor(
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private log: LogService
   ) {
   }
 
@@ -25,7 +27,7 @@ export class AuthService {
     this.loggedIn = value;
   }
 
-  login() {
+  login(route?: string) {
     const lock = new Auth0Lock(
       AUTH_CONFIG.CLIENT_ID,
       AUTH_CONFIG.CLIENT_DOMAIN,
@@ -47,17 +49,15 @@ export class AuthService {
           title: 'Connectez vous!'
         },
       },
-      (error, result) => console.log(error, result)
+      (error, result) => this.log.error('Error while calling Auth0: ' + JSON.stringify(error))
     );
-    lock.on('show', () => console.log('lock is shown'));
-    lock.on('hide', () => console.log('lock is hidden'));
+    lock.on('show', () => this.log.debug('lock is shown'));
+    lock.on('hide', () => this.log.debug('lock is hidden'));
     lock.on('unrecoverable_error', error => {
-      console.log('lock unrecoverable_error: ');
-      console.log(error);
+      this.log.error('lock unrecoverable_error: ' + JSON.stringify(error));
     });
     lock.on('authorization_error', error => {
-      console.log('lock authorization_error: ');
-      console.log(error);
+      this.log.error('lock authorization_error: ' + JSON.stringify(error));
     });
     const me = this;
     lock.on('authenticated', authResult => {
@@ -65,7 +65,7 @@ export class AuthService {
       me.setLoggedIn(true);
       lock.getUserInfo(authResult.accessToken, function(error, profile) {
         if (error) {
-          console.log(error);
+          this.log.error('Error while trying to get user info' + JSON.stringify(error));
           me.router.navigate(['/']);
           return;
         }
@@ -73,10 +73,10 @@ export class AuthService {
         me._setSession(authResult, profile);
         me.userService.currentUser().subscribe(
           user => {
-          if (user === null) {
-            me.router.navigate(['/register']);
-          } else {
+          if (user) {
             me.router.navigate(['/map']);
+          } else {
+            me.router.navigate(['/register']);
           }
         });
       });

@@ -32,7 +32,7 @@ export class FileService implements OnDestroy {
 
         dialogRef.afterClosed().subscribe(result => {
           console.log('The dialog was closed');
-          if (result !== undefined) {
+          if (result) {
             fileName = result;
 
             // Get geojson data
@@ -54,7 +54,7 @@ export class FileService implements OnDestroy {
         });
         dialogRef.afterClosed().subscribe(result => {
           console.log('The dialog was closed');
-          if (result !== undefined) {
+          if (result) {
             fileName = result;
 
             if (type.data === 'kml') {
@@ -82,7 +82,7 @@ export class FileService implements OnDestroy {
 
         dialogRef.afterClosed().subscribe(result => {
           console.log('The dialog was closed');
-          if (result !== undefined) {
+          if (result) {
             fileName = result;
 
             // Get geojson data
@@ -97,13 +97,14 @@ export class FileService implements OnDestroy {
     ));
     this.subscriptions.push(this.menuEventService.getObservable('filesOpen').subscribe(
       () => {
+        console.log('opening files open dialog');
         const dialogRef = this.dialog.open(DialogFilesOpenComponent, {
           width: '700px'
         });
 
         dialogRef.afterClosed().subscribe(result => {
           console.log('The dialog was closed');
-          if (result !== undefined) {
+          if (result) {
             const fileList: FileList = result;
             // loop through files
             for (let i = 0; i < fileList.length; i++) {
@@ -128,7 +129,7 @@ export class FileService implements OnDestroy {
 
         dialogRef.afterClosed().subscribe(result => {
           console.log('The dialog was closed');
-          if (result !== undefined) {
+          if (result) {
             const file: File = result;
             me.parseFile(file, (content: string) => {
               me.menuEventService.callEvent('loadGPS', { content: content, type: file.name.split('.').pop() });

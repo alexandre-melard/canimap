@@ -44,7 +44,7 @@ export class MapMenuComponent extends BaseMenuComponent implements OnInit {
         color = 'black';
       }
     });
-    if (color === undefined) {
+    if (!color) {
       color = super.color(state);
     }
     return color;

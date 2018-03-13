@@ -2,6 +2,7 @@
 import { Router, NavigationStart } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class LogService {
@@ -26,9 +27,15 @@ export class LogService {
         this.keepAfterNavigationChange = keepAfterNavigationChange;
         this.subject.next({ type: type, text: message });
         if (!keepAfterNavigationChange) {
-            setTimeout(() => this.subject.next(), 3000);
+            setTimeout(() => this.subject.next(), 4000);
         }
         console.log(type + ': ' + message);
+    }
+
+    debug(message: string, keepAfterNavigationChange = false) {
+        if (!environment.production) {
+            this.log('debug', message, keepAfterNavigationChange);
+        }
     }
 
     info(message: string, keepAfterNavigationChange = false) {

@@ -1,25 +1,36 @@
 ﻿import { Injectable, OnDestroy } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
 import { MenuEventService } from './menuEvent.service';
 import { UserService } from './user.service';
-import * as ol from 'openlayers';
+
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { CaniDrawObjectService } from './caniDrawObject.service';
+import { DrawService } from './draw.service';
+import { LogService } from '../_services/log.service';
 
 import { MapBox } from '../_models/mapBox';
 import { LayerBox } from '../_models/layerBox';
 import { User } from '../_models/user';
-import * as $ from 'jquery';
+
 import { SETTINGS } from '../_consts/settings';
+
+import * as ol from 'openlayers';
+import * as $ from 'jquery';
 
 @Injectable()
 export class MapService implements OnDestroy {
-  private user: User;
+
   private map: ol.Map;
   private subject = new Subject<any>();
   private keepAfterNavigationChange = false;
   private subscriptions = new Array<Subscription>();
+
+  private get user(): Observable<User> {
+    return this.userService.currentUser();
+  }
 
   get layerBoxes(): LayerBox[] {
     return [this.ignPlan, this.ignSatellite, this.googleSatellite, this.bingSatellite, this.bingHybride];
@@ -52,29 +63,25 @@ export class MapService implements OnDestroy {
   );
 
   constructor(
+    private route: ActivatedRoute,
+    private router: Router,
     private menuEventService: MenuEventService,
     private userService: UserService,
-    private deviceService: DeviceDetectorService
+    private deviceService: DeviceDetectorService,
+    private caniDrawObjectService: CaniDrawObjectService,
+    private drawService: DrawService,
+    private log: LogService
   ) {
-    userService.currentUser()
-      .subscribe(user => {
-        this.user = user;
-        this.setMapFromUserPreferences();
-      }, () => {
-        this.user = new User();
-        this.setMapFromUserPreferences();
-      });
-
     this.subscriptions.push(this.menuEventService.getObservable('mapMove').subscribe(
       (coords) => {
-        console.log('map move to :', JSON.stringify(coords));
+        this.log.debug('moving map to :' + JSON.stringify(coords));
         this.map.getView().setCenter(ol.proj.fromLonLat([coords.lng, coords.lat]));
         coords.success();
       }
     ));
     this.subscriptions.push(this.menuEventService.getObservable('addMarker').subscribe(
       (coords) => {
-        console.log('map add marker to :', JSON.stringify(coords));
+        this.log.debug('adding marker to :' + JSON.stringify(coords));
         const iconFeature = new ol.Feature({
           geometry: new ol.geom.Point(ol.proj.fromLonLat([coords.lng, coords.lat])),
         });
@@ -95,11 +102,11 @@ export class MapService implements OnDestroy {
     ));
     this.subscriptions.push(this.menuEventService.getObservable('gpsMarker').subscribe(
       () => {
-        console.log('drawing gpsMarker start');
+        this.log.debug('drawing gps marker');
         this.menuEventService.callEvent('disableInteractions');
         const popup = $('.ol-popup').clone().get(0);
         $(popup).css('display', 'block');
-        const options = {
+        const options: olx.OverlayOptions = {
           element: popup,
           autoPan: true,
           offset: [0, -25],
@@ -134,24 +141,30 @@ export class MapService implements OnDestroy {
     ));
   }
 
-  setMapFromUserPreferences() {
-    if (this.user.mapBoxes !== undefined) {
-      this.user.mapBoxes.forEach(m => {
-        const layerBox = this.layerBoxes.find(l => m.key === l.key);
-        if (layerBox !== undefined) {
-          layerBox.layer.setOpacity(m.opacity);
-          layerBox.layer.setVisible(m.visible);
+  setMapFromUserPreferences(): Observable<any> {
+    const observable = new Observable((observer) => {
+      this.user.subscribe((user) => {
+        if (user.mapBoxes) {
+          user.mapBoxes.forEach(m => {
+            const layerBox = this.layerBoxes.find(l => m.key === l.key);
+            if (layerBox) {
+              layerBox.layer.setOpacity(m.opacity);
+              layerBox.layer.setVisible(m.visible);
+            } else {
+              // there is a problem with the saved data, removed corrupted entry
+              user.mapBoxes.slice(user.mapBoxes.lastIndexOf(m), 1);
+            }
+          });
         } else {
-          // there is a problem with the saved data, removed corrupted entry
-          this.user.mapBoxes.slice(this.user.mapBoxes.lastIndexOf(m), 1);
+          user.mapBoxes = new Array<MapBox>();
+          this.layerBoxes.forEach(layerBox => {
+            user.mapBoxes.push(new MapBox(layerBox.key, layerBox.layer.getOpacity(), layerBox.layer.getVisible()));
+          });
         }
+        observer.next();
       });
-    } else {
-      this.user.mapBoxes = new Array<MapBox>();
-      this.layerBoxes.forEach(layerBox => {
-        this.user.mapBoxes.push(new MapBox(layerBox.key, layerBox.layer.getOpacity(), layerBox.layer.getVisible()));
-      });
-    }
+    });
+    return observable;
   }
 
   loadMap() {
@@ -169,6 +182,20 @@ export class MapService implements OnDestroy {
       })
     });
 
+    /**
+     * Rustine, permet d'eviter les cartes blanches sur mobile en attendant de trouver la vrai raison
+     */
+    if (this.deviceService.isMobile) {
+      map.on('postrender', (event) => {
+        const canva = document.getElementsByTagName('canvas')[0];
+        const reload = document.location.href.endsWith('map') && canva &&  canva.style.display === 'none';
+        if (reload) {
+          event.map.updateSize();
+//          location.reload();
+        }
+      });
+    }
+
     this.layerBoxes.map(layerBox => map.addLayer(layerBox.layer));
 
     // add slider
@@ -178,8 +205,8 @@ export class MapService implements OnDestroy {
       $('.ol-zoom-in').css('display', 'none');
       $('.ol-zoom-out').css('display', 'none');
     }
-
     this.map = map;
+
     this.menuEventService.callEvent('mapLoaded', map);
   }
 
@@ -273,16 +300,25 @@ export class MapService implements OnDestroy {
   }
 
   saveOpacity() {
-    this.layerBoxes.forEach(layerBox => {
-      let mapBox = this.user.mapBoxes.find(m => layerBox.key === m.key);
-      if (mapBox === undefined) {
-        mapBox = new MapBox(layerBox.key, layerBox.layer.getOpacity(), layerBox.layer.getVisible());
-        this.user.mapBoxes.push(mapBox);
-      }
-      mapBox.opacity = layerBox.layer.getOpacity();
-      mapBox.visible = layerBox.layer.getVisible();
-    });
-    this.userService.update(this.user).subscribe((user) => console.log('setting pushed to server'));
+    this.user.subscribe(
+      (user) => {
+        this.layerBoxes.forEach(layerBox => {
+          let mapBox = user.mapBoxes.find(m => layerBox.key === m.key);
+          if (!mapBox) {
+            mapBox = new MapBox(layerBox.key, layerBox.layer.getOpacity(), layerBox.layer.getVisible());
+            user.mapBoxes.push(mapBox);
+          }
+          mapBox.opacity = layerBox.layer.getOpacity();
+          mapBox.visible = layerBox.layer.getVisible();
+        });
+        this.log.info('sending settings to the server');
+        this.userService.update(user).subscribe(
+          () => this.log.success('settings saved on the server'),
+          (error) => this.log.error('error while sending settings on the server:' + JSON.stringify(error))
+        );
+      },
+      (error) => this.log.error('error while getting current user:' + JSON.stringify(error))
+    );
   }
 
   setOpacity(layerBox: LayerBox, opacity: number) {

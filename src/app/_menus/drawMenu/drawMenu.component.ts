@@ -42,7 +42,7 @@ export class DrawMenuComponent extends BaseMenuComponent implements OnInit {
         color = 'black';
       }
     });
-    if (color === undefined) {
+    if (!color) {
       color = super.color(state);
     }
     return color;
@@ -68,8 +68,7 @@ export class DrawMenuComponent extends BaseMenuComponent implements OnInit {
       data: this.drawService.color
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      if (result !== undefined) {
+      if (result) {
         this.drawService.color = result;
         $('.app-canimap-color-chooser > span > img').css('background-color', result);
         $('.app-canimap-color-chooser > span > img').css('border-radius', '20px');

@@ -6,6 +6,7 @@ import { User } from '../_models/user';
 import { Helper } from '../_models/helper';
 import { UserService } from '../_services/user.service';
 import { Observable } from 'rxjs/Observable';
+import { LogService } from '../_services/log.service';
 
 @Injectable()
 export class HelperEventService {
@@ -13,7 +14,8 @@ export class HelperEventService {
   constructor(
     public dialog: MatDialog,
     private userService: UserService,
-    private http: HttpClient) {
+    private http: HttpClient,
+    private log: LogService) {
   }
 
 
@@ -21,7 +23,7 @@ export class HelperEventService {
     const helperObs = new Observable<Helper>((observer) => {
       const currentUser = this.userService.currentUser();
       currentUser.subscribe(user => {
-        if (user.helpers === undefined) {
+        if (!user.helpers) {
           user.helpers = new Array<Helper>();
         }
         let helper;
@@ -44,7 +46,7 @@ export class HelperEventService {
   showHelper(key: string, proceed: Function): void {
     this.getHelper(key)
       .subscribe(helper => {
-        if ((helper !== undefined) && helper.visible) {
+        if ((helper) && helper.visible) {
           this.http.get('../assets/helpers/' + key + '.json')
             .subscribe((data: any) => {
               const dialogRef = this.dialog.open(DialogHelperComponent, {
@@ -52,15 +54,13 @@ export class HelperEventService {
                 data: { title: data.title, body: data.body, key: key, dismissHelp: false }
               });
               dialogRef.afterClosed().subscribe(result => {
-                console.log('The dialog was closed: ' + key);
-                if (result !== undefined && result.dismissHelp) {
+                if (result && result.dismissHelp) {
                   this.dismissHelp(key);
                 }
                 proceed();
               });
             },
-            err => console.log(err),
-            () => console.log('Completed'));
+            err => this.log.error('error while trying to access remote helper: ' + JSON.stringify(err)));
         } else {
           proceed();
         }

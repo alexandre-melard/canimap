@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuEventService } from '../../_services/menuEvent.service';
 import { HelperEventService } from '../../_services/helperEvent.service';
+import { FileService } from '../../_services/file.service';
 
 @Component({
   selector: 'app-canimap-file-menu',
@@ -15,6 +16,7 @@ export class FileMenuComponent implements OnInit {
   constructor(
     private menuEventService: MenuEventService,
     private helperEventService: HelperEventService,
+    private fileService: FileService,
     private router: Router
   ) { }
 

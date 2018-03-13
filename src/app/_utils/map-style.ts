@@ -1,11 +1,10 @@
 import { lineStringStyle } from './map-style-linestring';
-
-import * as ol from 'openlayers';
 import { formatLength } from '../_utils/map-format-length';
 import { hexToRgb } from '../_utils/color-hex-to-rgb';
 import { colorGetBrightness } from '../_utils/color-brightness';
 import { fillOptions } from '../_utils/map-style-options-fill';
 import { strokeOptions } from '../_utils/map-style-options-stroke';
+import * as ol from 'openlayers';
 
 export function styleFunction(feature: ol.Feature, resolution: number) {
   const geometry: ol.geom.LineString = <ol.geom.LineString>feature.getGeometry();

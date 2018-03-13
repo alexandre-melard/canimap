@@ -1,30 +1,30 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { CanActivate } from '@angular/router';
+import { LogService } from '../_services/log.service';
 
 @Injectable()
 export class CheckEnv implements CanActivate {
 
-    constructor(private router: Router) { }
+    constructor(
+        private router: Router,
+        private log: LogService
+    ) { }
 
     canActivate() {
-        console.log('checking env');
         const currentUser = localStorage.getItem('currentUser');
-        if (currentUser !== null && currentUser.startsWith('{') && currentUser.endsWith('}')) {
+        if (currentUser && currentUser.startsWith('{') && currentUser.endsWith('}')) {
             const user: any = JSON.parse(currentUser);
-            if (user === undefined ||
-                user === null ||
+            if (!user ||
                 user === 'null' ||
-                user.email === undefined ||
-                user.email === null ||
-                user.email === '' ||
-                user.currentUser !== undefined) {
+                !user.email ||
+                user.email === '') {
                 localStorage.removeItem('currentUser');
-                console.log('removing current user, bad format');
+                this.log.info('you have an old version of the app, cleaning up local cookies');
             }
-        } else if (currentUser !== null) {
+        } else if (currentUser) {
             localStorage.removeItem('currentUser');
-            console.log('removing current user, bad format');
+            this.log.info('you have an old version of the app, cleaning up local cookies');
         }
         return true;
     }

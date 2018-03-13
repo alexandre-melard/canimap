@@ -1,9 +1,9 @@
+
 import * as ol from 'openlayers';
-import * as olx from 'openlayers/externs/olx';
 import { formatLength, getLength } from '../_utils/map-format-length';
 import { CaniDrawLineStringOptions } from '../_models/caniDrawLineString';
 
-export function lineStringStyle(feature: ol.Feature, resolution: number): olx.style.Style[] {
+export function lineStringStyle(feature: ol.Feature, resolution: number): any[] {
   const styles = new Array<ol.style.Style>();
   const geometry: ol.geom.LineString = <ol.geom.LineString>feature.getGeometry();
 

@@ -33,7 +33,6 @@ export class MenuComponent implements OnInit {
     private deviceService: DeviceDetectorService
   ) {
     this.deviceInfo = this.deviceService.getDeviceInfo();
-    console.log(this.deviceInfo);
   }
 
   ngOnInit() {

@@ -22,17 +22,17 @@ export class RegisterComponent {
   constructor(
     private router: Router,
     private userService: UserService,
-    private logService: LogService) {
+    private log: LogService) {
     userService.currentUser()
       .subscribe(user => {
-        if (user === null) {
-          this.model = new User();
-          this.model.email = localStorage.getItem('email');
-          console.log('creating new user with email:' + this.model.email);
-        } else {
+        if (user) {
           this.model = user;
           this.udpate = true;
-          console.log('editing user with email:' + this.model.email);
+          this.log.info('editing user with email:' + this.model.email);
+        } else {
+          this.model = new User();
+          this.model.email = localStorage.getItem('email');
+          this.log.info('creating new user with email:' + this.model.email);
         }
       });
   }

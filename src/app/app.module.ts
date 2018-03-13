@@ -7,6 +7,8 @@ import { SatPopoverModule } from '@ncstate/sat-popover';
 import { AppMaterialModules } from './material.module';
 import { AgmCoreModule } from '@agm/core';
 import { AppRoutingModule } from './app-routing/app-routing.module';
+import { HttpClientModule } from '@angular/common/http';
+import { JWT_OPTIONS, JwtModule } from '@auth0/angular-jwt';
 
 // used to create fake backend
 
@@ -27,7 +29,6 @@ import { TrackMenuComponent } from './_menus/tracksMenu';
 import { MapMenuComponent } from './_menus/mapMenu';
 import { DrawMenuComponent } from './_menus/drawMenu';
 import { HelpComponent } from './help/index';
-import { LoginComponent } from './_guards/login.component';
 import { InlineEditComponent } from './_directives/inline-edit.component';
 
 import { DialogChooseLayersComponent } from './_dialogs/chooseLayer.component';
@@ -38,7 +39,7 @@ import { DialogFileSaveComponent } from './_dialogs/fileSave.component';
 import { DialogFilesOpenComponent } from './_dialogs/filesOpen.component';
 import { DialogObjectsDisplayComponent } from './_dialogs/objectsDisplay.component';
 import { DialogObjectsAddComponent } from './_dialogs/ObjectsAdd.component';
-import { DialogLoginComponent } from './_dialogs/login.component';
+import { LoginComponent } from './_guards/login.component';
 
 import { AuthGuard } from './_services/auth-guard.service';
 import { CheckEnv } from './_services/check-env.service';
@@ -51,9 +52,19 @@ import { CaniDrawObjectService } from './_services/caniDrawObject.service';
 import { DrawService } from './_services/draw.service';
 import { HelperEventService } from './_services/helperEvent.service';
 import { FileService } from './_services/file.service';
-import { HttpClientModule } from '@angular/common/http';
-import { JwtModule } from '@auth0/angular-jwt';
 
+export function jwtOptionsFactory() {
+  return {
+    tokenGetter: () => {
+      return sessionStorage.getItem('access_token');
+    },
+    whitelistedDomains: ['localhost:4200']
+  };
+}
+
+export function getToken() {
+  return localStorage.getItem('token');
+}
 
 @NgModule({
   declarations: [
@@ -70,7 +81,6 @@ import { JwtModule } from '@auth0/angular-jwt';
     DrawMenuComponent,
     CanimapComponent,
     HelpComponent,
-    LoginComponent,
     DialogChooseLayersComponent,
     DialogChooseColorComponent,
     DialogHelperComponent,
@@ -79,16 +89,17 @@ import { JwtModule } from '@auth0/angular-jwt';
     DialogFileSaveComponent,
     DialogObjectsDisplayComponent,
     DialogObjectsAddComponent,
-    DialogLoginComponent,
+    LoginComponent,
     RegisterComponent,
     InlineEditComponent
   ],
   imports: [
     HttpClientModule,
     JwtModule.forRoot({
-      config: {
-        tokenGetter: () => localStorage.getItem('token'),
-        whitelistedDomains: ['localhost:4200']
+      jwtOptionsProvider: {
+        provide: JWT_OPTIONS,
+        useFactory: jwtOptionsFactory,
+        deps: []
       }
     }),
     BrowserModule,
@@ -125,7 +136,6 @@ import { JwtModule } from '@auth0/angular-jwt';
     DialogObjectsAddComponent,
     DialogChooseLayersComponent,
     DialogChooseColorComponent,
-    DialogLoginComponent,
     DialogHelperComponent
   ],
   bootstrap: [AppComponent]

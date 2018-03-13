@@ -25,7 +25,7 @@ export class BaseMenuComponent {
 
   draw(what: string) {
     const drawInteraction = drawInteractions.filter((d) => d.type === what)[0];
-    if (drawInteraction !== undefined) {
+    if (drawInteraction) {
       this.menuEventService.prepareEvent(drawInteraction.event, null);
       this.helperEventService.showHelper(drawInteraction.helper, () => {
         this.menuEventService.proceed();

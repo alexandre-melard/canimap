@@ -28,8 +28,7 @@ export class MenuEventService {
     this.waitingCalls.forEach(
       call => {
         if (call.key === key) {
-          const index = this.waitingCalls.indexOf(call);
-          events.push(this.waitingCalls.splice(index, 1)[0]);
+          events.push(call);
         }
       }
     );
@@ -64,7 +63,7 @@ export class MenuEventService {
 
   private getEvent(key: string): Subject<any> {
     let source = this.onEventSource.get(key);
-    if (source === undefined) {
+    if (!source) {
       source = new Subject<any>();
       this.onEventSource.set(key, source);
     }

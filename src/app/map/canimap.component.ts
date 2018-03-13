@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit, HostListener } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { UserService } from '../_services/user.service';
 import { MapService } from '../_services/map.service';
-import { FileService } from '../_services/file.service';
 
 @Component({
   selector: 'app-canimap-map',
@@ -8,12 +9,25 @@ import { FileService } from '../_services/file.service';
   styleUrls: ['./canimap.component.css']
 })
 export class CanimapComponent implements OnInit {
+
   constructor(
-    private mapService: MapService,
-    private fileService: FileService
+    private route: ActivatedRoute,
+    private router: Router,
+    private userService: UserService,
+    private mapService: MapService
   ) { }
+
   ngOnInit(): void {
-    this.mapService.loadMap();
+    this.userService.currentUser()
+      .subscribe(user => {
+        if (user) {
+          this.mapService.setMapFromUserPreferences().subscribe(() => this.mapService.loadMap());
+        } else {
+          this.router.navigate(['/register']);
+        }
+      }, () => {
+        this.router.navigate(['/register']);
+      });
   }
 
   @HostListener('window:beforeunload', ['$event'])

@@ -4,6 +4,7 @@
 import { formatLength } from './map-format-length';
 import { formatArea } from './map-format-area';
 import { Map, Feature } from 'openlayers';
+
 import * as ol from 'openlayers';
 import * as $ from 'jquery';
 
@@ -46,7 +47,7 @@ export class Tooltip {
         /** @type {ol.Coordinate|undefined} */
         let tooltipCoord = evt.coordinate;
 
-        if (this.sketch !== null) {
+        if (this.sketch) {
             let output = null;
             const geom = this.sketch.getGeometry();
             if (geom instanceof ol.geom.Polygon) {
@@ -70,7 +71,7 @@ export class Tooltip {
     }
 
     createTooltip(map, tooltipDom, tooltipOverlay, options) {
-        if (tooltipDom !== null) {
+        if (tooltipDom) {
             tooltipDom.parentNode.removeChild(tooltipDom);
         }
         tooltipDom = document.createElement('div');

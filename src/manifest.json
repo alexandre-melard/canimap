@@ -1,0 +1,14 @@
+{
+  "short_name": "Canimap",
+  "name": "Canimap: a track mapping tool",
+  "icons": [
+    {
+      "src": "assets/cropped-logo-180x180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/map",
+  "display": "standalone",
+  "orientation": "portrait"
+}
