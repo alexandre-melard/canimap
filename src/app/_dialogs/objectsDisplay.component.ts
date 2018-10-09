@@ -9,7 +9,7 @@ import { LayerBox } from '../_models/layerBox';
 import { CaniDrawObject } from '../_models/caniDrawObject';
 import { DialogChooseColorComponent } from '../_dialogs/chooseColor.component';
 import {MatTableDataSource} from '@angular/material';
-import * as $ from 'jquery';
+declare var $;
 
 @Component({
   selector: 'app-dialog-display-objects',

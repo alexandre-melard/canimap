@@ -1,8 +1,9 @@
 ﻿import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { HelperEventService } from '../../_services/helperEvent.service';
-import { MenuEventService } from '../../_services/menuEvent.service';
+import { EventService } from '../../_services/event.service';
 import { BaseMenuComponent } from '../baseMenu';
+import { Events } from '../../_consts/events';
 
 @Component({
   selector: 'app-canimap-track-menu',
@@ -15,12 +16,12 @@ export class TrackMenuComponent extends BaseMenuComponent {
   contextVisible = false;
   constructor(
     private router: Router,
-    public menuEventService: MenuEventService,
+    public eventService: EventService,
     public helperEventService: HelperEventService) {
-    super(menuEventService, helperEventService);
+    super(eventService, helperEventService);
   }
 
   objects() {
-    this.menuEventService.callEvent('displayObjects', null);
+    this.eventService.call(Events.MAP_DRAW_OBJECT_DISPLAY);
   }
 }

@@ -27,7 +27,7 @@ const appRoutes: Routes = [
   {
       path: 'register',
       component: RegisterComponent,
-      canActivate: [CheckEnv]
+      canActivate: [CheckEnv, AuthGuard]
   },
   {
       path: 'login',

@@ -1,5 +1,6 @@
 import { Inject, ElementRef, ViewChild, Component } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Events } from '../_consts/events';
 
 @Component({
   selector: 'app-dialog-files-open',

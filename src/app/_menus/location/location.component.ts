@@ -3,9 +3,13 @@ import { FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MapsAPILoader } from '@agm/core';
 import { LogService } from '../../_services/log.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
+
 import { } from '@types/googlemaps';
 
-import { MenuEventService } from '../../_services/menuEvent.service';
+import { EventService } from '../../_services/event.service';
+import { MapService } from '../../_services/map.service';
+import { Events } from '../../_consts/events';
 
 @Component({
   selector: 'app-canimap-location',
@@ -23,20 +27,34 @@ export class LocationComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private menuEventService: MenuEventService,
+    private eventService: EventService,
     private mapsAPILoader: MapsAPILoader,
     private log: LogService,
-    private ngZone: NgZone) { }
+    private ngZone: NgZone,
+    private mapService: MapService,
+    private deviceDetectorService: DeviceDetectorService
+  ) { }
 
   gps() {
-    navigator.geolocation.getCurrentPosition((position) => {
-      this.menuEventService.callEvent('mapMove', { lat: position.coords.latitude, lng: position.coords.longitude, success: () => {
-        this.menuEventService.callEvent('addMarker', { lat: position.coords.latitude, lng: position.coords.longitude });
-      } });
-    }, (error) => this.log.error('Error while getting current position: ' + JSON.stringify(error)),
-    {
-      enableHighAccuracy: true
-    });
+    if (this.deviceDetectorService.isMobile()) {
+      this.mapService.compass();
+    } else {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          this.eventService.call(
+            Events.MAP_MOVE,
+            {
+              lat: position.coords.latitude, lng: position.coords.longitude, success: () => {
+                this.mapService.addMarker({ lat: position.coords.latitude, lng: position.coords.longitude });
+              }
+            });
+        },
+        error => this.log.error('Error while getting current position: ' + JSON.stringify(error)),
+        {
+          enableHighAccuracy: true
+        }
+      );
+    }
   }
 
   ngOnInit() {
@@ -81,9 +99,14 @@ export class LocationComponent implements OnInit {
             latitude = latlng[0];
             longitude = latlng[1];
           }
-          me.menuEventService.callEvent('mapMove', { lat: latitude, lng: longitude, success: () => {
-            me.menuEventService.callEvent('addMarker', { lat: latitude, lng: longitude });
-          } });
+          this.eventService.call(
+            Events.MAP_MOVE,
+            {
+              lat: latitude, lng: longitude, success: () => {
+                me.mapService.addMarker({ lat: latitude, lng: longitude });
+              }
+            }
+          );
         });
       });
     });

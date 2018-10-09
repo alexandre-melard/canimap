@@ -1,7 +1,7 @@
 import { Injectable, Inject, Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
-import { MenuEventService } from '../_services/menuEvent.service';
+import { EventService } from '../_services/event.service';
 import { DrawService } from '../_services/draw.service';
 
 import { Subscription } from 'rxjs/Subscription';
@@ -10,19 +10,18 @@ import { DialogFileOpenComponent } from '../_dialogs/fileOpen.component';
 import { DialogFilesOpenComponent } from '../_dialogs/filesOpen.component';
 import { DialogFileSaveComponent } from '../_dialogs/fileSave.component';
 import { environment } from '../../environments/environment';
+import { Events } from '../_consts/events';
 
 @Injectable()
 export class FileService implements OnDestroy {
-  private subscriptions = new Array<Subscription>();
-  // private FB;
 
   constructor(
-    private menuEventService: MenuEventService,
+    private eventService: EventService,
     private drawService: DrawService,
     public dialog: MatDialog
   ) {
     const me = this;
-    this.subscriptions.push(this.menuEventService.getObservable('fileSave').subscribe(
+    this.eventService.subscribe(Events.MAP_FILE_SAVE,
       () => {
         let fileName = 'carte';
         const dialogRef = this.dialog.open(DialogFileSaveComponent, {
@@ -36,16 +35,16 @@ export class FileService implements OnDestroy {
             fileName = result;
 
             // Get geojson data
-            me.menuEventService.callEvent('getGeoJson', (geoJson) => {
-              saveAs(new Blob([geoJson]), fileName + '.geojson');
-            });
+            me.eventService.call(Events.MAP_DRAW_GEO_JSON_EXPORT,
+              geoJson => saveAs(new Blob([geoJson]), fileName + '.geojson')
+            );
           }
         });
       },
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('fileExport').subscribe(
+    );
+    this.eventService.subscribe(Events.MAP_FILE_EXPORT,
       (type: any) => {
         let fileName = 'piste';
         const dialogRef = this.dialog.open(DialogFileSaveComponent, {
@@ -58,21 +57,22 @@ export class FileService implements OnDestroy {
             fileName = result;
 
             if (type.data === 'kml') {
-              me.menuEventService.callEvent('getKML', (kml) => {
-                saveAs(new Blob([kml]), fileName + '.kml');
-              });
+              me.eventService.call(
+                Events.MAP_DRAW_KML_EXPORT,
+                kml => saveAs(new Blob([kml]), fileName + '.kml')
+              );
             } else {
-              me.menuEventService.callEvent('getGPX', (gpx) => {
-                saveAs(new Blob([gpx]), fileName + '.gpx');
-              });
+              me.eventService.call(Events.MAP_DRAW_GPX_EXPORT,
+                gpx => saveAs(new Blob([gpx]), fileName + '.gpx')
+              );
             }
           }
         });
       },
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('printScreen').subscribe(
+    );
+    this.eventService.subscribe(Events.MAP_SCREEN_PRINT,
       () => {
         let fileName = 'carte';
         const dialogRef = this.dialog.open(DialogFileSaveComponent, {
@@ -86,16 +86,16 @@ export class FileService implements OnDestroy {
             fileName = result;
 
             // Get geojson data
-            me.menuEventService.callEvent('saveAsPng', (blob) => {
-              saveAs(blob, fileName + '.png');
-            });
+            me.eventService.call(Events.MAP_DRAW_PNG_EXPORT,
+              blob => saveAs(blob, fileName + '.png')
+            );
           }
         });
       },
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('filesOpen').subscribe(
+    );
+    this.eventService.subscribe(Events.MAP_FILE_OPEN_MULTIPLE,
       () => {
         console.log('opening files open dialog');
         const dialogRef = this.dialog.open(DialogFilesOpenComponent, {
@@ -110,7 +110,7 @@ export class FileService implements OnDestroy {
             for (let i = 0; i < fileList.length; i++) {
               const file = fileList.item(i);
               me.parseFile(file, (content: string) => {
-                me.menuEventService.callEvent('addLayersFromJson', content);
+                me.eventService.call(Events.MAP_DRAW_JSON_LAYERS_ADD, content);
               }
               );
             }
@@ -119,8 +119,8 @@ export class FileService implements OnDestroy {
       },
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('fileOpen').subscribe(
+    );
+    this.eventService.subscribe(Events.MAP_FILE_LOAD_GPS,
       (data) => {
         const dialogRef = this.dialog.open(DialogFileOpenComponent, {
           width: '700px',
@@ -132,14 +132,14 @@ export class FileService implements OnDestroy {
           if (result) {
             const file: File = result;
             me.parseFile(file, (content: string) => {
-              me.menuEventService.callEvent('loadGPS', { content: content, type: file.name.split('.').pop() });
+              me.eventService.call(Events.MAP_DRAW_GPS_IMPORT, { content: content, type: file.name.split('.').pop() });
             });
           }
         });
       },
       e => console.log('onError: %s', e),
       () => console.log('onCompleted')
-    ));
+    );
   }
 
   parseFile(file: File, success: Function): void {
@@ -156,11 +156,6 @@ export class FileService implements OnDestroy {
   }
 
   ngOnDestroy() {
-    // prevent memory leak when component destroyed
-    console.log('unsubscribing from canimap service');
-    for (const subscription of this.subscriptions) {
-      subscription.unsubscribe();
-    }
   }
 
 }

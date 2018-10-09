@@ -1,14 +1,14 @@
-﻿import { Injectable, OnDestroy } from '@angular/core';
+﻿import { Injectable, OnDestroy, Output } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+
 import { Subject } from 'rxjs/Subject';
-import { MenuEventService } from './menuEvent.service';
+import { EventService } from './event.service';
 import { UserService } from './user.service';
 
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { CaniDrawObjectService } from './caniDrawObject.service';
-import { DrawService } from './draw.service';
 import { LogService } from '../_services/log.service';
 
 import { MapBox } from '../_models/mapBox';
@@ -18,15 +18,18 @@ import { User } from '../_models/user';
 import { SETTINGS } from '../_consts/settings';
 
 import * as ol from 'openlayers';
-import * as $ from 'jquery';
+import { Events } from '../_consts/events';
+
+declare var $;
+declare var GyroNorm;
 
 @Injectable()
 export class MapService implements OnDestroy {
 
+  private gn: any;
+  private watchPositionId: number;
   private map: ol.Map;
-  private subject = new Subject<any>();
   private keepAfterNavigationChange = false;
-  private subscriptions = new Array<Subscription>();
 
   private get user(): Observable<User> {
     return this.userService.currentUser();
@@ -65,80 +68,117 @@ export class MapService implements OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private menuEventService: MenuEventService,
+    private eventService: EventService,
     private userService: UserService,
     private deviceService: DeviceDetectorService,
-    private caniDrawObjectService: CaniDrawObjectService,
-    private drawService: DrawService,
     private log: LogService
   ) {
-    this.subscriptions.push(this.menuEventService.getObservable('mapMove').subscribe(
-      (coords) => {
+    if (deviceService.isMobile()) {
+      this.gn = new GyroNorm();
+    }
+    this.eventService.subscribe(Events.MAP_MOVE, (
+      (coords: any) => {
         this.log.debug('moving map to :' + JSON.stringify(coords));
         this.map.getView().setCenter(ol.proj.fromLonLat([coords.lng, coords.lat]));
-        coords.success();
+        this.map.getView().setZoom(18);
+        if (coords.success) {
+          coords.success();
+        }
       }
     ));
-    this.subscriptions.push(this.menuEventService.getObservable('addMarker').subscribe(
-      (coords) => {
-        this.log.debug('adding marker to :' + JSON.stringify(coords));
-        const iconFeature = new ol.Feature({
-          geometry: new ol.geom.Point(ol.proj.fromLonLat([coords.lng, coords.lat])),
+  }
+
+  compass() {
+    if (this.watchPositionId) {
+      navigator.geolocation.clearWatch(this.watchPositionId);
+      this.gn.end();
+      this.watchPositionId = null;
+    } else {
+      this.watchPositionId = navigator.geolocation.watchPosition(
+        position => {
+          this.eventService.call(
+            Events.MAP_MOVE,
+            {
+              lat: position.coords.latitude, lng: position.coords.longitude, success: () => { }
+            }
+          );
+        },
+        error => this.log.error('Error while getting current position: ' + JSON.stringify(error)),
+        { enableHighAccuracy: true }
+      );
+      const initialAngle = this.map.getView().getRotation();
+      const me = this;
+      me.gn.init({ frequency: 50, orientationBase: GyroNorm.GAME }).then(function () {
+        me.gn.start(function (event) {
+          event.do.alpha = event.do.alpha;
+          const alpha = event.do.alpha * Math.PI * 2 / 360;
+          me.log.info(`a: ${event.do.alpha}`, true);
+          me.map.getView().setRotation(initialAngle + alpha);
         });
-        iconFeature.setStyle(new ol.style.Style({
-          image: new ol.style.Circle({
-            radius: 10,
-            stroke: new ol.style.Stroke({
-              color: 'purple',
-              width: 2
-            }),
-            fill: new ol.style.Fill({
-              color: 'rgba(255,0,0,0.5)'
-            })
-          })
-        }));
-        this.map.addLayer(new ol.layer.Vector({ source: new ol.source.Vector({ features: [iconFeature] }) }));
+      });
+    }
+  }
+
+  addMarker(coords) {
+    this.log.debug('adding marker to :' + JSON.stringify(coords));
+    const iconFeature = new ol.Feature({
+      geometry: new ol.geom.Point(ol.proj.fromLonLat([coords.lng, coords.lat])),
+    });
+    iconFeature.setStyle(new ol.style.Style({
+      image: new ol.style.Circle({
+        radius: 10,
+        stroke: new ol.style.Stroke({
+          color: 'purple',
+          width: 2
+        }),
+        fill: new ol.style.Fill({
+          color: 'rgba(255,0,0,0.5)'
+        })
+      })
+    }));
+    this.map.addLayer(new ol.layer.Vector({ source: new ol.source.Vector({ features: [iconFeature] }) }));
+  }
+
+  gpsMarker() {
+    this.log.debug('drawing gps marker');
+    this.eventService.call(Events.MAP_DRAW_INTERACTIONS_DISABLE);
+    const popup = $('.ol-popup').clone().get(0);
+    $(popup).css('display', 'block');
+    const options: olx.OverlayOptions = {
+      element: popup,
+      autoPan: true,
+      offset: [0, -25],
+      autoPanAnimation: {
+        duration: 250,
+        source: null
       }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('gpsMarker').subscribe(
-      () => {
-        this.log.debug('drawing gps marker');
-        this.menuEventService.callEvent('disableInteractions');
-        const popup = $('.ol-popup').clone().get(0);
-        $(popup).css('display', 'block');
-        const options: olx.OverlayOptions = {
-          element: popup,
-          autoPan: true,
-          offset: [0, -25],
-          autoPanAnimation: {
-            duration: 250,
-            source: null
-          }
-        };
-        const overlay = new ol.Overlay(options);
-        const closer = $(popup).find('a');
-        this.map.addOverlay(overlay);
-        $('#map').css('cursor', 'crosshair');
-        const me = this;
-        this.map.once('singleclick', function (evt) {
-          const coordinate = evt.coordinate;
-          let hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
-          hdms = hdms.split(' ').join('');
-          hdms = hdms.replace('N', 'N ');
-          hdms = hdms.replace('S', 'S ');
-          const content = $(popup).find('.ol-popup-content');
-          content.html('<code>' + hdms + '</code>');
-          overlay.setPosition(coordinate);
-          $('#map').css('cursor', 'default');
-          me.menuEventService.callEvent('move');
-        });
-        closer.on('click', (event) => {
-          overlay.setPosition(undefined);
-          closer.blur();
-          return false;
-        });
-      }
-    ));
+    };
+    const overlay = new ol.Overlay(options);
+    const closer = $(popup).find('a');
+    this.map.addOverlay(overlay);
+    $('#map').css('cursor', 'crosshair');
+    const me = this;
+    this.map.once('singleclick', function (evt) {
+      const coordinate = evt.coordinate;
+      let hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
+      hdms = hdms.split(' ').join('');
+      hdms = hdms.replace('N', 'N ');
+      hdms = hdms.replace('S', 'S ');
+      const content = $(popup).find('.ol-popup-content');
+      content.html('<code>' + hdms + '</code>');
+      overlay.setPosition(coordinate);
+      $('#map').css('cursor', 'default');
+      me.eventService.call(Events.MAP_STATE_MOVE);
+    });
+    closer.on('click', (event) => {
+      overlay.setPosition(undefined);
+      closer.blur();
+      return false;
+    });
+  }
+
+  rotate(radians: number) {
+    this.map.getView().setRotation(radians);
   }
 
   setMapFromUserPreferences(): Observable<any> {
@@ -171,10 +211,12 @@ export class MapService implements OnDestroy {
     const map = new ol.Map({
       target: 'map',
       controls: ol.control.defaults({
-        attributionOptions: /** @type {ol.control.AttributionOptions} */ ({
+        attributionOptions: /** @type {ol.control.AttributionOptions} */ {
           collapsible: false
-        })
-      }),
+        }
+      }).extend([
+        new ol.control.ScaleLine()
+      ]),
       loadTilesWhileAnimating: false,
       view: new ol.View({
         zoom: 15,
@@ -186,12 +228,11 @@ export class MapService implements OnDestroy {
      * Rustine, permet d'eviter les cartes blanches sur mobile en attendant de trouver la vrai raison
      */
     if (this.deviceService.isMobile) {
-      map.on('postrender', (event) => {
+      map.on(Events.OL_MAP_POSTRENDER, (event) => {
         const canva = document.getElementsByTagName('canvas')[0];
-        const reload = document.location.href.endsWith('map') && canva &&  canva.style.display === 'none';
+        const reload = document.location.href.endsWith('map') && canva && canva.style.display === 'none';
         if (reload) {
           event.map.updateSize();
-//          location.reload();
         }
       });
     }
@@ -199,15 +240,29 @@ export class MapService implements OnDestroy {
     this.layerBoxes.map(layerBox => map.addLayer(layerBox.layer));
 
     // add slider
-    if (!this.deviceService.isMobile()) {
-      map.addControl(new ol.control.ZoomSlider());
-    } else {
+    if (this.deviceService.isMobile()) {
       $('.ol-zoom-in').css('display', 'none');
       $('.ol-zoom-out').css('display', 'none');
     }
     this.map = map;
 
-    this.menuEventService.callEvent('mapLoaded', map);
+    this.eventService.call(Events.MAP_STATE_LOADED, map);
+    if (this.deviceService.isMobile()) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          this.eventService.call(
+            Events.MAP_MOVE,
+            {
+              lat: position.coords.latitude, lng: position.coords.longitude
+            }
+          );
+        },
+        error => this.log.error('Error while getting current position: ' + JSON.stringify(error)),
+        {
+          enableHighAccuracy: true
+        }
+      );
+    }
   }
 
   getBingLayer(key: string, type: string, opacity: number, visible: boolean) {
@@ -237,7 +292,8 @@ export class MapService implements OnDestroy {
           {
             url: 'http://khm{0-3}.googleapis.com/kh?v=742&hl=pl&&x={x}&y={y}&z={z}',
             projection: ol.proj.get('EPSG:3857'),
-            crossOrigin: ''
+            crossOrigin: '',
+            attributions: SETTINGS.VERSION
           })
       });
     l.set('id', key);
@@ -327,8 +383,5 @@ export class MapService implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(subscription => {
-      subscription.unsubscribe();
-    });
   }
 }

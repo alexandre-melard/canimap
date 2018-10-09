@@ -1,9 +1,9 @@
-﻿import { Inject, Component, OnInit } from '@angular/core';
+﻿import { Inject, Component, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { MapService } from '../../_services/map.service';
 import { DrawService } from '../../_services/draw.service';
-import { MenuEventService } from '../../_services/menuEvent.service';
+import { EventService } from '../../_services/event.service';
 import { HelperEventService } from '../../_services/helperEvent.service';
 import { BaseMenuComponent } from '../baseMenu';
 
@@ -11,7 +11,10 @@ import { DialogChooseColorComponent } from '../../_dialogs/chooseColor.component
 import { DialogChooseLayersComponent } from '../../_dialogs/chooseLayer.component';
 
 import 'rxjs/add/observable/of';
-import * as $ from 'jquery';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { Events } from '../../_consts/events';
+import { Helpers } from '../../_consts/helpers';
+declare var $;
 
 @Component({
   selector: 'app-canimap-draw-menu',
@@ -20,14 +23,15 @@ import * as $ from 'jquery';
 })
 
 export class DrawMenuComponent extends BaseMenuComponent implements OnInit {
+
   constructor(
     private mapService: MapService,
     private drawService: DrawService,
-    public menuEventService: MenuEventService,
+    public eventService: EventService,
     public helperEventService: HelperEventService,
     public dialog: MatDialog
   ) {
-    super(menuEventService, helperEventService);
+    super(eventService, helperEventService);
   }
 
   ngOnInit() {
@@ -35,8 +39,8 @@ export class DrawMenuComponent extends BaseMenuComponent implements OnInit {
 
   color(state: any) {
     let color: string;
-    ['edit', 'delete'].forEach((states) => {
-      if (this.menuEventService.state === state) {
+    [Events.MAP_DRAW_EDIT, Events.MAP_DRAW_DELETE].forEach((states) => {
+      if (this.eventService.state === state) {
         color = 'red';
       } else {
         color = 'black';
@@ -49,16 +53,14 @@ export class DrawMenuComponent extends BaseMenuComponent implements OnInit {
   }
 
   edit(event: any) {
-    this.menuEventService.prepareEvent('edit', null);
-    this.helperEventService.showHelper('edit', () => {
-      this.menuEventService.proceed();
+    this.helperEventService.showHelper(Helpers.MAP_DRAW_EDIT, () => {
+      this.eventService.call(Events.MAP_DRAW_EDIT);
     });
   }
 
   delete(event: any) {
-    this.menuEventService.prepareEvent('delete', null);
-    this.helperEventService.showHelper('delete', () => {
-      this.menuEventService.proceed();
+    this.helperEventService.showHelper(Helpers.MAP_DRAW_DELETE, () => {
+      this.eventService.call(Events.MAP_DRAW_DELETE);
     });
   }
 

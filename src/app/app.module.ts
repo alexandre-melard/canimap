@@ -17,6 +17,7 @@ import { AppComponent } from './app.component';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 
 import { LogComponent } from './_directives/index';
+import { CompassComponent } from './_directives/compass.component';
 import { HomeComponent } from './home/index';
 import { LocationComponent } from './_menus/location/index';
 import { MenuComponent } from './_menus/menu/index';
@@ -46,7 +47,7 @@ import { CheckEnv } from './_services/check-env.service';
 import { AuthService } from './_services/auth.service';
 import { LogService } from './_services/log.service';
 import { UserService } from './_services/user.service';
-import { MenuEventService } from './_services/menuEvent.service';
+import { EventService } from './_services/event.service';
 import { MapService } from './_services/map.service';
 import { CaniDrawObjectService } from './_services/caniDrawObject.service';
 import { DrawService } from './_services/draw.service';
@@ -70,6 +71,7 @@ export function getToken() {
   declarations: [
     AppComponent,
     LogComponent,
+    CompassComponent,
     HomeComponent,
     MenuComponent,
     MenuMobileComponent,
@@ -121,7 +123,7 @@ export function getToken() {
     AuthService,
     LogService,
     UserService,
-    MenuEventService,
+    EventService,
     MapService,
     DrawService,
     CaniDrawObjectService,

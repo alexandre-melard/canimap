@@ -21,6 +21,12 @@
     <app-canimap-track-menu *ngIf="isMapVisible && !isMobileApp"></app-canimap-track-menu>
     <app-canimap-map-menu *ngIf="isMapVisible"></app-canimap-map-menu>
     <app-canimap-draw-menu *ngIf="isMapVisible && !isMobileApp"></app-canimap-draw-menu>
+    <button mat-icon-button aria-label="Print" matTooltipPosition="right" matTooltip="Cache les menus pour impression"
+      i18n="Print|Hide menus" (click)="print()">
+      <mat-icon class="mat-24">
+        print
+      </mat-icon>
+    </button>
   </div>
 </div>
 <app-canimap-location *ngIf="isMapVisible"></app-canimap-location>

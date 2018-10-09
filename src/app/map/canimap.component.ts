@@ -2,6 +2,7 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../_services/user.service';
 import { MapService } from '../_services/map.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-canimap-map',
@@ -9,13 +10,16 @@ import { MapService } from '../_services/map.service';
   styleUrls: ['./canimap.component.css']
 })
 export class CanimapComponent implements OnInit {
-
+  notMobile = true;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private userService: UserService,
-    private mapService: MapService
-  ) { }
+    private mapService: MapService,
+    private deviceService: DeviceDetectorService
+  ) {
+    this.notMobile = !deviceService.isMobile();
+  }
 
   ngOnInit(): void {
     this.userService.currentUser()
@@ -32,11 +36,11 @@ export class CanimapComponent implements OnInit {
 
   @HostListener('window:beforeunload', ['$event'])
   beforeunloadHandler(event) {
-      return false;
+    return false;
   }
 
   @HostListener('window:unload', ['$event'])
   unloadHandler(event) {
-      return false;
+    return false;
   }
 }

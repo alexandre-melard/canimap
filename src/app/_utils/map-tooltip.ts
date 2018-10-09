@@ -6,7 +6,8 @@ import { formatArea } from './map-format-area';
 import { Map, Feature } from 'openlayers';
 
 import * as ol from 'openlayers';
-import * as $ from 'jquery';
+import { Events } from '../_consts/events';
+declare var $;
 
 /**
  * Message to show when the user is drawing a polygon.
@@ -116,7 +117,7 @@ export class Tooltip {
         this.createHelpTooltip(map);
         this.sketch = sketch;
         this.map = map;
-        this.moveListenerKey = map.on('pointermove', this.pointerMoveHandler, this);
+        this.moveListenerKey = map.on(Events.OL_MAP_POINTERMOVE, this.pointerMoveHandler, this);
     }
 
     deleteTooltip(map, tooltipDom, tooltipOverlay, moveListenerKey) {

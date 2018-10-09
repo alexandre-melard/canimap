@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { MenuEventService } from '../../_services/menuEvent.service';
+import { EventService } from '../../_services/event.service';
 import * as NoSleep from 'nosleep.js';
+import { Events } from '../../_consts/events';
 
 @Component({
     selector: 'app-canimap-menu-mobile',
@@ -14,7 +15,7 @@ export class MenuMobileComponent implements OnInit {
     recordTrackStatus = false;
     noSleep;
 
-    constructor(private menuEventService: MenuEventService) {
+    constructor(private eventService: EventService) {
         this.noSleep = new NoSleep();
     }
 
@@ -25,11 +26,11 @@ export class MenuMobileComponent implements OnInit {
         } else {
             this.noSleep.disable();
         }
-        this.menuEventService.callEvent('recordTrack', this.recordTrackStatus);
+        this.eventService.call(Events.MAP_DRAW_TRACK_RECORD, this.recordTrackStatus);
     }
 
     addObject() {
-        this.menuEventService.callEvent('addObjectToTrack', this.recordTrackStatus);
+        this.eventService.call('addObjectToTrack', this.recordTrackStatus);
     }
 
     get color(): string {

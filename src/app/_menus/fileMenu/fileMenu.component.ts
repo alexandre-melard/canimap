@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuEventService } from '../../_services/menuEvent.service';
+import { EventService } from '../../_services/event.service';
 import { HelperEventService } from '../../_services/helperEvent.service';
 import { FileService } from '../../_services/file.service';
+import { Events } from '../../_consts/events';
+import { Helpers } from '../../_consts/helpers';
 
 @Component({
   selector: 'app-canimap-file-menu',
@@ -14,7 +16,7 @@ export class FileMenuComponent implements OnInit {
   model: any = {};
 
   constructor(
-    private menuEventService: MenuEventService,
+    private eventService: EventService,
     private helperEventService: HelperEventService,
     private fileService: FileService,
     private router: Router
@@ -28,41 +30,36 @@ export class FileMenuComponent implements OnInit {
   }
 
   printScreen(e: MouseEvent) {
-    this.menuEventService.callEvent('printScreen', null);
+    this.eventService.call(Events.MAP_SCREEN_PRINT);
   }
 
   fileSave(e: MouseEvent) {
-    this.menuEventService.prepareEvent('fileSave', null);
-    this.helperEventService.showHelper('fileSave', () => {
-      this.menuEventService.proceed();
-    });
+    this.helperEventService.showHelper(Helpers.MAP_FILE_SAVE,
+      () => this.eventService.call(Events.MAP_FILE_SAVE)
+    );
   }
 
   gpx(e: MouseEvent) {
-    this.menuEventService.prepareEvent('fileExport', 'gpx');
-    this.helperEventService.showHelper('fileExport', () => {
-      this.menuEventService.proceed();
-    });
+    this.helperEventService.showHelper(Helpers.MAP_FILE_EXPORT,
+      () => this.eventService.call(Events.MAP_FILE_EXPORT, 'gpx')
+    );
   }
 
   kml(e: MouseEvent) {
-    this.menuEventService.prepareEvent('fileExport', 'kml');
-    this.helperEventService.showHelper('fileExport', () => {
-      this.menuEventService.proceed();
-    });
+    this.helperEventService.showHelper(Helpers.MAP_FILE_EXPORT,
+      () => this.eventService.call(Events.MAP_FILE_EXPORT, 'kml')
+    );
   }
 
   filesOpen(e: MouseEvent) {
-    this.menuEventService.prepareEvent('filesOpen', null);
-    this.helperEventService.showHelper('filesOpen', () => {
-      this.menuEventService.proceed();
-    });
+    this.helperEventService.showHelper(Helpers.MAP_FILE_OPEN_MULTIPLE,
+      () => this.eventService.call(Events.MAP_FILE_OPEN_MULTIPLE)
+    );
   }
 
   gps(e: MouseEvent) {
-    this.menuEventService.prepareEvent('fileOpen', ['gpx', 'kml']);
-    this.helperEventService.showHelper('loadGPS', () => {
-      this.menuEventService.proceed();
-    });
+    this.helperEventService.showHelper(Helpers.MAP_FILE_LOAD_GPS,
+      () => this.eventService.call(Events.MAP_FILE_LOAD_GPS, ['gpx', 'kml'])
+    );
   }
 }

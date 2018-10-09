@@ -16,6 +16,7 @@ body {
 .map {
   background: white;
   background-image: unset;
+  overflow: hidden;
 }
 
 button.mat-icon-button {

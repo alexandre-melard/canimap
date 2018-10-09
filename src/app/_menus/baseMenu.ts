@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HelperEventService } from '../_services/helperEvent.service';
-import { MenuEventService } from '../_services/menuEvent.service';
+import { EventService } from '../_services/event.service';
 import { drawInteractions } from '../_consts/drawings';
 
 @Component({
@@ -11,13 +11,13 @@ import { drawInteractions } from '../_consts/drawings';
 
 export class BaseMenuComponent {
   constructor(
-    public menuEventService: MenuEventService,
+    public eventService: EventService,
     public helperEventService: HelperEventService
   ) { }
 
   color(state: any) {
     let color = 'black';
-    if (this.menuEventService.state === 'draw-' + state) {
+    if (this.eventService.state === 'draw-' + state) {
       color = 'red';
     }
     return color;
@@ -26,9 +26,8 @@ export class BaseMenuComponent {
   draw(what: string) {
     const drawInteraction = drawInteractions.filter((d) => d.type === what)[0];
     if (drawInteraction) {
-      this.menuEventService.prepareEvent(drawInteraction.event, null);
       this.helperEventService.showHelper(drawInteraction.helper, () => {
-        this.menuEventService.proceed();
+        this.eventService.call(drawInteraction.event);
       });
     }
   }

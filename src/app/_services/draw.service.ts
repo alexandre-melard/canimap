@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
-import { MenuEventService } from './menuEvent.service';
+import { EventService } from './event.service';
 import { CaniDrawObjectService } from './caniDrawObject.service';
 
 import * as ol from 'openlayers';
@@ -19,8 +19,11 @@ import { hexToRgb } from '../_utils/color-hex-to-rgb';
 import { CaniDrawObject } from '../_models/caniDrawObject';
 import { LogService } from '../_services/log.service';
 import { formatLength } from '../_utils/map-format-length';
+import { MapService } from './map.service';
+import { Events } from '../_consts/events';
+import { writeScaleToCanvas } from '../_utils/write-scale-to-canvas';
 
-import * as $ from 'jquery';
+declare var $;
 
 @Injectable()
 export class DrawService implements OnDestroy {
@@ -35,39 +38,36 @@ export class DrawService implements OnDestroy {
   private watchId;
   private track: ol.geom.LineString;
 
-  private subscriptions = new Array<Subscription>();
   public color = '#F00';
 
   constructor(
-    private menuEventService: MenuEventService,
+    private eventService: EventService,
     private caniDrawObjectService: CaniDrawObjectService,
+    private mapService: MapService,
     private logService: LogService
   ) {
     const me = this;
-    this.subscriptions.push(this.menuEventService.getObservable('mapLoaded').subscribe(
+    this.eventService.subscribe(Events.MAP_STATE_LOADED,
       (map: ol.Map) => {
         me.mapLoaded(map);
       }
-    ));
+    );
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(subscription => {
-      subscription.unsubscribe();
-    });
   }
 
   configureFeature(draw: CaniDraw) {
-    draw.interaction.on('drawstart', (event: ol.interaction.Draw.Event) => {
+    draw.interaction.on(Events.OL_DRAW_START, (event: ol.interaction.Draw.Event) => {
       this.tooltip.sketch = event.feature;
     });
-    draw.interaction.on('drawend', (event: ol.interaction.Draw.Event) => {
+    draw.interaction.on(Events.OL_DRAW_END, (event: ol.interaction.Draw.Event) => {
       const feature = event.feature;
       feature.set('style', draw.style(this.color));
       this.tooltip.sketch = null;
       this.tooltip.resetTooltips(this.map);
-      this.menuEventService.callEvent('move', null);
-      this.menuEventService.callEvent('drawend', { feature: feature, draw: draw });
+      this.eventService.call(Events.MAP_STATE_MOVE);
+      this.eventService.call(Events.MAP_DRAW_FEATURE_CREATED, { feature: feature, draw: draw });
     });
     $(document).keydown((e) => {
       if (e.which === 27) {
@@ -105,10 +105,7 @@ export class DrawService implements OnDestroy {
     map.addInteraction(this.select);
     this.select.setActive(false);
     const selectedFeatures = this.select.getFeatures();
-    // this.select.on('change:active', () => {
-    //   selectedFeatures.forEach(selectedFeatures.remove, selectedFeatures);
-    // });
-    this.select.on('select', (selectEvent: ol.interaction.Select.Event) => {
+    this.select.on(Events.OL_DRAW_SELECT, (selectEvent: ol.interaction.Select.Event) => {
       const selected = selectEvent.selected;
       $(document).keydown((e) => {
         if (e.which === 46) {
@@ -123,10 +120,10 @@ export class DrawService implements OnDestroy {
     map.addInteraction(this.delete);
     this.delete.setActive(false);
     const deletedFeatures = this.delete.getFeatures();
-    this.delete.on('change:active', () => {
+    this.delete.on(Events.OL_MAP_CHANGE_ACTIVE, () => {
       deletedFeatures.forEach(deletedFeatures.remove, deletedFeatures);
     });
-    this.delete.on('select', (selectEvent: ol.interaction.Select.Event) => {
+    this.delete.on(Events.OL_DRAW_SELECT, (selectEvent: ol.interaction.Select.Event) => {
       while (selectEvent.selected.length > 0) {
         this.source.removeFeature(selectEvent.selected.pop());
       }
@@ -147,41 +144,41 @@ export class DrawService implements OnDestroy {
     map.addInteraction(this.snap);
     this.map = map;
 
-    this.subscriptions.push(this.menuEventService.getObservable('move').subscribe(
+    this.eventService.subscribe(Events.MAP_STATE_MOVE,
       () => {
         console.log('drawing stop');
-        me.menuEventService.callEvent('disableInteractions', null);
+        me.eventService.call(Events.MAP_DRAW_INTERACTIONS_DISABLE);
       }
-    ));
+    );
     drawInteractions.forEach((drawInteraction) => {
-      this.subscriptions.push(this.menuEventService.getObservable(drawInteraction.event).subscribe(
+      this.eventService.subscribe(drawInteraction.event,
         () => {
           console.log('drawing ' + drawInteraction.type);
           me.enableDrawInteraction(drawInteraction.type);
         }
-      ));
+      );
     });
-    this.subscriptions.push(this.menuEventService.getObservable('disableInteractions').subscribe(
+    this.eventService.subscribe(Events.MAP_DRAW_INTERACTIONS_DISABLE,
       () => {
         this.disableInteractions();
       }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('edit').subscribe(
+    );
+    this.eventService.subscribe(Events.MAP_DRAW_EDIT,
       () => {
         this.disableInteractions();
         this.select.setActive(true);
         this.modify.setActive(true);
       }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('delete').subscribe(
+    );
+    this.eventService.subscribe(Events.MAP_DRAW_DELETE,
       () => {
         this.disableInteractions();
         this.delete.setActive(true);
       }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('addLayersFromJson').subscribe(
-      (json) => {
-        json = JSON.parse(json);
+    );
+    this.eventService.subscribe(Events.MAP_DRAW_JSON_LAYERS_ADD,
+      (jsonStr: string) => {
+        const json = JSON.parse(jsonStr);
         let features = new Array<ol.Feature>();
         console.log('importing 1json as draw');
         let i = 0;
@@ -215,15 +212,15 @@ export class DrawService implements OnDestroy {
           f.set('style', lStyle);
           if ((f.getGeometry().getType() === 'Point') && f.getProperties().type && (f.getProperties().type === 'RuObject')) {
             console.log('found object');
-            me.menuEventService.callEvent('registerObject', f);
+            me.eventService.call(Events.MAP_DRAW_OBJECT_REGISTER, f);
           }
 
         });
         me.source.addFeatures(features);
         me.map.getView().fit(me.source.getExtent());
       }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('getKML').subscribe(
+    );
+    this.eventService.subscribe(Events.MAP_DRAW_KML_EXPORT,
       (success: Function) => {
         console.log('converting drawings to KML');
         const kmlFormat = new ol.format.KML();
@@ -234,8 +231,8 @@ export class DrawService implements OnDestroy {
           });
         success(kml);
       }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('getGPX').subscribe(
+    );
+    this.eventService.subscribe(Events.MAP_DRAW_GPX_EXPORT,
       (success: Function) => {
         console.log('converting drawings to GPX');
         const gpxFormat = new ol.format.GPX();
@@ -246,8 +243,8 @@ export class DrawService implements OnDestroy {
           });
         success(gpx);
       }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('getGeoJson').subscribe(
+    );
+    this.eventService.subscribe(Events.MAP_DRAW_GEO_JSON_EXPORT,
       (success: Function) => {
         console.log('converting drawings to geoJson');
         const geojsonFormat = new ol.format.GeoJSON();
@@ -268,21 +265,23 @@ export class DrawService implements OnDestroy {
         }
         success(JSON.stringify(json));
       }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('saveAsPng').subscribe(
+    );
+    this.eventService.subscribe(Events.MAP_DRAW_PNG_EXPORT,
       (success: Function) => {
         console.log('converting drawings to png');
         me.map.once('postcompose', function (event) {
-          const canvas = event.context.canvas;
+          let canvas = event.context.canvas;
           canvas.setAttribute('crossOrigin', 'anonymous');
+          const olscale = $('.ol-scale-line-inner');
+          canvas = writeScaleToCanvas(event, canvas, olscale);
           canvas.toBlob(function (blob) {
             success(blob);
           });
         });
         me.map.renderSync();
       }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('loadGPS').subscribe(
+    );
+    this.eventService.subscribe(Events.MAP_DRAW_GPS_IMPORT,
       (gps: { content, type }) => {
         console.log('importing gps path as draw');
         let f;
@@ -311,13 +310,14 @@ export class DrawService implements OnDestroy {
           if ((feature.getGeometry().getType() === 'Point') && feature.getProperties().type &&
             (feature.getProperties().type === 'RuObject')) {
             console.log('found object');
-            me.menuEventService.callEvent('registerObject', feature);
+            me.eventService.call(Events.MAP_DRAW_OBJECT_REGISTER, feature);
           }
         });
         me.map.getView().fit(me.source.getExtent());
       }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('recordTrack').subscribe(
+    );
+    this.eventService.subscribe(
+      Events.MAP_DRAW_TRACK_RECORD,
       (status: Function) => {
         if (status) {
           this.logService.info('starting track recording');
@@ -362,12 +362,12 @@ export class DrawService implements OnDestroy {
         } else {
           this.logService.success('stopping track recording');
           navigator.geolocation.clearWatch(this.watchId);
-          this.menuEventService.callEvent('fileSave', null);
+          this.eventService.call(Events.MAP_FILE_SAVE, null);
           this.track = undefined;
         }
       }
-    ));
-    this.subscriptions.push(this.menuEventService.getObservable('addObjectToTrack').subscribe(
+    );
+    this.eventService.subscribe('addObjectToTrack',
       () => {
         console.log('add object on track');
         navigator.geolocation.getCurrentPosition((position) => {
@@ -383,7 +383,7 @@ export class DrawService implements OnDestroy {
             this.source.addFeature(feature);
           });
         });
-      }));
+      });
     console.log('draw loaded');
   }
 

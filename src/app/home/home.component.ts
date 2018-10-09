@@ -5,7 +5,7 @@ import { User } from '../_models/index';
 import { UserService } from '../_services/user.service';
 import { AuthService } from '../_services/auth.service';
 import { MatTabChangeEvent } from '@angular/material';
-import * as $ from 'jquery';
+declare var $;
 
 @Component({
   moduleId: module.id.toString(),
@@ -52,9 +52,4 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  deleteUser() {
-    this.userService.delete(this.currentUser.email).subscribe((user: User) => {
-      this.logout();
-    });
-  }
 }

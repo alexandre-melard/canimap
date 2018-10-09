@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { LogService } from '../_services/log.service';
 import { UserService } from '../_services/user.service';
 import { User } from '../_models/user';
-import * as $ from 'jquery';
+declare var $;
 
 @Component({
   moduleId: module.id.toString(),

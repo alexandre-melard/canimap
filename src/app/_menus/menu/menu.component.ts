@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DeviceDetectorService } from 'ngx-device-detector';
+declare var $;
 
 @Component({
   selector: 'app-canimap-menu',
@@ -35,6 +36,9 @@ export class MenuComponent implements OnInit {
     this.deviceInfo = this.deviceService.getDeviceInfo();
   }
 
+  print() {
+    $('.canimap-menu *, app-canimap-location, app-compass').hide();
+  }
   ngOnInit() {
   }
 }
