@@ -1,4 +1,6 @@
-import * as ol from 'openlayers';
+import { Feature } from 'ol/Feature';
+import { Options as TextOptions } from 'ol/style/Text';
+
 
 /**
  * @typedef {{font: (string|undefined),
@@ -13,8 +15,8 @@ import * as ol from 'openlayers';
  *     fill: (ol.style.Fill|undefined),
  *     stroke: (ol.style.Stroke|undefined)}}
  */
-export function textOptions(feature: ol.Feature, key?: string): olx.style.TextOptions {
-  const textOptions: olx.style.TextOptions = {};
+export function textOptions(feature: Feature, key?: string): TextOptions {
+  const textOptions: TextOptions = {};
   ['font', 'offsetX', 'offsetY', 'scale', 'rotateWithView', 'rotation', 'text', 'textAlign', 'textBaseline'].forEach((param) => {
     if (feature.get((key ? key : 'custom.text.') + param)) {
       textOptions[param] = feature.get((key ? key : 'custom.text.') + param);

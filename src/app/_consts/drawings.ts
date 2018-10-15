@@ -8,7 +8,7 @@ import { CaniDrawPolygon } from '../_models/caniDrawPolygon';
 import { CaniDrawCircle } from '../_models/caniDrawCircle';
 import { CaniDrawRectangle } from '../_models/caniDrawRectangle';
 import { CaniDrawIcon } from '../_models/caniDrawIcon';
-import * as ol from 'openlayers';
+import * as ol from 'ol';
 
 function getTextColor(color: string) {
   return (colorGetBrightness(hexToRgb(color)) > 125) ? 'black' : 'white';

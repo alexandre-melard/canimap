@@ -1,12 +1,12 @@
-import * as ol from 'openlayers';
+import { Icon, Options as IconOptions } from 'ol/style/Icon';
 import { CaniDraw } from './caniDraw';
 
-export interface CaniDrawIconOptions extends olx.style.IconOptions {
+export interface CaniDrawIconOptions extends IconOptions {
   type?: string;
   frequency?: number;
 }
 
-export class CaniDrawIcon extends ol.style.Icon {
+export class CaniDrawIcon extends Icon {
   type?: string;
 
   constructor(type?: string, style?: (color?: string) => CaniDrawIconOptions) {

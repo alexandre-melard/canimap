@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material';
 import { EventService } from '../_services/event.service';
 import { DrawService } from '../_services/draw.service';
 
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { saveAs } from 'file-saver';
 import { DialogFileOpenComponent } from '../_dialogs/fileOpen.component';
 import { DialogFilesOpenComponent } from '../_dialogs/filesOpen.component';

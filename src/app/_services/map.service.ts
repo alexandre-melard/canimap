@@ -1,9 +1,8 @@
-﻿import { Injectable, OnDestroy, Output } from '@angular/core';
+import { Injectable, OnDestroy, Output } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-
 import { Subject } from 'rxjs/Subject';
 import { EventService } from './event.service';
 import { UserService } from './user.service';
@@ -17,7 +16,20 @@ import { User } from '../_models/user';
 
 import { SETTINGS } from '../_consts/settings';
 
-import * as ol from 'openlayers';
+import { Overlay } from 'ol/Overlay';
+import { View } from 'ol/View';
+
+import { Map } from 'ol/Map';
+import { Feature } from 'ol/Feature';
+import { Vector, Tile, Base } from 'ol/layer';
+import { Vector as VectorSource, WMTSSource as WMTSSource, BingMaps, TileImage} from 'ol/source';
+import { Point } from 'ol/geom';
+import { getWidth } from 'ol/extent';
+import { Circle, Style, Stroke, Fill } from 'ol/style';
+import { AttributionOptions, ScaleLine, defaults } from 'ol/control';
+import { fromLonLat, transform, get } from 'ol/proj';
+import { toStringHDMS } from 'ol/coordinate';
+import { WMTS } from 'ol/tilegrid';
 import { Events } from '../_consts/events';
 
 declare var $;
@@ -28,7 +40,7 @@ export class MapService implements OnDestroy {
 
   private gn: any;
   private watchPositionId: number;
-  private map: ol.Map;
+  private map: Map;
   private keepAfterNavigationChange = false;
 
   private get user(): Observable<User> {
@@ -79,7 +91,7 @@ export class MapService implements OnDestroy {
     this.eventService.subscribe(Events.MAP_MOVE, (
       (coords: any) => {
         this.log.debug('moving map to :' + JSON.stringify(coords));
-        this.map.getView().setCenter(ol.proj.fromLonLat([coords.lng, coords.lat]));
+        this.map.getView().setCenter(fromLonLat([coords.lng, coords.lat]));
         this.map.getView().setZoom(18);
         if (coords.success) {
           coords.success();
@@ -121,22 +133,22 @@ export class MapService implements OnDestroy {
 
   addMarker(coords) {
     this.log.debug('adding marker to :' + JSON.stringify(coords));
-    const iconFeature = new ol.Feature({
-      geometry: new ol.geom.Point(ol.proj.fromLonLat([coords.lng, coords.lat])),
+    const iconFeature = new Feature({
+      geometry: new Point(fromLonLat([coords.lng, coords.lat])),
     });
-    iconFeature.setStyle(new ol.style.Style({
-      image: new ol.style.Circle({
+    iconFeature.setStyle(new Style({
+      image: new Circle({
         radius: 10,
-        stroke: new ol.style.Stroke({
+        stroke: new Stroke({
           color: 'purple',
           width: 2
         }),
-        fill: new ol.style.Fill({
+        fill: new Fill({
           color: 'rgba(255,0,0,0.5)'
         })
       })
     }));
-    this.map.addLayer(new ol.layer.Vector({ source: new ol.source.Vector({ features: [iconFeature] }) }));
+    this.map.addLayer(new Vector({ source: new VectorSource({ features: [iconFeature] }) }));
   }
 
   gpsMarker() {
@@ -144,7 +156,7 @@ export class MapService implements OnDestroy {
     this.eventService.call(Events.MAP_DRAW_INTERACTIONS_DISABLE);
     const popup = $('.ol-popup').clone().get(0);
     $(popup).css('display', 'block');
-    const options: olx.OverlayOptions = {
+    const options = {
       element: popup,
       autoPan: true,
       offset: [0, -25],
@@ -153,14 +165,14 @@ export class MapService implements OnDestroy {
         source: null
       }
     };
-    const overlay = new ol.Overlay(options);
+    const overlay = new Overlay(options);
     const closer = $(popup).find('a');
     this.map.addOverlay(overlay);
     $('#map').css('cursor', 'crosshair');
     const me = this;
     this.map.once('singleclick', function (evt) {
       const coordinate = evt.coordinate;
-      let hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
+      let hdms = toStringHDMS(transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
       hdms = hdms.split(' ').join('');
       hdms = hdms.replace('N', 'N ');
       hdms = hdms.replace('S', 'S ');
@@ -208,19 +220,19 @@ export class MapService implements OnDestroy {
   }
 
   loadMap() {
-    const map = new ol.Map({
+    const map = new Map({
       target: 'map',
-      controls: ol.control.defaults({
+      controls: defaults({
         attributionOptions: /** @type {ol.control.AttributionOptions} */ {
           collapsible: false
         }
       }).extend([
-        new ol.control.ScaleLine()
+        new ScaleLine()
       ]),
       loadTilesWhileAnimating: false,
-      view: new ol.View({
+      view: new View({
         zoom: 15,
-        center: ol.proj.transform([5.347022, 45.419364], 'EPSG:4326', 'EPSG:3857')
+        center: transform([5.347022, 45.419364], 'EPSG:4326', 'EPSG:3857')
       })
     });
 
@@ -266,12 +278,12 @@ export class MapService implements OnDestroy {
   }
 
   getBingLayer(key: string, type: string, opacity: number, visible: boolean) {
-    const l = new ol.layer.Tile(
+    const l = new Tile(
       {
         visible: visible,
         opacity: opacity,
         preload: Infinity,
-        source: new ol.source.BingMaps({
+        source: new BingMaps({
           key: 'AkI1BkPAQ-KOw7uZLelGWgLQ5Vbxq7-5K8p-2oMsMuboW8wGBMKA6T63GJ1nJVFK',
           imagerySet: type,
           // use maxZoom 19 to see stretched tiles instead of the BingMaps
@@ -284,14 +296,14 @@ export class MapService implements OnDestroy {
   }
 
   getGoogleLayer(key: string, type: string, opacity: number, visible: boolean) {
-    const l = new ol.layer.Tile(
+    const l = new Tile(
       {
         visible: visible,
         opacity: opacity,
-        source: new ol.source.TileImage(
+        source: new TileImage(
           {
             url: 'http://khm{0-3}.googleapis.com/kh?v=742&hl=pl&&x={x}&y={y}&z={z}',
-            projection: ol.proj.get('EPSG:3857'),
+            projection: get('EPSG:3857'),
             crossOrigin: '',
             attributions: SETTINGS.VERSION
           })
@@ -300,18 +312,18 @@ export class MapService implements OnDestroy {
     return l;
   }
 
-  getIgnLayer(key: string, type: string, opacity: number, visible: boolean): ol.layer.Base {
+  getIgnLayer(key: string, type: string, opacity: number, visible: boolean): Base {
     const resolutions = [];
     const matrixIds = [];
-    const proj3857 = ol.proj.get('EPSG:3857');
-    const maxResolution = ol.extent.getWidth(proj3857.getExtent()) / 256;
+    const proj3857 = get('EPSG:3857');
+    const maxResolution = getWidth(proj3857.getExtent()) / 256;
 
     for (let i = 0; i < 18; i++) {
       matrixIds[i] = i.toString();
       resolutions[i] = maxResolution / Math.pow(2, i);
     }
 
-    const tileGrid = new ol.tilegrid.WMTS({
+    const tileGrid = new WMTS({
       origin: [-20037508, 20037508],
       resolutions: resolutions,
       matrixIds: matrixIds
@@ -321,7 +333,7 @@ export class MapService implements OnDestroy {
     // Expiration date is 06/29/2018.
     const apiKey = '6i88pkdxubzayoady4upbkjg';
 
-    const ign_source = new ol.source.WMTS({
+    const ign_source = new WMTSSource({
       url: 'https://wxs.ign.fr/' + apiKey + '/wmts',
       layer: type,
       matrixSet: 'PM',
@@ -335,7 +347,7 @@ export class MapService implements OnDestroy {
       crossOrigin: ''
     });
 
-    const ign = new ol.layer.Tile({
+    const ign = new Tile({
       opacity: opacity,
       visible: visible,
       source: ign_source
@@ -345,7 +357,7 @@ export class MapService implements OnDestroy {
     return ign;
   }
 
-  getLayer(map: ol.Map, id): ol.layer.Base {
+  getLayer(map: Map, id): Base {
     let layer;
     map.getLayers().forEach(function (lyr) {
       if (id === lyr.get('id')) {

@@ -1,10 +1,11 @@
-import * as ol from 'openlayers';
+import { Options as FillOptions } from 'ol/style/Fill';
+import { Feature } from 'ol/Feature';
 
 /**
  * @typedef {{color: (ol.Color|ol.ColorLike|undefined)}}
  */
-export function fillOptions(feature: ol.Feature, key?: string): olx.style.FillOptions {
-  const fillOptions: olx.style.FillOptions = {};
+export function fillOptions(feature: Feature, key?: string): FillOptions {
+  const fillOptions: FillOptions = {};
   ['color'].forEach((param) => {
     if (feature.get((key ? key : 'custom.fill.') + param)) {
       fillOptions[param] = feature.get((key ? key : 'custom.fill.') + param);

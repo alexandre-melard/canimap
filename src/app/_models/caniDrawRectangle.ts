@@ -1,13 +1,16 @@
-import * as ol from 'openlayers';
+import { Options as CircleOptions } from 'ol/style/Circle';
+import { Fill } from 'ol/style/Fill';
+import { Stroke } from 'ol/style/Stroke';
+import { GeometryType } from 'ol/geom/GeometryType';
 import { CaniDraw } from './caniDraw';
 
-export interface CaniDrawRectangleOptions extends olx.style.CircleOptions {
-  fillOptions?: olx.style.FillOptions;
-  strokeOptions?: olx.style.StrokeOptions;
+export interface CaniDrawRectangleOptions extends CircleOptions {
+  fillOptions?: Fill;
+  strokeOptions?: Stroke;
 }
 
 export class CaniDrawRectangle extends CaniDraw {
-  geometry: ol.geom.GeometryType = 'Circle';
+  geometry: GeometryType = 'Circle';
   style: (color?: string) => CaniDrawRectangleOptions;
   constructor(type: string, helper: string, style?: (color?: string) => CaniDrawRectangleOptions) {
     super(type, helper, style);

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs';
 import { AUTH_CONFIG } from '../_consts/settings';
 import { UserService } from '../_services/user.service';
 import { LogService } from '../_services/log.service';

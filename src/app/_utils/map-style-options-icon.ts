@@ -1,4 +1,5 @@
-import * as ol from 'openlayers';
+import { Feature } from 'ol/Feature';
+import { Options as IconOptions } from 'ol/style/Icon';
 
 /**
  * @typedef {{
@@ -21,8 +22,8 @@ import * as ol from 'openlayers';
  *     src: (string|undefined)
  * }}
  */
-export function iconOptions(feature: ol.Feature, key?: string): olx.style.IconOptions {
-  const iconOptions: olx.style.IconOptions = {
+export function iconOptions(feature: Feature, key?: string): IconOptions {
+  const iconOptions: IconOptions = {
     rotateWithView: true
   };
   ['enabled', 'frequency', 'anchor', 'anchorOrigin', 'anchorXUnits', 'anchorYUnits', 'color', 'crossOrigin',

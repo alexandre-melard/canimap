@@ -3,9 +3,10 @@
  */
 import { formatLength } from './map-format-length';
 import { formatArea } from './map-format-area';
-import { Map, Feature } from 'openlayers';
+import { Map } from 'ol/Map';
+import { Feature } from 'ol/Feature';
 
-import * as ol from 'openlayers';
+import * as ol from 'ol';
 import { Events } from '../_consts/events';
 declare var $;
 

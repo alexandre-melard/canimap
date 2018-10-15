@@ -1,11 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs/Observable';
 import { EventService } from './event.service';
 import { CaniDrawObjectService } from './caniDrawObject.service';
 
-import * as ol from 'openlayers';
+import * as ol from 'ol';
+import { Options as DrawOptions } from 'ol/interaction/Draw';
 
 import { MapBox } from '../_models/mapBox';
 import { LayerBox } from '../_models/layerBox';
@@ -87,7 +88,7 @@ export class DrawService implements OnDestroy {
       map: map
     });
     drawInteractions.forEach((drawInteraction) => {
-      const options: olx.interaction.DrawOptions = {
+      const options: DrawOptions = {
         source: this.source,
         type: drawInteraction.geometry,
       };

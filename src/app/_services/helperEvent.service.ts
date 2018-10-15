@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { User } from '../_models/user';
 import { Helper } from '../_models/helper';
 import { UserService } from '../_services/user.service';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { LogService } from '../_services/log.service';
 
 @Injectable()

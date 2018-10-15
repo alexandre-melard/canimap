@@ -1,9 +1,9 @@
-﻿import { Inject, Component, OnInit } from '@angular/core';
+import { Inject, Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DataSource } from '@angular/cdk/collections';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { MapsAPILoader } from '@agm/core';
 import { } from '@types/googlemaps';
 import { HelperEventService } from '../../_services/helperEvent.service';
@@ -13,7 +13,7 @@ import { BaseMenuComponent } from '../baseMenu';
 import { DialogChooseColorComponent } from '../../_dialogs/chooseColor.component';
 import { DialogChooseLayersComponent } from '../../_dialogs/chooseLayer.component';
 
-import 'rxjs/add/observable/of';
+
 import { MapService } from '../../_services/map.service';
 import { Events } from '../../_consts/events';
 import { Helpers } from '../../_consts/helpers';
