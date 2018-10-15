@@ -17,6 +17,7 @@
 .settings/
 *.sublime-workspace
 .bundle/*
+.editorconfig
 
 # IDE - VSCode
 .vscode/*
