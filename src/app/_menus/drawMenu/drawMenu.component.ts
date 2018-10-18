@@ -1,6 +1,6 @@
-﻿import { Inject, Component, OnInit, Output } from '@angular/core';
+import { Inject, Component, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
+import { Observable ,  ReplaySubject } from 'rxjs';
 import { MapService } from '../../_services/map.service';
 import { DrawService } from '../../_services/draw.service';
 import { EventService } from '../../_services/event.service';
@@ -9,9 +9,6 @@ import { BaseMenuComponent } from '../baseMenu';
 
 import { DialogChooseColorComponent } from '../../_dialogs/chooseColor.component';
 import { DialogChooseLayersComponent } from '../../_dialogs/chooseLayer.component';
-
-import 'rxjs/add/observable/of';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Events } from '../../_consts/events';
 import { Helpers } from '../../_consts/helpers';
 declare var $;

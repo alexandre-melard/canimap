@@ -1,6 +1,6 @@
 import { Component, Input, Optional, Host, OnInit } from '@angular/core';
 import { SatPopover } from '@ncstate/sat-popover';
-import { filter } from 'rxjs/operators/filter';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-inline-edit',

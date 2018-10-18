@@ -1,7 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
-import { Subject } from 'rxjs/Subject';
+import { Observable ,  Subscription ,  Subject } from 'rxjs';
 import { EventService } from './event.service';
 import { CaniDrawObjectService } from './caniDrawObject.service';
 
@@ -87,7 +85,7 @@ export class DrawService implements OnDestroy {
       map: map
     });
     drawInteractions.forEach((drawInteraction) => {
-      const options: olx.interaction.DrawOptions = {
+      const options: ol.olx.interaction.DrawOptions = {
         source: this.source,
         type: drawInteraction.geometry,
       };
@@ -269,7 +267,7 @@ export class DrawService implements OnDestroy {
     this.eventService.subscribe(Events.MAP_DRAW_PNG_EXPORT,
       (success: Function) => {
         console.log('converting drawings to png');
-        me.map.once('postcompose', function (event) {
+        me.map.once('postcompose', function (event: ol.render.Event) {
           let canvas = event.context.canvas;
           canvas.setAttribute('crossOrigin', 'anonymous');
           const olscale = $('.ol-scale-line-inner');

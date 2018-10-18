@@ -1,9 +1,9 @@
 import * as ol from 'openlayers';
 import { CaniDraw } from './caniDraw';
 
-export interface CaniDrawPolygonOptions extends olx.style.StyleOptions {
-  fillOptions?: olx.style.FillOptions;
-  strokeOptions?: olx.style.StrokeOptions;
+export interface CaniDrawPolygonOptions extends ol.olx.style.StyleOptions {
+  fillOptions?: ol.olx.style.FillOptions;
+  strokeOptions?: ol.olx.style.StrokeOptions;
 }
 
 export class CaniDrawPolygon extends CaniDraw {

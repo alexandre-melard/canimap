@@ -1,9 +1,9 @@
 import * as ol from 'openlayers';
 import { CaniDraw } from './caniDraw';
 
-export interface CaniDrawRectangleOptions extends olx.style.CircleOptions {
-  fillOptions?: olx.style.FillOptions;
-  strokeOptions?: olx.style.StrokeOptions;
+export interface CaniDrawRectangleOptions extends ol.olx.style.CircleOptions {
+  fillOptions?: ol.olx.style.FillOptions;
+  strokeOptions?: ol.olx.style.StrokeOptions;
 }
 
 export class CaniDrawRectangle extends CaniDraw {

@@ -1,7 +1,7 @@
 import * as ol from 'openlayers';
 import { CaniDraw } from './caniDraw';
 
-export interface CaniDrawIconOptions extends olx.style.IconOptions {
+export interface CaniDrawIconOptions extends ol.olx.style.IconOptions {
   type?: string;
   frequency?: number;
 }

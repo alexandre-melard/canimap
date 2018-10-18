@@ -21,8 +21,8 @@ import * as ol from 'openlayers';
  *     src: (string|undefined)
  * }}
  */
-export function iconOptions(feature: ol.Feature, key?: string): olx.style.IconOptions {
-  const iconOptions: olx.style.IconOptions = {
+export function iconOptions(feature: ol.Feature, key?: string): ol.olx.style.IconOptions {
+  const iconOptions: ol.olx.style.IconOptions = {
     rotateWithView: true
   };
   ['enabled', 'frequency', 'anchor', 'anchorOrigin', 'anchorXUnits', 'anchorYUnits', 'color', 'crossOrigin',

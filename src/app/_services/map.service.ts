@@ -1,10 +1,6 @@
-﻿import { Injectable, OnDestroy, Output } from '@angular/core';
+import { Injectable, OnDestroy, Output } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-
-import { Subject } from 'rxjs/Subject';
+import { Observable ,  Subscription ,  ReplaySubject ,  Subject } from 'rxjs';
 import { EventService } from './event.service';
 import { UserService } from './user.service';
 
@@ -36,13 +32,13 @@ export class MapService implements OnDestroy {
   }
 
   get layerBoxes(): LayerBox[] {
-    return [this.ignPlan, this.ignSatellite, this.googleSatellite, this.bingSatellite, this.bingHybride];
+    return [this.ignPlan, this.ignSatellite, this.osm, this.bingSatellite, this.bingHybride];
   }
 
-  googleSatellite = new LayerBox(
-    'googleSatellite',
-    'Google Satellite',
-    this.getGoogleLayer('googleSatellite', 's', 0, false)
+  osm = new LayerBox(
+    'osm',
+    'Osm',
+    this.getOsmLayer('osm', 0, false)
   );
   bingSatellite = new LayerBox(
     'bingSatellite',
@@ -144,7 +140,7 @@ export class MapService implements OnDestroy {
     this.eventService.call(Events.MAP_DRAW_INTERACTIONS_DISABLE);
     const popup = $('.ol-popup').clone().get(0);
     $(popup).css('display', 'block');
-    const options: olx.OverlayOptions = {
+    const options: ol.olx.OverlayOptions = {
       element: popup,
       autoPan: true,
       offset: [0, -25],
@@ -158,7 +154,7 @@ export class MapService implements OnDestroy {
     this.map.addOverlay(overlay);
     $('#map').css('cursor', 'crosshair');
     const me = this;
-    this.map.once('singleclick', function (evt) {
+    this.map.once('singleclick', function (evt: ol.MapBrowserEvent) {
       const coordinate = evt.coordinate;
       let hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
       hdms = hdms.split(' ').join('');
@@ -228,7 +224,7 @@ export class MapService implements OnDestroy {
      * Rustine, permet d'eviter les cartes blanches sur mobile en attendant de trouver la vrai raison
      */
     if (this.deviceService.isMobile) {
-      map.on(Events.OL_MAP_POSTRENDER, (event) => {
+      map.on(Events.OL_MAP_POSTRENDER, (event: ol.MapBrowserEvent) => {
         const canva = document.getElementsByTagName('canvas')[0];
         const reload = document.location.href.endsWith('map') && canva && canva.style.display === 'none';
         if (reload) {
@@ -283,18 +279,12 @@ export class MapService implements OnDestroy {
     return l;
   }
 
-  getGoogleLayer(key: string, type: string, opacity: number, visible: boolean) {
+  getOsmLayer(key: string, opacity: number, visible: boolean) {
     const l = new ol.layer.Tile(
       {
         visible: visible,
         opacity: opacity,
-        source: new ol.source.TileImage(
-          {
-            url: 'http://khm{0-3}.googleapis.com/kh?v=742&hl=pl&&x={x}&y={y}&z={z}',
-            projection: ol.proj.get('EPSG:3857'),
-            crossOrigin: '',
-            attributions: SETTINGS.VERSION
-          })
+        source: new ol.source.OSM()
       });
     l.set('id', key);
     return l;

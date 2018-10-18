@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  ReplaySubject ,  Subscription } from 'rxjs';
 import { LogService } from './log.service';
 import { Events } from '../_consts/events';
 

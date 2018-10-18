@@ -3,13 +3,11 @@ import { MatDialog } from '@angular/material';
 
 import { EventService } from '../_services/event.service';
 
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  Subscription ,  Observer } from 'rxjs';
 import { DialogObjectsDisplayComponent } from '../_dialogs/objectsDisplay.component';
 import { CaniDrawPoint } from '../_models/caniDrawPoint';
 import { CaniDrawObject } from '../_models/caniDrawObject';
 import { DialogObjectsAddComponent } from '../_dialogs/ObjectsAdd.component';
-import { Observer } from 'rxjs/Observer';
 import * as ol from 'openlayers';
 import { MapService } from './map.service';
 import { Events } from '../_consts/events';
@@ -42,7 +40,7 @@ export class CaniDrawObjectService implements OnDestroy {
       }
     });
     me.selectInteraction.on(Events.OL_DRAW_SELECT,
-      (event) => {
+      (event: ol.interaction.Select.Event) => {
         if (event.selected.length > 0) {
           console.log('point click detected');
           me.eventService.call(Events.MAP_DRAW_OBJECT_DISPLAY, null);

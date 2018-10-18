@@ -1,9 +1,8 @@
-﻿import { Inject, Component } from '@angular/core';
+import { Inject, Component } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
+import { BehaviorSubject ,  Observable } from 'rxjs';
+
 import { MapService } from '../_services/map.service';
 import { LayerBox } from '../_models/layerBox';
 import { CaniDrawObject } from '../_models/caniDrawObject';

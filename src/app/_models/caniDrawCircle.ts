@@ -1,7 +1,8 @@
 import * as ol from 'openlayers';
 import { CaniDraw } from './caniDraw';
 
-export interface CaniDrawCircleOptions extends olx.style.CircleOptions {
+
+export interface CaniDrawCircleOptions extends ol.olx.style.CircleOptions {
   type: string;
 }
 

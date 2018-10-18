@@ -24,7 +24,7 @@ export class CompassComponent implements OnInit {
     ngOnInit() {
         const me = this;
         this.eventService.subscribe(Events.MAP_STATE_LOADED, (map: ol.Map) => {
-            map.getView().on(Events.OL_MAP_CHANGE_ROTATION, (rotation) => {
+            map.getView().on(Events.OL_MAP_CHANGE_ROTATION, (rotation: ol.ObjectEvent) => {
                 const degree = - Math.round((rotation.oldValue * (180 / Math.PI) * -1) + 100);
                 const rotateCSS = 'rotate(' + (degree + 90) + 'deg)';
                 $('#rotateable').css({
