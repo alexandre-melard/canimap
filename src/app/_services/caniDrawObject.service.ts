@@ -7,7 +7,7 @@ import { Observable ,  Subscription ,  Observer } from 'rxjs';
 import { DialogObjectsDisplayComponent } from '../_dialogs/objectsDisplay.component';
 import { CaniDrawPoint } from '../_models/caniDrawPoint';
 import { CaniDrawObject } from '../_models/caniDrawObject';
-import { DialogObjectsAddComponent } from '../_dialogs/ObjectsAdd.component';
+import { DialogObjectsAddComponent } from '../_dialogs/objectsAdd.component';
 import * as ol from 'openlayers';
 import { MapService } from './map.service';
 import { Events } from '../_consts/events';

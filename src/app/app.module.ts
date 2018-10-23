@@ -39,7 +39,7 @@ import { DialogFileOpenComponent } from './_dialogs/fileOpen.component';
 import { DialogFileSaveComponent } from './_dialogs/fileSave.component';
 import { DialogFilesOpenComponent } from './_dialogs/filesOpen.component';
 import { DialogObjectsDisplayComponent } from './_dialogs/objectsDisplay.component';
-import { DialogObjectsAddComponent } from './_dialogs/ObjectsAdd.component';
+import { DialogObjectsAddComponent } from './_dialogs/objectsAdd.component';
 import { LoginComponent } from './_guards/login.component';
 
 import { AuthGuard } from './_services/auth-guard.service';
