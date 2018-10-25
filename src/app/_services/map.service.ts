@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy, Output } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Observable ,  Subscription ,  ReplaySubject ,  Subject } from 'rxjs';
+import { Observable, Subscription, ReplaySubject, Subject } from 'rxjs';
 import { EventService } from './event.service';
 import { UserService } from './user.service';
 
@@ -32,7 +32,7 @@ export class MapService implements OnDestroy {
   }
 
   get layerBoxes(): LayerBox[] {
-    return [this.ignPlan, this.ignSatellite, this.osm, this.bingSatellite, this.bingHybride];
+    return [this.ignPlan, this.ignSatellite, this.googleSatellite, this.googleHybride, this.osm, this.bingSatellite, this.bingHybride];
   }
 
   osm = new LayerBox(
@@ -44,6 +44,16 @@ export class MapService implements OnDestroy {
     'bingSatellite',
     'Bing Satellite',
     this.getBingLayer('bingSatellite', 'Aerial', 0, false)
+  );
+  googleSatellite = new LayerBox(
+    'googleSatellite',
+    'Google Satellite',
+    this.getGoogleLayer('googleSatellite', 's', 0, false)
+  );
+  googleHybride = new LayerBox(
+    'googleHybride',
+    'Google Hybride',
+    this.getGoogleLayer('googleSatellite', 'y', 0, false)
   );
   bingHybride = new LayerBox(
     'bingHybride',
@@ -269,10 +279,22 @@ export class MapService implements OnDestroy {
         preload: Infinity,
         source: new ol.source.BingMaps({
           key: 'AkI1BkPAQ-KOw7uZLelGWgLQ5Vbxq7-5K8p-2oMsMuboW8wGBMKA6T63GJ1nJVFK',
-          imagerySet: type,
-          // use maxZoom 19 to see stretched tiles instead of the BingMaps
-          // "no photos at this zoom level" tiles
-          // maxZoom: 19
+          imagerySet: type
+        })
+      });
+    l.set('id', key);
+    return l;
+  }
+
+  getGoogleLayer(key: string, type: string, opacity: number, visible: boolean) {
+    const l = new ol.layer.Tile(
+      {
+        visible: visible,
+        opacity: opacity,
+        preload: Infinity,
+        source: new ol.source.XYZ({
+          url: `https://mt0.google.com/vt/lyrs=${type}&hl=en&x={x}&y={y}&z={z}&s=Ga`,
+          attributions: SETTINGS.VERSION
         })
       });
     l.set('id', key);
@@ -284,7 +306,9 @@ export class MapService implements OnDestroy {
       {
         visible: visible,
         opacity: opacity,
-        source: new ol.source.OSM()
+        source: new ol.source.OSM(
+          { attributions: SETTINGS.VERSION }
+        )
       });
     l.set('id', key);
     return l;

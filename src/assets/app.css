@@ -81,15 +81,8 @@ button.mat-icon-button {
 .pac-logo, .pac-logo:after {
   background-image: none;
 }
-
 .ol-zoom {
   top: 10px;
-  left: unset;
-  right: 10px;
-}
-
-.ol-zoomslider {
-  top: 70px;
   left: unset;
   right: 10px;
 }
