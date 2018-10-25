@@ -1,14 +1,10 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable ,  Subscription ,  Subject } from 'rxjs';
 import { EventService } from './event.service';
 import { CaniDrawObjectService } from './caniDrawObject.service';
 
 import * as ol from 'openlayers';
 
-import { MapBox } from '../_models/mapBox';
-import { LayerBox } from '../_models/layerBox';
 import { CaniDraw } from '../_models/caniDraw';
-import { CaniStyle } from '../_models/caniStyle';
 import { Tooltip } from '../_utils/map-tooltip';
 import { drawInteractions } from '../_consts/drawings';
 import { SETTINGS } from '../_consts/settings';
@@ -17,9 +13,9 @@ import { hexToRgb } from '../_utils/color-hex-to-rgb';
 import { CaniDrawObject } from '../_models/caniDrawObject';
 import { LogService } from '../_services/log.service';
 import { formatLength } from '../_utils/map-format-length';
-import { MapService } from './map.service';
 import { Events } from '../_consts/events';
 import { writeScaleToCanvas } from '../_utils/write-scale-to-canvas';
+import { randomColor } from 'randomcolor';
 
 declare var $;
 
@@ -36,12 +32,11 @@ export class DrawService implements OnDestroy {
   private watchId;
   private track: ol.geom.LineString;
 
-  public color = '#F00';
+  public color = undefined;
 
   constructor(
     private eventService: EventService,
     private caniDrawObjectService: CaniDrawObjectService,
-    private mapService: MapService,
     private logService: LogService
   ) {
     const me = this;
@@ -102,7 +97,6 @@ export class DrawService implements OnDestroy {
     this.select = new ol.interaction.Select();
     map.addInteraction(this.select);
     this.select.setActive(false);
-    const selectedFeatures = this.select.getFeatures();
     this.select.on(Events.OL_DRAW_SELECT, (selectEvent: ol.interaction.Select.Event) => {
       const selected = selectEvent.selected;
       $(document).keydown((e) => {
@@ -292,17 +286,16 @@ export class DrawService implements OnDestroy {
             break;
         }
         const features = f.readFeatures(gps.content, { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' });
-        const rgb = hexToRgb(me.color);
         features.forEach((feature: ol.Feature) => {
           const lStyle = drawInteractions.find((draw) => (draw.type === 'LineStringGps')).style;
           if (feature.getGeometry().getType() === 'MultiLineString') {
             (<ol.geom.MultiLineString>feature.getGeometry()).getLineStrings().forEach((lineStringGeom: ol.geom.LineString) => {
               const feat = new ol.Feature(lineStringGeom);
-              feat.set('style', lStyle(this.color));
+              feat.set('style', lStyle(this.color ? this.color : randomColor()));
               me.source.addFeature(feat);
             });
           } else {
-            feature.set('style', lStyle(this.color));
+            feature.set('style', lStyle(this.color ? this.color  : randomColor()));
             me.source.addFeature(feature);
           }
           if ((feature.getGeometry().getType() === 'Point') && feature.getProperties().type &&

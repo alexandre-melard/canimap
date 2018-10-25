@@ -1,5 +1,4 @@
 import { CaniDraw } from '../_models/caniDraw';
-import { CaniStyle } from '../_models/caniStyle';
 import { hexToRgb } from '../_utils/color-hex-to-rgb';
 import { colorGetBrightness } from '../_utils/color-brightness';
 import { CaniDrawPoint } from '../_models/caniDrawPoint';
@@ -7,8 +6,7 @@ import { CaniDrawLineString } from '../_models/caniDrawLineString';
 import { CaniDrawPolygon } from '../_models/caniDrawPolygon';
 import { CaniDrawCircle } from '../_models/caniDrawCircle';
 import { CaniDrawRectangle } from '../_models/caniDrawRectangle';
-import { CaniDrawIcon } from '../_models/caniDrawIcon';
-import * as ol from 'openlayers';
+import { randomColor } from 'randomcolor';
 
 function getTextColor(color: string) {
   return (colorGetBrightness(hexToRgb(color)) > 125) ? 'black' : 'white';
@@ -57,25 +55,26 @@ export class Drawings {
       { specificity: 'Caché' }
     ),
     new CaniDrawLineString('VictimPath', 'polyline',
-      () => {
+      (color) => {
+        color = color ? color : randomColor();
         return {
           strokeOptions: {
-            color: '#00F',
+            color: color,
             width: 3
           },
           textOptions: {
             offsetY: -20,
             font: '18px Calibri,sans-serif',
             fillOptions: {
-              color: '#00F'
+              color: color,
             },
             strokeOptions: {
-              color: getTextColor('#00F'),
+              color: getTextColor(color),
               width: 3
             }
           },
           imageOptions: {
-            color: '#00F',
+            color: color,
             crossOrigin: 'anonymous',
             src: '../assets/icons/arrow_20.png',
             anchor: [0.75, 0.5],
@@ -86,10 +85,11 @@ export class Drawings {
       }
     ),
     new CaniDrawLineString('K9Path', 'polyline',
-      () => {
+      (color) => {
+        color = color ? color : randomColor();
         return {
           strokeOptions: {
-            color: '#F93',
+            color: color,
             width: 3
           },
           textOptions: {
@@ -97,15 +97,15 @@ export class Drawings {
             offsetY: -20,
             font: '18px Calibri,sans-serif',
             fillOptions: {
-              color: '#F93'
+              color: color,
             },
             strokeOptions: {
-              color: getTextColor('#F93'),
+              color: getTextColor(color),
               width: 3
             }
           },
           imageOptions: {
-            color: '#F93',
+            color: color,
             crossOrigin: 'anonymous',
             src: '../assets/icons/arrow_20.png',
             anchor: [0.75, 0.5],
@@ -117,6 +117,7 @@ export class Drawings {
     ),
     new CaniDrawLineString('LineStringGps', 'polyline',
       (color) => {
+        color = color ? color : randomColor();
         return {
           strokeOptions: {
             color: color,
@@ -126,7 +127,7 @@ export class Drawings {
             offsetY: -20,
             font: '18px Calibri,sans-serif',
             fillOptions: {
-              color: color
+              color: color,
             },
             strokeOptions: {
               color: getTextColor(color),
@@ -146,6 +147,7 @@ export class Drawings {
     ),
     new CaniDrawLineString('LineStringArrow', 'polyline',
       (color) => {
+        color = color ? color : randomColor();
         return {
           strokeOptions: {
             color: color,
@@ -156,7 +158,7 @@ export class Drawings {
             offsetY: -20,
             font: '18px Calibri,sans-serif',
             fillOptions: {
-              color: color
+              color: color,
             },
             strokeOptions: {
               color: getTextColor(color),
@@ -176,6 +178,7 @@ export class Drawings {
     ),
     new CaniDrawLineString('LineString', 'polyline',
       (color) => {
+        color = color ? color : randomColor();
         return {
           strokeOptions: {
             color: color,
@@ -185,7 +188,7 @@ export class Drawings {
             offsetY: -20,
             font: '18px Calibri,sans-serif',
             fillOptions: {
-              color: color
+              color: color,
             },
             strokeOptions: {
               color: getTextColor(color),
@@ -197,6 +200,7 @@ export class Drawings {
     ),
     new CaniDrawPolygon('Polygon', 'polygon',
       (color) => {
+        color = color ? color : randomColor();
         const rgb = hexToRgb(color);
         return {
           fillOptions: {
@@ -211,6 +215,7 @@ export class Drawings {
     ),
     new CaniDrawRectangle('Rectangle', 'rectangle',
       (color) => {
+        color = color ? color : randomColor();
         const rgb = hexToRgb(color);
         return {
           type: 'Rectangle',
@@ -227,6 +232,7 @@ export class Drawings {
     ),
     new CaniDrawCircle('Circle', 'circle',
       (color) => {
+        color = color ? color : randomColor();
         const rgb = hexToRgb(color);
         return {
           type: 'Circle',

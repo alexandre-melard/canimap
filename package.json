@@ -37,6 +37,7 @@
     "ngx-device-detector": "^1.1.7",
     "nosleep.js": "^0.7.0",
     "openlayers": "^4.6.5",
+    "randomcolor": "^0.5.3",
     "rxjs": "^6.3.3",
     "rxjs-compat": "^6.3.3",
     "web-animations-js": "^2.3.1",

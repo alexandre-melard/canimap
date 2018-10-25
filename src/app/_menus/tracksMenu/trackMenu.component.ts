@@ -15,7 +15,6 @@ export class TrackMenuComponent extends BaseMenuComponent {
   gpsMarkerToggle = true;
   contextVisible = false;
   constructor(
-    private router: Router,
     public eventService: EventService,
     public helperEventService: HelperEventService) {
     super(eventService, helperEventService);
