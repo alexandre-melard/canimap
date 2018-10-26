@@ -109,8 +109,8 @@ export class FileService implements OnDestroy {
             // loop through files
             for (let i = 0; i < fileList.length; i++) {
               const file = fileList.item(i);
-              me.parseFile(file, (content: string) => {
-                me.eventService.call(Events.MAP_DRAW_JSON_LAYERS_ADD, content);
+              me.parseFile(file, (content: string, fileName: string) => {
+                me.eventService.call(Events.MAP_DRAW_JSON_LAYERS_ADD, { content: content, fileName: fileName});
               }
               );
             }
@@ -150,7 +150,7 @@ export class FileService implements OnDestroy {
       console.log(e);
     };
     reader.onloadend = (f) => {
-      success(reader.result);
+      success(reader.result, file.name);
     };
     reader.readAsText(file);
   }

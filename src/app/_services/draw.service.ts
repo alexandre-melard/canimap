@@ -169,10 +169,11 @@ export class DrawService implements OnDestroy {
       }
     );
     this.eventService.subscribe(Events.MAP_DRAW_JSON_LAYERS_ADD,
-      (jsonStr: string) => {
-        const json = JSON.parse(jsonStr);
+      (file: any) => {
+        const fileName = file.fileName;
+        const json = JSON.parse(file.content);
         let features = new Array<ol.Feature>();
-        console.log('importing 1json as draw');
+        console.log('importing json as draw');
         let i = 0;
         const toDelete = new Array();
         json.features.forEach((f) => {
@@ -206,7 +207,7 @@ export class DrawService implements OnDestroy {
             console.log('found object');
             me.eventService.call(Events.MAP_DRAW_OBJECT_REGISTER, f);
           }
-
+          f.set('fileName', fileName);
         });
         me.source.addFeatures(features);
         me.map.getView().fit(me.source.getExtent());
@@ -295,7 +296,7 @@ export class DrawService implements OnDestroy {
               me.source.addFeature(feat);
             });
           } else {
-            feature.set('style', lStyle(this.color ? this.color  : randomColor()));
+            feature.set('style', lStyle(this.color ? this.color : randomColor()));
             me.source.addFeature(feature);
           }
           if ((feature.getGeometry().getType() === 'Point') && feature.getProperties().type &&
@@ -375,6 +376,19 @@ export class DrawService implements OnDestroy {
           });
         });
       });
+    this.map.on('click', function (evt: ol.MapBrowserEvent) {
+      const f = map.forEachFeatureAtPixel(
+        evt.pixel,
+        function (ft, layer) { return ft; }
+      );
+      if (f && f.get('type') === 'click') {
+        const geometry = f.getGeometry();
+        const content = '<p>' + f.get('fileName') + '</p>';
+        popup.show(coord, content);
+      } else { popup.hide(); }
+
+    });
+
     console.log('draw loaded');
   }
 
