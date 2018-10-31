@@ -9,7 +9,10 @@ export class Events {
     static MAP_DRAW_FEATURE_CREATED = 'map.draw.feature.created';
     static MAP_DRAW_INTERACTIONS_DISABLE = 'map.draw.interactions.disable';
     static MAP_DRAW_JSON_LAYERS_ADD = 'map.draw.json.layers.add';
-    static MAP_DRAW_OBJECT_REGISTER = 'map.draw.objetc.register';
+    static MAP_DRAW_NAME_DISPLAY_SUBSCRIBE = 'map.draw.name.display.subscribe';
+    static MAP_DRAW_NAME_DISPLAY_UNSUBSCRIBE = 'map.draw.name.display.unsubscribe';
+    static MAP_DRAW_OBJECT_REGISTER = 'map.draw.object.register';
+    static MAP_DRAW_OBJECT_ADD = 'map.draw.object.add';
     static MAP_DRAW_OBJECT_DISPLAY = 'map.draw.object.display';
     static MAP_DRAW_KML_EXPORT = 'map.draw.kml.export';
     static MAP_DRAW_GPX_EXPORT = 'map.draw.gpx.export';
@@ -17,7 +20,6 @@ export class Events {
     static MAP_DRAW_PNG_EXPORT = 'map.draw.png.export';
     static MAP_DRAW_GPS_IMPORT = 'map.draw.gps.import';
     static MAP_DRAW_TRACK_RECORD = 'map.draw.track.record';
-
     static MAP_SCREEN_PRINT = 'map.screen.print';
 
     static MAP_FILE_SAVE = 'map.file.save';

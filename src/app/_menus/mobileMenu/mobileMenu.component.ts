@@ -30,7 +30,7 @@ export class MenuMobileComponent implements OnInit {
     }
 
     addObject() {
-        this.eventService.call('addObjectToTrack', this.recordTrackStatus);
+        this.eventService.call(Events.MAP_DRAW_OBJECT_ADD, this.recordTrackStatus);
     }
 
     get color(): string {

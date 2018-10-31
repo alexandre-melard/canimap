@@ -104,7 +104,7 @@ app-log {
   z-index: 1000;
 }
 
-.ol-popup {
+.ol-popup, .ol-popup-name {
   cursor: pointer;
 }
 
@@ -246,7 +246,7 @@ app-canimap-menu-mobile {
   user-select: text;
 }
 
-.ol-popup {
+.ol-popup, .ol-popup-name {
   position: absolute;
   display: none;
   background-color: rgba(0,0,0,0.4);
@@ -259,7 +259,7 @@ app-canimap-menu-mobile {
   left: -49px;
   min-width: 205px;
 }
-.ol-popup:after, .ol-popup:before {
+.ol-popup:after, .ol-popup:before, .ol-popup-name:after, .ol-popup-name:before {
   top: 100%;
   border: solid transparent;
   content: " ";
@@ -268,17 +268,22 @@ app-canimap-menu-mobile {
   position: absolute;
   pointer-events: none;
 }
-.ol-popup:after {
+.ol-popup:after, .ol-popup-name:after {
   border-top-color: white;
   border-width: 10px;
   left: 48px;
   margin-left: -10px;
 }
-.ol-popup:before {
+.ol-popup:before, .ol-popup-name:before {
   border-top-color: #cccccc;
   border-width: 11px;
   left: 48px;
   margin-left: -11px;
+}
+.ol-popup-name {
+  min-width: 100px;
+  padding: 3px;
+  border-radius: 5px;
 }
 .ol-popup-closer {
   text-decoration: none;

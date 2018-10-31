@@ -15,6 +15,7 @@ import { SETTINGS } from '../_consts/settings';
 
 import * as ol from 'openlayers';
 import { Events } from '../_consts/events';
+import { popupDMS } from '../_utils/map-popup';
 
 declare var $;
 declare var GyroNorm;
@@ -148,39 +149,7 @@ export class MapService implements OnDestroy {
   gpsMarker() {
     this.log.debug('drawing gps marker');
     this.eventService.call(Events.MAP_DRAW_INTERACTIONS_DISABLE);
-    const popup = $('.ol-popup').clone().get(0);
-    $(popup).css('display', 'block');
-    const options: ol.olx.OverlayOptions = {
-      element: popup,
-      autoPan: true,
-      offset: [0, -25],
-      autoPanAnimation: {
-        duration: 250,
-        source: null
-      }
-    };
-    const overlay = new ol.Overlay(options);
-    const closer = $(popup).find('a');
-    this.map.addOverlay(overlay);
-    $('#map').css('cursor', 'crosshair');
-    const me = this;
-    this.map.once('singleclick', function (evt: ol.MapBrowserEvent) {
-      const coordinate = evt.coordinate;
-      let hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
-      hdms = hdms.split(' ').join('');
-      hdms = hdms.replace('N', 'N ');
-      hdms = hdms.replace('S', 'S ');
-      const content = $(popup).find('.ol-popup-content');
-      content.html('<code>' + hdms + '</code>');
-      overlay.setPosition(coordinate);
-      $('#map').css('cursor', 'default');
-      me.eventService.call(Events.MAP_STATE_MOVE);
-    });
-    closer.on('click', (event) => {
-      overlay.setPosition(undefined);
-      closer.blur();
-      return false;
-    });
+    popupDMS('.ol-popup', this.map, this.eventService);
   }
 
   rotate(radians: number) {

@@ -1,43 +1,50 @@
-﻿<button mat-icon-button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="appMenu" matTooltipPosition="right" matTooltip="Recherche Utilitaire">
+﻿<button mat-icon-button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="appMenu" matTooltipPosition="right"
+  matTooltip="Recherche Utilitaire">
   <mat-icon class="mat-24">
-      pets
+    pets
   </mat-icon>
 </button>
 <mat-menu #appMenu="matMenu" [overlapTrigger]="true">
   <button mat-icon-button aria-label="Victim" matTooltipPosition="below" matTooltip="Piste de la victime" i18n="Victim|draw the victim path"
     (click)="draw('VictimPath')">
-    <mat-icon class="mat-24"  [style.color]="color('VictimPath')">
+    <mat-icon class="mat-24" [style.color]="color('VictimPath')">
       directions_walk
     </mat-icon>
   </button>
   <button mat-icon-button aria-label="Tracker" matTooltipPosition="below" matTooltip="Piste de l'&eacute;quipe" i18n="Tracker|draw the tracker path"
     (click)="draw('K9Path')">
-      <mat-icon class="mat-24" [style.color]="color('K9Path')">
-        pets
-      </mat-icon>
+    <mat-icon class="mat-24" [style.color]="color('K9Path')">
+      pets
+    </mat-icon>
   </button>
   <button mat-icon-button aria-label="Parking" matTooltipPosition="below" matTooltip="Parking" i18n="Parking|Put a parking slot"
     (click)="draw('ParkingMarker')">
-    <mat-icon class="mat-24"  color="color('ParkingMarker')">
+    <mat-icon class="mat-24" color="color('ParkingMarker')">
       local_parking
     </mat-icon>
   </button>
   <button mat-icon-button aria-label="Pose" matTooltipPosition="below" matTooltip="Objet posé" i18n="Laying|put a laying object"
     (click)="draw('PoseMarker')">
-    <img src="../assets/icons/dot_green.png"/>
+    <img src="../assets/icons/dot_green.png" />
   </button>
   <button mat-icon-button aria-label="Suspendus" matTooltipPosition="below" matTooltip="Objet suspendu" i18n="Hanging|put a suspended object"
     (click)="draw('SuspenduMarker')">
-    <img src="../assets/icons/dot_blue.png"/>
+    <img src="../assets/icons/dot_blue.png" />
   </button>
   <button mat-icon-button aria-label="Cache" matTooltipPosition="below" matTooltip="Objet caché" i18n="Hidden|put a hidden object"
     (click)="draw('CacheMarker')">
-    <img src="../assets/icons/dot_purple.png"/>
+    <img src="../assets/icons/dot_purple.png" />
   </button>
   <button mat-icon-button aria-label="Objets" matTooltipPosition="below" matTooltip="Liste des objets" i18n="Object list|Display a list of objects"
-  (click)="objects()">
-  <mat-icon class="mat-24">
+    (click)="objects()">
+    <mat-icon class="mat-24">
       assignment
+    </mat-icon>
+  </button>
+  <button mat-icon-button aria-label="Nom" matTooltipPosition="below" matTooltip="Afficher le nom de la piste" i18n="Track name|DDisplay track name"
+    (click)="trackName()">
+    <mat-icon class="mat-24">
+      chrome_reader_mode
     </mat-icon>
   </button>
 </mat-menu>

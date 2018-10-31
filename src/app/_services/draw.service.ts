@@ -16,6 +16,7 @@ import { formatLength } from '../_utils/map-format-length';
 import { Events } from '../_consts/events';
 import { writeScaleToCanvas } from '../_utils/write-scale-to-canvas';
 import { randomColor } from 'randomcolor';
+import { popupName } from '../_utils/map-popup';
 
 declare var $;
 
@@ -207,7 +208,7 @@ export class DrawService implements OnDestroy {
             console.log('found object');
             me.eventService.call(Events.MAP_DRAW_OBJECT_REGISTER, f);
           }
-          f.set('fileName', fileName);
+          f.set('fileName', fileName.slice(0, -8));
         });
         me.source.addFeatures(features);
         me.map.getView().fit(me.source.getExtent());
@@ -267,6 +268,7 @@ export class DrawService implements OnDestroy {
           canvas.setAttribute('crossOrigin', 'anonymous');
           const olscale = $('.ol-scale-line-inner');
           canvas = writeScaleToCanvas(event, canvas, olscale);
+          canvas.setAttribute('crossOrigin', 'anonymous');
           canvas.toBlob(function (blob) {
             success(blob);
           });
@@ -359,7 +361,7 @@ export class DrawService implements OnDestroy {
         }
       }
     );
-    this.eventService.subscribe('addObjectToTrack',
+    this.eventService.subscribe(Events.MAP_DRAW_OBJECT_ADD,
       () => {
         console.log('add object on track');
         navigator.geolocation.getCurrentPosition((position) => {
@@ -375,20 +377,28 @@ export class DrawService implements OnDestroy {
             this.source.addFeature(feature);
           });
         });
-      });
-    this.map.on('click', function (evt: ol.MapBrowserEvent) {
-      const f = map.forEachFeatureAtPixel(
-        evt.pixel,
-        function (ft, layer) { return ft; }
-      );
-      if (f && f.get('type') === 'click') {
-        const geometry = f.getGeometry();
-        const content = '<p>' + f.get('fileName') + '</p>';
-        popup.show(coord, content);
-      } else { popup.hide(); }
-
-    });
-
+      }
+    );
+    let drawNameDisplayKey;
+    this.eventService.subscribe(Events.MAP_DRAW_NAME_DISPLAY_SUBSCRIBE,
+      () => {
+        console.log('subscribe display name on track');
+        if (!drawNameDisplayKey) {
+          drawNameDisplayKey = me.map.on('click', function (evt: ol.MapBrowserEvent) {
+            popupName('.ol-popup-name', me.map, me.eventService);
+          });
+        }
+      }
+    );
+    this.eventService.subscribe(Events.MAP_DRAW_NAME_DISPLAY_UNSUBSCRIBE,
+      () => {
+        console.log('unsubscribe display name on track');
+        if (drawNameDisplayKey) {
+          ol.Map.unByKey(drawNameDisplayKey);
+        }
+        me.eventService.call(Events.MAP_STATE_MOVE);
+      }
+    );
     console.log('draw loaded');
   }
 

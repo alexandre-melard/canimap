@@ -23,4 +23,12 @@ export class TrackMenuComponent extends BaseMenuComponent {
   objects() {
     this.eventService.call(Events.MAP_DRAW_OBJECT_DISPLAY);
   }
+
+  trackName() {
+    if (this.eventService.state !== Events.MAP_DRAW_NAME_DISPLAY_SUBSCRIBE) {
+      this.eventService.call(Events.MAP_DRAW_NAME_DISPLAY_SUBSCRIBE);
+    } else {
+      this.eventService.call(Events.MAP_DRAW_NAME_DISPLAY_UNSUBSCRIBE);
+    }
+  }
 }
