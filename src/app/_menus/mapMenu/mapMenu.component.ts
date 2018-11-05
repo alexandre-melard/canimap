@@ -1,22 +1,16 @@
-import { Inject, Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { FormControl } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { DataSource } from '@angular/cdk/collections';
-import { Observable } from 'rxjs';
-import { MapsAPILoader } from '@agm/core';
-import { } from '@types/googlemaps';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { HelperEventService } from '../../_services/helperEvent.service';
 import { EventService } from '../../_services/event.service';
 import { BaseMenuComponent } from '../baseMenu';
 
-import { DialogChooseColorComponent } from '../../_dialogs/chooseColor.component';
 import { DialogChooseLayersComponent } from '../../_dialogs/chooseLayer.component';
 
 
 import { MapService } from '../../_services/map.service';
 import { Events } from '../../_consts/events';
 import { Helpers } from '../../_consts/helpers';
+import { LogService } from '../../_services/log.service';
 declare var $;
 
 @Component({
@@ -27,7 +21,7 @@ declare var $;
 
 export class MapMenuComponent extends BaseMenuComponent implements OnInit {
   constructor(
-    private router: Router,
+    private log: LogService,
     public eventService: EventService,
     public helperEventService: HelperEventService,
     private mapService: MapService,
@@ -36,6 +30,7 @@ export class MapMenuComponent extends BaseMenuComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.log.debug('[MapMenuComponent] [INIT]');
   }
 
   color(state: any) {
@@ -55,6 +50,10 @@ export class MapMenuComponent extends BaseMenuComponent implements OnInit {
 
   move(event?: any): void {
     this.eventService.call(Events.MAP_STATE_MOVE);
+  }
+
+  zoom(resolution: number): void {
+    this.eventService.call(Events.MAP_SET_RESOLUTION, resolution);
   }
 
   gpsMarker(e: MouseEvent) {

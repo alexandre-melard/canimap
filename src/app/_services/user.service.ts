@@ -3,8 +3,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LogService } from '../_services/log.service';
 
 import { environment } from '../../environments/environment';
-import { Observable ,  of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs/Observable';
+import { of } from 'rxjs/Observable/of';
+import { catchError, tap, share } from 'rxjs/operators';
 
 import { User } from '../_models/index';
 
@@ -27,20 +28,22 @@ export class UserService {
   }
 
   create(user: User) {
+    this.log.debug('[UserService] create');
     return this.http
       .post<User>(environment.backend + '/api/users', user, this.httpOptions)
       .pipe(
-        tap((userResult: User) => this.log.debug(`added user w/ id=${userResult._id}`)),
+        tap((userResult: User) => this.log.debug(`[UserService] added user w/ id=${userResult._id}`)),
         catchError(this.handleError('create'))
       );
   }
 
   update(user: User) {
+    this.log.debug('[UserService] update');
     return this.http
       .put<User>(environment.backend + '/api/users/' + user.email, user, this.httpOptions)
       .pipe(
         tap((userResult: User) => {
-          this.log.debug(`updated user w/ id=${userResult._id}`);
+          this.log.debug(`[UserService] updated user w/ id=${userResult._id}`);
           localStorage.setItem('currentUser', JSON.stringify(user));
           return user;
         }),
@@ -49,32 +52,39 @@ export class UserService {
   }
 
   get(email: string) {
+    this.log.debug('[UserService] get');
     return this.http
-      .get<User>(environment.backend + '/api/users/' + email, this.httpOptions)
-      .pipe(
-        tap((userResult: User) => {
-          if (userResult) {
-            this.log.debug(`get user w/ id=${userResult._id}`);
-          } else {
-            this.log.debug(`unknown user with email ${email}`);
-            throw new ErrorEvent(`unknown user with email ${email}`);
-          }
-          return userResult;
-        }),
-        catchError(this.handleError('get'))
-      );
+      .get<User>(environment.backend + '/api/users/' + email, this.httpOptions);
+      // .pipe(
+      //   tap((userResult: User) => {
+      //     if (userResult) {
+      //       this.log.debug(`[UserService] get user w/ id=${userResult._id}`);
+      //     } else {
+      //       this.log.debug(`[UserService] unknown user with email ${email}`);
+      //       throw new ErrorEvent(`unknown user with email ${email}`);
+      //     }
+      //     return userResult;
+      //   }),
+      //   catchError(this.handleError('get'))
+      // )
+      // .pipe(share());
   }
 
   currentUser(): Observable<User> {
+    this.log.debug('[UserService] currentUser');
     if (!this._user) {
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
       if (currentUser) {
+        this.log.debug(`[UserService] currentUser: found current user in localStorage with email: ${currentUser.email}`);
+        this.log.setUser(currentUser);
         this._user = new Observable<User>((observer) => {
           observer.next(currentUser);
         });
       } else {
         this._user = this.get(localStorage.getItem('email'));
+        this._user = this._user.pipe(share());
         this._user.subscribe(user => {
+          this.log.setUser(user);
           localStorage.setItem('currentUser', JSON.stringify(user));
         });
       }
@@ -91,7 +101,7 @@ export class UserService {
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
-      this.log.error(`${operation} failed: ${error.message}`);
+      this.log.error(`[UserService] ${operation} failed: ${error.message}`);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);

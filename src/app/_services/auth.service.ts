@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { AUTH_CONFIG } from '../_consts/settings';
 import { UserService } from '../_services/user.service';
 import { LogService } from '../_services/log.service';
@@ -49,15 +49,15 @@ export class AuthService {
           title: 'Connectez vous!'
         },
       },
-      (error, result) => this.log.error('Error while calling Auth0: ' + JSON.stringify(error))
+      (error, result) => this.log.error('[AuthService] Error while calling Auth0: ' + JSON.stringify(error))
     );
-    lock.on('show', () => this.log.debug('lock is shown'));
-    lock.on('hide', () => this.log.debug('lock is hidden'));
+    lock.on('show', () => this.log.debug('[AuthService] lock is shown'));
+    lock.on('hide', () => this.log.debug('[AuthService] lock is hidden'));
     lock.on('unrecoverable_error', error => {
-      this.log.error('lock unrecoverable_error: ' + JSON.stringify(error));
+      this.log.error('[AuthService] lock unrecoverable_error: ' + JSON.stringify(error));
     });
     lock.on('authorization_error', error => {
-      this.log.error('lock authorization_error: ' + JSON.stringify(error));
+      this.log.error('[AuthService] lock authorization_error: ' + JSON.stringify(error));
     });
     const me = this;
     lock.on('authenticated', authResult => {
@@ -65,7 +65,7 @@ export class AuthService {
       me.setLoggedIn(true);
       lock.getUserInfo(authResult.accessToken, function(error, profile) {
         if (error) {
-          this.log.error('Error while trying to get user info' + JSON.stringify(error));
+          this.log.error('[AuthService] Error while trying to get user info' + JSON.stringify(error));
           me.router.navigate(['/']);
           return;
         }

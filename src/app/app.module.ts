@@ -1,7 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { NgModule, ErrorHandler, forwardRef } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SatPopoverModule } from '@ncstate/sat-popover';
 import { AppMaterialModules } from './material.module';
@@ -53,6 +52,7 @@ import { CaniDrawObjectService } from './_services/caniDrawObject.service';
 import { DrawService } from './_services/draw.service';
 import { HelperEventService } from './_services/helperEvent.service';
 import { FileService } from './_services/file.service';
+import { CanimapErrorHandler } from './_directives/errorHandler';
 
 export function jwtOptionsFactory() {
   return {
@@ -121,14 +121,15 @@ export function getToken() {
     AuthGuard,
     CheckEnv,
     AuthService,
-    LogService,
-    UserService,
     EventService,
     MapService,
     DrawService,
     CaniDrawObjectService,
     HelperEventService,
-    FileService
+    FileService,
+    UserService,
+    LogService,
+    { provide: ErrorHandler, useClass: CanimapErrorHandler }
   ],
   entryComponents: [
     DialogFileSaveComponent,

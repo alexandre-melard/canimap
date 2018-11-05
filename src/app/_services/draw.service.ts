@@ -38,7 +38,7 @@ export class DrawService implements OnDestroy {
   constructor(
     private eventService: EventService,
     private caniDrawObjectService: CaniDrawObjectService,
-    private logService: LogService
+    private log: LogService
   ) {
     const me = this;
     this.eventService.subscribe(Events.MAP_STATE_LOADED,
@@ -139,14 +139,13 @@ export class DrawService implements OnDestroy {
 
     this.eventService.subscribe(Events.MAP_STATE_MOVE,
       () => {
-        console.log('drawing stop');
         me.eventService.call(Events.MAP_DRAW_INTERACTIONS_DISABLE);
       }
     );
     drawInteractions.forEach((drawInteraction) => {
       this.eventService.subscribe(drawInteraction.event,
         () => {
-          console.log('drawing ' + drawInteraction.type);
+          this.log.debug('[DrawService] drawing ' + drawInteraction.type);
           me.enableDrawInteraction(drawInteraction.type);
         }
       );
@@ -174,7 +173,7 @@ export class DrawService implements OnDestroy {
         const fileName = file.fileName;
         const json = JSON.parse(file.content);
         let features = new Array<ol.Feature>();
-        console.log('importing json as draw');
+        this.log.debug('[DrawService] MAP_DRAW_JSON_LAYERS_ADD: importing json as draw');
         let i = 0;
         const toDelete = new Array();
         json.features.forEach((f) => {
@@ -205,7 +204,7 @@ export class DrawService implements OnDestroy {
           });
           f.set('style', lStyle);
           if ((f.getGeometry().getType() === 'Point') && f.getProperties().type && (f.getProperties().type === 'RuObject')) {
-            console.log('found object');
+            this.log.debug('[DrawService] MAP_DRAW_JSON_LAYERS_ADD: found object');
             me.eventService.call(Events.MAP_DRAW_OBJECT_REGISTER, f);
           }
           f.set('fileName', fileName.slice(0, -8));
@@ -216,7 +215,7 @@ export class DrawService implements OnDestroy {
     );
     this.eventService.subscribe(Events.MAP_DRAW_KML_EXPORT,
       (success: Function) => {
-        console.log('converting drawings to KML');
+        this.log.debug('[DrawService] MAP_DRAW_KML_EXPORT: converting drawings to KML');
         const kmlFormat = new ol.format.KML();
         const kml = kmlFormat.writeFeatures(me.source.getFeatures(),
           {
@@ -228,7 +227,7 @@ export class DrawService implements OnDestroy {
     );
     this.eventService.subscribe(Events.MAP_DRAW_GPX_EXPORT,
       (success: Function) => {
-        console.log('converting drawings to GPX');
+        this.log.debug('[DrawService] MAP_DRAW_GPX_EXPORT: converting drawings to GPX');
         const gpxFormat = new ol.format.GPX();
         const gpx = gpxFormat.writeFeatures(me.source.getFeatures(),
           {
@@ -240,7 +239,7 @@ export class DrawService implements OnDestroy {
     );
     this.eventService.subscribe(Events.MAP_DRAW_GEO_JSON_EXPORT,
       (success: Function) => {
-        console.log('converting drawings to geoJson');
+        this.log.debug('[DrawService] MAP_DRAW_GEO_JSON_EXPORT: converting drawings to geoJson');
         const geojsonFormat = new ol.format.GeoJSON();
         const jsonStr = geojsonFormat.writeFeatures(me.source.getFeatures());
         const json = JSON.parse(jsonStr);
@@ -262,23 +261,29 @@ export class DrawService implements OnDestroy {
     );
     this.eventService.subscribe(Events.MAP_DRAW_PNG_EXPORT,
       (success: Function) => {
-        console.log('converting drawings to png');
+        this.log.debug('[DrawService] MAP_DRAW_PNG_EXPORT: converting drawings to png');
         me.map.once('postcompose', function (event: ol.render.Event) {
           let canvas = event.context.canvas;
           canvas.setAttribute('crossOrigin', 'anonymous');
           const olscale = $('.ol-scale-line-inner');
           canvas = writeScaleToCanvas(event, canvas, olscale);
           canvas.setAttribute('crossOrigin', 'anonymous');
-          canvas.toBlob(function (blob) {
-            success(blob);
-          });
+          try {
+            canvas.toBlob(function (blob) {
+              success(blob);
+            }, 'image/jpeg', 0.80);
+          } catch (e) {
+            if (e.name !== 'SecurityError') {
+              throw e;
+            }
+          }
         });
         me.map.renderSync();
       }
     );
     this.eventService.subscribe(Events.MAP_DRAW_GPS_IMPORT,
       (gps: { content, type }) => {
-        console.log('importing gps path as draw');
+        this.log.debug('[DrawService] MAP_DRAW_GPS_IMPORT: importing gps path as draw');
         let f;
         switch (gps.type) {
           case 'gpx':
@@ -303,23 +308,22 @@ export class DrawService implements OnDestroy {
           }
           if ((feature.getGeometry().getType() === 'Point') && feature.getProperties().type &&
             (feature.getProperties().type === 'RuObject')) {
-            console.log('found object');
+            this.log.debug('[DrawService] MAP_DRAW_GPS_IMPORT: found object');
             me.eventService.call(Events.MAP_DRAW_OBJECT_REGISTER, feature);
           }
         });
         me.map.getView().fit(me.source.getExtent());
       }
     );
-    this.eventService.subscribe(
-      Events.MAP_DRAW_TRACK_RECORD,
+    this.eventService.subscribe( Events.MAP_DRAW_TRACK_RECORD,
       (status: Function) => {
         if (status) {
-          this.logService.info('starting track recording');
+          this.log.info('[DrawService] MAP_DRAW_TRACK_RECORD starting track recording');
           me.source.clear();
           me.track = null;
           let first = true;
           me.watchId = navigator.geolocation.watchPosition((position) => {
-            console.log(position.coords);
+            this.log.debug('[DrawService] MAP_DRAW_TRACK_RECORD: ' + position.coords);
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
             const coords = ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:3857');
@@ -342,7 +346,7 @@ export class DrawService implements OnDestroy {
                 if (tmpLine.getLength() > SETTINGS.TRACK.FREQUENCY) {
                   coordinates.push(coords);
                   me.track.setCoordinates(coordinates);
-                  me.logService.info('Longueur: ' + formatLength(me.track), true);
+                  me.log.info('Longueur: ' + formatLength(me.track), true);
                 }
                 tmpLine = undefined;
               }
@@ -354,7 +358,7 @@ export class DrawService implements OnDestroy {
               enableHighAccuracy: true
             });
         } else {
-          this.logService.success('stopping track recording');
+          this.log.success('[DrawService] MAP_DRAW_TRACK_RECORD stopping track recording');
           navigator.geolocation.clearWatch(this.watchId);
           this.eventService.call(Events.MAP_FILE_SAVE, null);
           this.track = undefined;
@@ -363,9 +367,9 @@ export class DrawService implements OnDestroy {
     );
     this.eventService.subscribe(Events.MAP_DRAW_OBJECT_ADD,
       () => {
-        console.log('add object on track');
+        this.log.debug('[DrawService] MAP_DRAW_OBJECT_ADD: add object on track');
         navigator.geolocation.getCurrentPosition((position) => {
-          console.log(position.coords);
+          this.log.debug('[DrawService] MAP_DRAW_OBJECT_ADD: ' + position.coords);
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
           const coords = ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:3857');
@@ -382,7 +386,7 @@ export class DrawService implements OnDestroy {
     let drawNameDisplayKey;
     this.eventService.subscribe(Events.MAP_DRAW_NAME_DISPLAY_SUBSCRIBE,
       () => {
-        console.log('subscribe display name on track');
+        this.log.debug('[DrawService] MAP_DRAW_NAME_DISPLAY_SUBSCRIBE: subscribe display name on track');
         if (!drawNameDisplayKey) {
           drawNameDisplayKey = me.map.on('click', function (evt: ol.MapBrowserEvent) {
             popupName('.ol-popup-name', me.map, me.eventService);
@@ -392,14 +396,14 @@ export class DrawService implements OnDestroy {
     );
     this.eventService.subscribe(Events.MAP_DRAW_NAME_DISPLAY_UNSUBSCRIBE,
       () => {
-        console.log('unsubscribe display name on track');
+        this.log.debug('[DrawService] MAP_DRAW_NAME_DISPLAY_UNSUBSCRIBE: unsubscribe display name on track');
         if (drawNameDisplayKey) {
           ol.Map.unByKey(drawNameDisplayKey);
         }
         me.eventService.call(Events.MAP_STATE_MOVE);
       }
     );
-    console.log('draw loaded');
+    this.log.info('[DrawService] draw services loaded');
   }
 
   disableInteractions() {

@@ -1,14 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector, forwardRef, Inject } from '@angular/core';
 import { Router, NavigationStart } from '@angular/router';
-import { Observable ,  Subject } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 import { environment } from '../../environments/environment';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { User } from '../_models';
 
 @Injectable()
 export class LogService {
     private subject = new Subject<any>();
     private keepAfterNavigationChange = false;
+    private user: User;
 
-    constructor(private router: Router) {
+    constructor(
+        private http: HttpClient,
+        private router: Router) {
         // clear alert message on route change
         router.events.subscribe(event => {
             if (event instanceof NavigationStart) {
@@ -22,13 +28,42 @@ export class LogService {
             }
         });
     }
+
+    public setUser(user: User) {
+        this.user = user;
+    }
+
+    private get httpOptions() {
+        return {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('id_token')
+            })
+        };
+    }
+
+    sendError(log: string, keepAfterNavigationChange = false) {
+        this.log('error', log, keepAfterNavigationChange);
+        let email: string;
+        if (this.user && this.user.email) {
+            email = this.user.email;
+        } else {
+            email = 'unknown';
+        }
+        return this.http
+            .post<{ email: string, content: string }>(
+                environment.backend + '/api/logs',
+                { email: email, content: log },
+                this.httpOptions);
+    }
+
     log(type: string, message: string, keepAfterNavigationChange = false) {
         this.keepAfterNavigationChange = keepAfterNavigationChange;
         this.subject.next({ type: type, text: message });
         if (!keepAfterNavigationChange) {
             setTimeout(() => this.subject.next(), 4000);
         }
-        console.log(type + ': ' + message);
+        console.log('[' + type + '] ' + message);
     }
 
     debug(message: string, keepAfterNavigationChange = false) {
@@ -46,7 +81,7 @@ export class LogService {
     }
 
     error(message: string, keepAfterNavigationChange = false) {
-        this.log('error', message, keepAfterNavigationChange);
+        this.sendError(message, keepAfterNavigationChange).subscribe(() => this.success('error sent to server'));
     }
 
     getMessage(): Observable<any> {

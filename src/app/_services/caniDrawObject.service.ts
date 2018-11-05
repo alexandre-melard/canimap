@@ -1,16 +1,17 @@
-import { Injectable, Inject, Component, OnInit, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
 import { EventService } from '../_services/event.service';
 
-import { Observable ,  Subscription ,  Observer } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { Observer } from 'rxjs/Observer';
 import { DialogObjectsDisplayComponent } from '../_dialogs/objectsDisplay.component';
-import { CaniDrawPoint } from '../_models/caniDrawPoint';
 import { CaniDrawObject } from '../_models/caniDrawObject';
 import { DialogObjectsAddComponent } from '../_dialogs/objectsAdd.component';
-import * as ol from 'openlayers';
-import { MapService } from './map.service';
 import { Events } from '../_consts/events';
+
+import * as ol from 'openlayers';
+import { LogService } from './log.service';
 
 @Injectable()
 export class CaniDrawObjectService implements OnDestroy {
@@ -20,8 +21,8 @@ export class CaniDrawObjectService implements OnDestroy {
 
   constructor(
     private eventService: EventService,
-    private mapService: MapService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private log: LogService
   ) {
     const me = this;
     eventService.subscribe(Events.MAP_STATE_LOADED,
@@ -42,7 +43,7 @@ export class CaniDrawObjectService implements OnDestroy {
     me.selectInteraction.on(Events.OL_DRAW_SELECT,
       (event: ol.interaction.Select.Event) => {
         if (event.selected.length > 0) {
-          console.log('point click detected');
+          this.log.debug('[CaniDrawObjectService] OL_DRAW_SELECT: point click detected');
           me.eventService.call(Events.MAP_DRAW_OBJECT_DISPLAY, null);
         }
       });
@@ -73,7 +74,7 @@ export class CaniDrawObjectService implements OnDestroy {
         properties['type'] = ruObject.type;
         feature.setProperties(properties);
         me.objects.push(ruObject);
-        console.log('adding object: ' + ruObject.name);
+        this.log.debug('[CaniDrawObjectService] MAP_DRAW_OBJECT_REGISTER: adding object: ' + ruObject.name);
       }
     );
 
@@ -85,23 +86,23 @@ export class CaniDrawObjectService implements OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-          console.log('The dialog was closed');
+          this.log.debug('[CaniDrawObjectService] DialogObjectsDisplayComponent was closed');
           this.objects.forEach((object: CaniDrawObject) => {
             me.writeRuObjectToFeature(object);
           });
         });
       },
-      e => console.log('onError: %s', e),
-      () => console.log('onCompleted')
+      e => this.log.error('[CaniDrawObjectService] MAP_DRAW_OBJECT_DISPLAY has failed: %s', e),
+      () => this.log.success('[CaniDrawObjectService] MAP_DRAW_OBJECT_DISPLAY has succeed')
     );
 
     this.eventService.subscribe(Events.MAP_DRAW_FEATURE_CREATED,
       (data: { feature: ol.Feature, draw: any }) => {
         const feature = data.feature;
         const draw = data.draw;
-        console.log('draw end detected');
+        this.log.debug('[CaniDrawObjectService] MAP_DRAW_FEATURE_CREATED');
         if (feature.getGeometry().getType() === 'Point') {
-          console.log('point draw detected');
+          this.log.debug('[CaniDrawObjectService] MAP_DRAW_FEATURE_CREATED: drawing point');
           const properties = feature.getProperties();
           if (draw.properties && draw.properties.specificity) {
             properties['specificity'] = draw.properties.specificity;
@@ -110,8 +111,8 @@ export class CaniDrawObjectService implements OnDestroy {
           }
         }
       },
-      e => console.log('onError: %s', e),
-      () => console.log('onCompleted')
+      e => this.log.error('[CaniDrawObjectService] MAP_DRAW_FEATURE_CREATED: %s', e),
+      () => this.log.success('[CaniDrawObjectService] MAP_DRAW_FEATURE_CREATED')
     );
   }
 
@@ -121,7 +122,7 @@ export class CaniDrawObjectService implements OnDestroy {
         width: '800px'
       });
       dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed');
+        this.log.debug('[CaniDrawObjectService] DialogObjectsAddComponent was closed');
         result.feature = feature;
         this.writeRuObjectToFeature(result);
         observer.next(result);

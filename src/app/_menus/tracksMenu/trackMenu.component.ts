@@ -1,9 +1,9 @@
-﻿import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+﻿import { Component, OnInit } from '@angular/core';
 import { HelperEventService } from '../../_services/helperEvent.service';
 import { EventService } from '../../_services/event.service';
 import { BaseMenuComponent } from '../baseMenu';
 import { Events } from '../../_consts/events';
+import { LogService } from '../../_services/log.service';
 
 @Component({
   selector: 'app-canimap-track-menu',
@@ -11,13 +11,17 @@ import { Events } from '../../_consts/events';
   templateUrl: 'trackMenu.component.html'
 })
 
-export class TrackMenuComponent extends BaseMenuComponent {
+export class TrackMenuComponent extends BaseMenuComponent implements OnInit {
   gpsMarkerToggle = true;
   contextVisible = false;
   constructor(
+    private log: LogService,
     public eventService: EventService,
     public helperEventService: HelperEventService) {
     super(eventService, helperEventService);
+  }
+  ngOnInit() {
+    this.log.debug('[TrackMenuComponent] [INIT]');
   }
 
   objects() {

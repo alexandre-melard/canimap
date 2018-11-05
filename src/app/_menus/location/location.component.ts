@@ -1,15 +1,13 @@
 ﻿import { ElementRef, NgZone, ViewChild, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
 import { MapsAPILoader } from '@agm/core';
 import { LogService } from '../../_services/log.service';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
-import { } from '@types/googlemaps';
-
 import { EventService } from '../../_services/event.service';
 import { MapService } from '../../_services/map.service';
 import { Events } from '../../_consts/events';
+import { } from '@types/googlemaps';
 
 @Component({
   selector: 'app-canimap-location',
@@ -26,7 +24,6 @@ export class LocationComponent implements OnInit {
   public searchElementRef: ElementRef;
 
   constructor(
-    private router: Router,
     private eventService: EventService,
     private mapsAPILoader: MapsAPILoader,
     private log: LogService,
@@ -49,7 +46,7 @@ export class LocationComponent implements OnInit {
               }
             });
         },
-        error => this.log.error('Error while getting current position: ' + JSON.stringify(error)),
+        error => this.log.error('[LocationComponent] Error while getting current position: ' + JSON.stringify(error)),
         {
           enableHighAccuracy: true
         }
@@ -58,16 +55,20 @@ export class LocationComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.log.debug('[LocationComponent] [INIT]');
     const me = this;
     // create search FormControl
     this.searchControl = new FormControl();
     // load Places Autocomplete
     this.mapsAPILoader.load().then(() => {
+      this.log.debug('[LocationComponent] [INIT] maps api loaded');
       const autocomplete = new google.maps.places.Autocomplete(me.searchElementRef.nativeElement, {
         type: 'geocode'
       });
       autocomplete.addListener('place_changed', () => {
+        this.log.debug('[LocationComponent] [INIT] maps api place_changed listener called');
         me.ngZone.run(() => {
+          this.log.debug('[LocationComponent] [INIT] maps api place_changed listener ngZone run');
           // get the place result
           const place: google.maps.places.PlaceResult = autocomplete.getPlace();
           let latitude;

@@ -1,6 +1,7 @@
 import { Component, Input, Optional, Host, OnInit } from '@angular/core';
 import { SatPopover } from '@ncstate/sat-popover';
 import { filter } from 'rxjs/operators';
+import { LogService } from '../_services/log.service';
 
 @Component({
   selector: 'app-inline-edit',
@@ -41,9 +42,13 @@ export class InlineEditComponent implements OnInit {
   /** Form model for the input. */
   comment = '';
 
-  constructor(@Optional() @Host() public popover: SatPopover) { }
+  constructor(
+    private log: LogService,
+    @Optional() @Host() public popover: SatPopover
+    ) { }
 
   ngOnInit() {
+    this.log.debug('[InlineEditComponent] [INIT]');
     // subscribe to cancellations and reset form value
     if (this.popover) {
       this.popover.closed.pipe(filter(val => val == null)).subscribe(() => this.comment = this.value || '');

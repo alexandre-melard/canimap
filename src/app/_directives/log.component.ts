@@ -11,10 +11,11 @@ import { LogService } from '../_services/log.service';
 export class LogComponent implements OnInit {
     message: any;
 
-    constructor(private logService: LogService) { }
+    constructor(private log: LogService) { }
 
     ngOnInit() {
-        this.logService.getMessage().subscribe(message => { this.message = message; });
+        this.log.debug('[LogComponent] [INIT]');
+        this.log.getMessage().subscribe(message => { this.message = message; });
     }
 }
 

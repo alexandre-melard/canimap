@@ -3,6 +3,7 @@ export class Events {
 
     static MAP_STATE_LOADED = 'map.state.loaded';
     static MAP_STATE_MOVE = 'map.state.move';
+    static MAP_SET_RESOLUTION = 'map.resolution.set';
 
     static MAP_DRAW_DELETE = 'map.draw.delete';
     static MAP_DRAW_EDIT = 'map.draw.edit';

@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { LogService } from '../../_services/log.service';
 declare var $;
 
 @Component({
@@ -29,7 +30,7 @@ export class MenuComponent implements OnInit {
   }
 
   constructor(
-    private route: ActivatedRoute,
+    private log: LogService,
     private router: Router,
     private deviceService: DeviceDetectorService
   ) {
@@ -39,6 +40,8 @@ export class MenuComponent implements OnInit {
   print() {
     $('.canimap-menu *, app-canimap-location, app-compass').hide();
   }
+
   ngOnInit() {
+    this.log.debug('[MenuComponent] [INIT]');
   }
 }

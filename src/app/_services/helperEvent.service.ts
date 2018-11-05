@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { DialogHelperComponent } from '../_dialogs/helper.component';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { HttpClient } from '@angular/common/http';
-import { User } from '../_models/user';
 import { Helper } from '../_models/helper';
 import { UserService } from '../_services/user.service';
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 import { LogService } from '../_services/log.service';
 
 @Injectable()
@@ -60,7 +59,7 @@ export class HelperEventService {
                 proceed();
               });
             },
-            err => this.log.error('error while trying to access remote helper: ' + JSON.stringify(err)));
+            err => this.log.error('[HelperEventService] error while trying to access remote helper: ' + JSON.stringify(err)));
         } else {
           proceed();
         }

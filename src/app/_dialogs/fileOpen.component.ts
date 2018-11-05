@@ -38,7 +38,7 @@ export class DialogFileOpenComponent {
     evt.preventDefault();
     const files = evt.dataTransfer.files;
     if (files.length > 1) {
-      this.log.error(`Vous ne pouvez charger qu'un fichier à la fois!`);
+      this.log.error(`[DialogFileOpenComponent] You can only load one file at a time`);
     }
     this.data = files[0]; // FileList object.
   }

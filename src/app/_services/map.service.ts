@@ -1,6 +1,5 @@
-import { Injectable, OnDestroy, Output } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Observable, Subscription, ReplaySubject, Subject } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 import { EventService } from './event.service';
 import { UserService } from './user.service';
 
@@ -13,9 +12,10 @@ import { User } from '../_models/user';
 
 import { SETTINGS } from '../_consts/settings';
 
-import * as ol from 'openlayers';
 import { Events } from '../_consts/events';
 import { popupDMS } from '../_utils/map-popup';
+
+import * as ol from 'openlayers';
 
 declare var $;
 declare var GyroNorm;
@@ -26,7 +26,6 @@ export class MapService implements OnDestroy {
   private gn: any;
   private watchPositionId: number;
   private map: ol.Map;
-  private keepAfterNavigationChange = false;
 
   private get user(): Observable<User> {
     return this.userService.currentUser();
@@ -73,8 +72,6 @@ export class MapService implements OnDestroy {
   );
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
     private eventService: EventService,
     private userService: UserService,
     private deviceService: DeviceDetectorService,
@@ -85,12 +82,19 @@ export class MapService implements OnDestroy {
     }
     this.eventService.subscribe(Events.MAP_MOVE, (
       (coords: any) => {
-        this.log.debug('moving map to :' + JSON.stringify(coords));
+        this.log.debug('[MapService] moving map to :' + JSON.stringify(coords));
         this.map.getView().setCenter(ol.proj.fromLonLat([coords.lng, coords.lat]));
         this.map.getView().setZoom(18);
         if (coords.success) {
           coords.success();
         }
+      }
+    ));
+    this.eventService.subscribe(Events.MAP_SET_RESOLUTION, (
+      (resolution: number) => {
+        this.log.debug('[MapService] setting map scale to :' + resolution);
+        resolution = resolution / 3570;
+        this.map.getView().setResolution(resolution);
       }
     ));
   }
@@ -110,7 +114,7 @@ export class MapService implements OnDestroy {
             }
           );
         },
-        error => this.log.error('Error while getting current position: ' + JSON.stringify(error)),
+        error => this.log.error('[MapService] Error while getting current position: ' + JSON.stringify(error)),
         { enableHighAccuracy: true }
       );
       const initialAngle = this.map.getView().getRotation();
@@ -127,7 +131,7 @@ export class MapService implements OnDestroy {
   }
 
   addMarker(coords) {
-    this.log.debug('adding marker to :' + JSON.stringify(coords));
+    this.log.debug('[MapService] adding marker to :' + JSON.stringify(coords));
     const iconFeature = new ol.Feature({
       geometry: new ol.geom.Point(ol.proj.fromLonLat([coords.lng, coords.lat])),
     });
@@ -147,7 +151,7 @@ export class MapService implements OnDestroy {
   }
 
   gpsMarker() {
-    this.log.debug('drawing gps marker');
+    this.log.debug('[MapService] drawing gps marker');
     this.eventService.call(Events.MAP_DRAW_INTERACTIONS_DISABLE);
     popupDMS('.ol-popup', this.map, this.eventService);
   }
@@ -156,28 +160,26 @@ export class MapService implements OnDestroy {
     this.map.getView().setRotation(radians);
   }
 
-  setMapFromUserPreferences(): Observable<any> {
+  setMapFromUserPreferences(user: User): Observable<any> {
     const observable = new Observable((observer) => {
-      this.user.subscribe((user) => {
-        if (user.mapBoxes) {
-          user.mapBoxes.forEach(m => {
-            const layerBox = this.layerBoxes.find(l => m.key === l.key);
-            if (layerBox) {
-              layerBox.layer.setOpacity(m.opacity);
-              layerBox.layer.setVisible(m.visible);
-            } else {
-              // there is a problem with the saved data, removed corrupted entry
-              user.mapBoxes.slice(user.mapBoxes.lastIndexOf(m), 1);
-            }
-          });
-        } else {
-          user.mapBoxes = new Array<MapBox>();
-          this.layerBoxes.forEach(layerBox => {
-            user.mapBoxes.push(new MapBox(layerBox.key, layerBox.layer.getOpacity(), layerBox.layer.getVisible()));
-          });
-        }
-        observer.next();
-      });
+      if (user.mapBoxes) {
+        user.mapBoxes.forEach(m => {
+          const layerBox = this.layerBoxes.find(l => m.key === l.key);
+          if (layerBox) {
+            layerBox.layer.setOpacity(m.opacity);
+            layerBox.layer.setVisible(m.visible);
+          } else {
+            // there is a problem with the saved data, removed corrupted entry
+            user.mapBoxes.slice(user.mapBoxes.lastIndexOf(m), 1);
+          }
+        });
+      } else {
+        user.mapBoxes = new Array<MapBox>();
+        this.layerBoxes.forEach(layerBox => {
+          user.mapBoxes.push(new MapBox(layerBox.key, layerBox.layer.getOpacity(), layerBox.layer.getVisible()));
+        });
+      }
+      observer.next();
     });
     return observable;
   }
@@ -232,7 +234,7 @@ export class MapService implements OnDestroy {
             }
           );
         },
-        error => this.log.error('Error while getting current position: ' + JSON.stringify(error)),
+        error => this.log.error('[MapService] Error while getting current position: ' + JSON.stringify(error)),
         {
           enableHighAccuracy: true
         }
@@ -350,13 +352,13 @@ export class MapService implements OnDestroy {
           mapBox.opacity = layerBox.layer.getOpacity();
           mapBox.visible = layerBox.layer.getVisible();
         });
-        this.log.info('sending settings to the server');
+        this.log.info('[MapService] sending settings to the server');
         this.userService.update(user).subscribe(
-          () => this.log.success('settings saved on the server'),
-          (error) => this.log.error('error while sending settings on the server:' + JSON.stringify(error))
+          () => this.log.success('[MapService] settings saved on the server'),
+          (error) => this.log.error('[MapService] error while sending settings on the server:' + JSON.stringify(error))
         );
       },
-      (error) => this.log.error('error while getting current user:' + JSON.stringify(error))
+      (error) => this.log.error('[MapService] error while getting current user:' + JSON.stringify(error))
     );
   }
 

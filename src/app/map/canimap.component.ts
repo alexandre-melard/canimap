@@ -25,7 +25,7 @@ export class CanimapComponent implements OnInit {
     this.userService.currentUser()
       .subscribe(user => {
         if (user) {
-          this.mapService.setMapFromUserPreferences().subscribe(() => this.mapService.loadMap());
+          this.mapService.setMapFromUserPreferences(user).subscribe(() => this.mapService.loadMap());
         } else {
           this.router.navigate(['/register']);
         }

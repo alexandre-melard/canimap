@@ -17,11 +17,12 @@ export class CompassComponent implements OnInit {
     message: any;
 
     constructor(
-        private logService: LogService,
+        private log: LogService,
         private eventService: EventService,
         private mapService: MapService) { }
 
     ngOnInit() {
+        this.log.debug('[CompassComponent] [INIT]');
         const me = this;
         this.eventService.subscribe(Events.MAP_STATE_LOADED, (map: ol.Map) => {
             map.getView().on(Events.OL_MAP_CHANGE_ROTATION, (rotation: ol.ObjectEvent) => {

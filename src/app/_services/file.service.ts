@@ -1,23 +1,22 @@
-import { Injectable, Inject, Component, OnInit, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
 import { EventService } from '../_services/event.service';
 import { DrawService } from '../_services/draw.service';
 
-import { Subscription } from 'rxjs';
 import { saveAs } from 'file-saver';
 import { DialogFileOpenComponent } from '../_dialogs/fileOpen.component';
 import { DialogFilesOpenComponent } from '../_dialogs/filesOpen.component';
 import { DialogFileSaveComponent } from '../_dialogs/fileSave.component';
-import { environment } from '../../environments/environment';
 import { Events } from '../_consts/events';
+import { LogService } from './log.service';
 
 @Injectable()
 export class FileService implements OnDestroy {
 
   constructor(
+    private log: LogService,
     private eventService: EventService,
-    private drawService: DrawService,
     public dialog: MatDialog
   ) {
     const me = this;
@@ -30,7 +29,7 @@ export class FileService implements OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-          console.log('The dialog was closed');
+          this.log.debug('[FileService] DialogFileSaveComponent was closed');
           if (result) {
             fileName = result;
 
@@ -41,8 +40,8 @@ export class FileService implements OnDestroy {
           }
         });
       },
-      e => console.log('onError: %s', e),
-      () => console.log('onCompleted')
+      e => this.log.error('[FileService] DialogFileSaveComponent: %s', e),
+      () => this.log.success('[FileService] DialogFileSaveComponent')
     );
     this.eventService.subscribe(Events.MAP_FILE_EXPORT,
       (type: any) => {
@@ -52,7 +51,7 @@ export class FileService implements OnDestroy {
           data: { name: fileName }
         });
         dialogRef.afterClosed().subscribe(result => {
-          console.log('The dialog was closed');
+          this.log.debug('[FileService] DialogFileSaveComponent was closed');
           if (result) {
             fileName = result;
 
@@ -69,8 +68,8 @@ export class FileService implements OnDestroy {
           }
         });
       },
-      e => console.log('onError: %s', e),
-      () => console.log('onCompleted')
+      e => this.log.error('[FileService] DialogFileSaveComponent: %s', e),
+      () => this.log.success('[FileService] DialogFileSaveComponent')
     );
     this.eventService.subscribe(Events.MAP_SCREEN_PRINT,
       () => {
@@ -81,29 +80,29 @@ export class FileService implements OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-          console.log('The dialog was closed');
+          this.log.debug('[FileService] DialogFileSaveComponent was closed');
           if (result) {
             fileName = result;
 
             // Get geojson data
             me.eventService.call(Events.MAP_DRAW_PNG_EXPORT,
-              blob => saveAs(blob, fileName + '.png')
+              blob => saveAs(blob, fileName + '.jpg')
             );
           }
         });
       },
-      e => console.log('onError: %s', e),
-      () => console.log('onCompleted')
+      e => this.log.error('[FileService] DialogFileSaveComponent: %s', e),
+      () => this.log.success('[FileService] DialogFileSaveComponent')
     );
     this.eventService.subscribe(Events.MAP_FILE_OPEN_MULTIPLE,
       () => {
-        console.log('opening files open dialog');
+        this.log.debug('[FileService] MAP_FILE_OPEN_MULTIPLE: opening files open dialog');
         const dialogRef = this.dialog.open(DialogFilesOpenComponent, {
           width: '700px'
         });
 
         dialogRef.afterClosed().subscribe(result => {
-          console.log('The dialog was closed');
+          this.log.debug('[FileService] MAP_FILE_OPEN_MULTIPLE was closed');
           if (result) {
             const fileList: FileList = result;
             // loop through files
@@ -117,8 +116,8 @@ export class FileService implements OnDestroy {
           }
         });
       },
-      e => console.log('onError: %s', e),
-      () => console.log('onCompleted')
+      e => this.log.error('[FileService] MAP_FILE_OPEN_MULTIPLE: %s', e),
+      () => this.log.success('[FileService] MAP_FILE_OPEN_MULTIPLE')
     );
     this.eventService.subscribe(Events.MAP_FILE_LOAD_GPS,
       (data) => {
@@ -128,7 +127,7 @@ export class FileService implements OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-          console.log('The dialog was closed');
+          this.log.debug('[FileService] DialogFileOpenComponent was closed');
           if (result) {
             const file: File = result;
             me.parseFile(file, (content: string) => {
@@ -137,17 +136,17 @@ export class FileService implements OnDestroy {
           }
         });
       },
-      e => console.log('onError: %s', e),
-      () => console.log('onCompleted')
+      e => this.log.error('[FileService] DialogFileOpenComponent: %s', e),
+      () => this.log.success('[FileService] DialogFileOpenComponent')
     );
   }
 
   parseFile(file: File, success: Function): void {
     const me = this;
-    console.log(file.size);
+    this.log.debug('[FileService] parseFile file size: ' + file.size);
     const reader = new FileReader();
     reader.onload = (e) => {
-      console.log(e);
+      this.log.debug('[FileService] file loaded: ' + e);
     };
     reader.onloadend = (f) => {
       success(reader.result, file.name);

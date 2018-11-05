@@ -28,11 +28,11 @@ export class RegisterComponent {
         if (user) {
           this.model = user;
           this.udpate = true;
-          this.log.info('editing user with email:' + this.model.email);
+          this.log.info('[RegisterComponent] editing user with email:' + this.model.email);
         } else {
           this.model = new User();
           this.model.email = localStorage.getItem('email');
-          this.log.info('creating new user with email:' + this.model.email);
+          this.log.info('[RegisterComponent] creating new user with email:' + this.model.email);
         }
       });
   }

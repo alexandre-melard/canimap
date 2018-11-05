@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable ,  ReplaySubject ,  Subscription } from 'rxjs';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { Subscription } from 'rxjs/Subscription';
 import { LogService } from './log.service';
 import { Events } from '../_consts/events';
 
@@ -16,12 +17,12 @@ export class EventService {
   onEventSource: Map<string, ReplaySubject<any>> = new Map();
 
   subscribe(key: string, next?: (value: any) => void, error?: (error: any) => void, complete?: () => void): Subscription {
-    this.log.debug('subscribed to: ' + key);
+    this.log.debug('[EventService] [subscribe] ' + key);
     return this.getEvent(key).asObservable().subscribe(next, error, complete);
   }
 
   call(key: string, value?: any) {
-    this.log.debug('call: ' + key);
+    this.log.debug('[EventService] [call] ' + key);
     this.state = key;
     this.getEvent(key).next(value);
   }

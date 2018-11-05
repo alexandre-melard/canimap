@@ -1,16 +1,15 @@
-import { Inject, Component, OnInit, Output } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Observable ,  ReplaySubject } from 'rxjs';
-import { MapService } from '../../_services/map.service';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { DrawService } from '../../_services/draw.service';
 import { EventService } from '../../_services/event.service';
 import { HelperEventService } from '../../_services/helperEvent.service';
 import { BaseMenuComponent } from '../baseMenu';
 
 import { DialogChooseColorComponent } from '../../_dialogs/chooseColor.component';
-import { DialogChooseLayersComponent } from '../../_dialogs/chooseLayer.component';
 import { Events } from '../../_consts/events';
 import { Helpers } from '../../_consts/helpers';
+import { LogService } from '../../_services/log.service';
+
 declare var $;
 
 @Component({
@@ -22,7 +21,7 @@ declare var $;
 export class DrawMenuComponent extends BaseMenuComponent implements OnInit {
 
   constructor(
-    private mapService: MapService,
+    private log: LogService,
     private drawService: DrawService,
     public eventService: EventService,
     public helperEventService: HelperEventService,
@@ -32,6 +31,7 @@ export class DrawMenuComponent extends BaseMenuComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.log.debug('[DrawMenuComponent] [INIT]');
   }
 
   color(state: any) {

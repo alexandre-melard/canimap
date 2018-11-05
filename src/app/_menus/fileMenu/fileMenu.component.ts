@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { EventService } from '../../_services/event.service';
 import { HelperEventService } from '../../_services/helperEvent.service';
-import { FileService } from '../../_services/file.service';
 import { Events } from '../../_consts/events';
 import { Helpers } from '../../_consts/helpers';
+import { LogService } from '../../_services/log.service';
+import { FileService } from '../../_services/file.service';
 
 @Component({
   selector: 'app-canimap-file-menu',
@@ -16,10 +17,11 @@ export class FileMenuComponent implements OnInit {
   model: any = {};
 
   constructor(
+    private log: LogService,
     private eventService: EventService,
     private helperEventService: HelperEventService,
-    private fileService: FileService,
-    private router: Router
+    private router: Router,
+    private fileService: FileService
   ) { }
 
   get visible(): boolean {
@@ -27,6 +29,7 @@ export class FileMenuComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.log.debug('[FileMenuComponent] [INIT]');
   }
 
   printScreen(e: MouseEvent) {

@@ -1,14 +1,12 @@
 import { Inject, Component } from '@angular/core';
 import { DataSource } from '@angular/cdk/collections';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { BehaviorSubject ,  Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable } from 'rxjs/Observable';
 
-import { MapService } from '../_services/map.service';
-import { LayerBox } from '../_models/layerBox';
 import { CaniDrawObject } from '../_models/caniDrawObject';
 import { DialogChooseColorComponent } from '../_dialogs/chooseColor.component';
 import {MatTableDataSource} from '@angular/material';
-declare var $;
 
 @Component({
   selector: 'app-dialog-display-objects',

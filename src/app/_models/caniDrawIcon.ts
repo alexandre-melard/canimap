@@ -1,5 +1,5 @@
-import * as ol from 'openlayers';
 import { CaniDraw } from './caniDraw';
+import * as ol from 'openlayers';
 
 export interface CaniDrawIconOptions extends ol.olx.style.IconOptions {
   type?: string;
