@@ -87,6 +87,14 @@ button.mat-icon-button {
   right: 10px;
 }
 
+.ol-scale-line {
+  left: 80px !important;
+}
+
+.ol-scale-line-inner {
+  font-size: 14px !important;
+}
+
 app-log {
   text-align: center;
   width: 80%;

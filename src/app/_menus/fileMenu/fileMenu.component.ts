@@ -1,11 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { EventService } from '../../_services/event.service';
 import { HelperEventService } from '../../_services/helperEvent.service';
 import { Events } from '../../_consts/events';
 import { Helpers } from '../../_consts/helpers';
 import { LogService } from '../../_services/log.service';
-import { FileService } from '../../_services/file.service';
+
+declare var $;
+
+export enum KEY_CODE {
+  RIGHT_ARROW = 39,
+  LEFT_ARROW = 37,
+  ESC = 27
+}
 
 @Component({
   selector: 'app-canimap-file-menu',
@@ -15,13 +22,13 @@ import { FileService } from '../../_services/file.service';
 
 export class FileMenuComponent implements OnInit {
   model: any = {};
+  menuVisible = true;
 
   constructor(
     private log: LogService,
     private eventService: EventService,
     private helperEventService: HelperEventService,
-    private router: Router,
-    private fileService: FileService
+    private router: Router
   ) { }
 
   get visible(): boolean {
@@ -33,7 +40,7 @@ export class FileMenuComponent implements OnInit {
   }
 
   printScreen(e: MouseEvent) {
-    this.eventService.call(Events.MAP_SCREEN_PRINT);
+    this.print();
   }
 
   fileSave(e: MouseEvent) {
@@ -65,4 +72,21 @@ export class FileMenuComponent implements OnInit {
       () => this.eventService.call(Events.MAP_FILE_LOAD_GPS, ['gpx', 'kml'])
     );
   }
+
+  print() {
+    if (this.visible) {
+      $('.canimap-menu *, app-canimap-location, app-compass').hide();
+      this.menuVisible = false;
+      this.log.info('Appuyez sur la touche Esc pour retrouver les menus');
+    }
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    if (event.keyCode === KEY_CODE.ESC && !this.menuVisible) {
+      $('.canimap-menu *, app-canimap-location, app-compass').show();
+      this.menuVisible = true;
+    }
+  }
+
 }
