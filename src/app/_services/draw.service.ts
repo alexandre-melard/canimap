@@ -181,8 +181,9 @@ export class DrawService implements OnDestroy {
             const feature = new ol.Feature(new ol.geom.Circle(f.geometry.coordinates.center, f.geometry.coordinates.radius));
             feature.set('style', f.properties.style);
             features.push(feature);
-            toDelete.push(i++);
+            toDelete.push(i);
           }
+          i++;
         });
         // Delete circles features
         while (toDelete.length > 0) {
@@ -267,7 +268,7 @@ export class DrawService implements OnDestroy {
           canvas.setAttribute('crossOrigin', 'anonymous');
           const olscale = $('.ol-scale-line-inner');
           canvas = writeScaleToCanvas(event, canvas, olscale);
-          canvas.setAttribute('crossOrigin', 'anonymous');
+          canvas.setAttribute('crossOrigin', 'Anonymous');
           try {
             canvas.toBlob(function (blob) {
               success(blob);
