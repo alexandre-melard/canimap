@@ -1,6 +1,6 @@
 export class Events {
     static MAP_MOVE = 'map.move';
-
+    static MAP_MOVE_CURRENT = 'map.move.current';
     static MAP_STATE_LOADED = 'map.state.loaded';
     static MAP_STATE_MOVE = 'map.state.move';
     static MAP_SET_RESOLUTION = 'map.resolution.set';

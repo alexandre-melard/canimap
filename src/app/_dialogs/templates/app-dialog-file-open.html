@@ -1,24 +1,26 @@
 <div mat-dialog-content>
-  <div id="drop_zone" (dragover)="dragover($event)" (drop)="drop($event)">Déposer le fichier ici ou <a (click)="upload()">uploadez le</a></div>
-  <output id="list" *ngIf="data">
-    <table *ngIf="data" width="100%" class="table table-sm table-striped table-hover table-responsive">
-      <tr>
-        <th>Nom</th>
-        <th>Taille</th>
-        <th>Dernière modification</th>
-        <th>Type</th>
-      </tr>
-      <tr>
-        <td>{{data.name}}</td>
-        <td>{{data.size}}</td>
-        <td>{{data.lastModifiedDate.toLocaleDateString()}}</td>
-        <td>{{data.name.split('.').pop().toUpperCase()}}</td>
-      </tr>
-    </table>
-  </output>
-  <input #fileOpen (change)="fileReceived($event)" type="file" id="file" name="file" [accept]="types" style="display:none"/>
+    <div (dragover)="dragover($event)" (drop)="drop($event)" id="drop_zone">Déposer le fichier ici ou <a
+            (click)="upload()">uploadez le</a></div>
+    <output *ngIf="data" id="list">
+        <table *ngIf="data" class="table table-sm table-striped table-hover table-responsive" width="100%">
+            <tr>
+                <th>Nom</th>
+                <th>Taille</th>
+                <th>Dernière modification</th>
+                <th>Type</th>
+            </tr>
+            <tr>
+                <td>{{data.name}}</td>
+                <td>{{data.size}}</td>
+                <td>{{data.lastModifiedDate.toLocaleDateString()}}</td>
+                <td>{{data.name.split('.').pop().toUpperCase()}}</td>
+            </tr>
+        </table>
+    </output>
+    <input #fileOpen (change)="fileReceived($event)" [accept]="types" id="file" name="file" style="display:none"
+           type="file"/>
 </div>
 <div mat-dialog-actions>
-  <button mat-button color="primary" [mat-dialog-close]="data" tabindex="2">Ok</button>
-  <button mat-button (click)="onNoClick()" tabindex="-1">Non merci!</button>
+    <button [mat-dialog-close]="data" color="primary" mat-button tabindex="2">Ok</button>
+    <button (click)="onNoClick()" mat-button tabindex="-1">Non merci!</button>
 </div>

@@ -1,27 +1,29 @@
 ﻿<div class="canimap-menu">
-  <div class="btn-group-vertical menu-bar">
-    <button *ngIf="!isMapVisible" mat-icon-button routerLink="/map" aria-label="Carte" matTooltipPosition="right" matTooltip="Affichez la carte"
-      i18n="Map|The mapping tools and display">
-      <mat-icon class="mat-24">
-        photo
-      </mat-icon>
-    </button>
-    <button *ngIf="isMapVisible || isRegisterVisible" mat-icon-button routerLink="/user" matTooltipPosition="right" matTooltip="Gérez votre compte"
-      i18n="Account|Account management">
-      <mat-icon class="mat-24">
-        face
-      </mat-icon>
-    </button>
-    <button mat-icon-button routerLink="/help" matTooltipPosition="right" matTooltip="Aide" i18n="Help|Help">
-      <mat-icon class="mat-24">
-        help
-      </mat-icon>
-    </button>
-    <app-canimap-file-menu *ngIf="isMapVisible"></app-canimap-file-menu>
-    <app-canimap-track-menu *ngIf="isMapVisible && !isMobileApp"></app-canimap-track-menu>
-    <app-canimap-map-menu *ngIf="isMapVisible"></app-canimap-map-menu>
-    <app-canimap-draw-menu *ngIf="isMapVisible && !isMobileApp"></app-canimap-draw-menu>
-  </div>
+    <div class="btn-group-vertical menu-bar">
+        <button *ngIf="!isMapVisible" aria-label="Carte" i18n="Map|The mapping tools and display" mat-icon-button matTooltip="Affichez la carte"
+                                      matTooltipPosition="right"
+                                      routerLink="/map">
+            <mat-icon class="mat-24">
+                photo
+            </mat-icon>
+        </button>
+        <button *ngIf="isMapVisible || isRegisterVisible" i18n="Account|Account management" mat-icon-button matTooltip="Gérez votre compte"
+                                                          matTooltipPosition="right"
+                                                          routerLink="/user">
+            <mat-icon class="mat-24">
+                face
+            </mat-icon>
+        </button>
+        <button i18n="Help|Help" mat-icon-button matTooltip="Aide" matTooltipPosition="right" routerLink="/help">
+            <mat-icon class="mat-24">
+                help
+            </mat-icon>
+        </button>
+        <app-canimap-file-menu *ngIf="isMapVisible"></app-canimap-file-menu>
+        <app-canimap-track-menu *ngIf="isMapVisible && !isMobileApp"></app-canimap-track-menu>
+        <app-canimap-map-menu *ngIf="isMapVisible"></app-canimap-map-menu>
+        <app-canimap-draw-menu *ngIf="isMapVisible && !isMobileApp"></app-canimap-draw-menu>
+    </div>
 </div>
 <app-canimap-location *ngIf="isMapVisible"></app-canimap-location>
 <app-canimap-menu-mobile *ngIf="isMapVisible && isMobileApp"></app-canimap-menu-mobile>

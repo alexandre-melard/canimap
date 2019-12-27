@@ -1,53 +1,62 @@
-﻿<button mat-icon-button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="appMenu" matTooltipPosition="right" matTooltip="Outils de dessin">
-  <mat-icon class="mat-24">
-      edit
-  </mat-icon>
+﻿<button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="appMenu" mat-icon-button matTooltip="Outils de dessin"
+        matTooltipPosition="right">
+    <mat-icon class="mat-24">
+        edit
+    </mat-icon>
 </button>
 <mat-menu #appMenu="matMenu" [overlapTrigger]="true">
-  <button mat-icon-button aria-label="Multilignes" matTooltipPosition="below" matTooltip="Multilignes" i18n="Multilignes|Tracer des lignes"
-    (click)="draw('LineString')">
-    <mat-icon class="mat-24" [style.color]="color('LineString')">
-      timeline
-    </mat-icon>
-  </button>
-  <button mat-icon-button aria-label="Multilignes" matTooltipPosition="below" matTooltip="Multilignes Avec Flêches" i18n="Multilignes|Tracer des lignes"
-  (click)="draw('LineStringArrow')">
-  <mat-icon class="mat-24" [style.color]="color('LineStringArrow')">
-    call_missed_outgoing
-  </mat-icon>
-</button>
-<button mat-icon-button aria-label="Polygone" matTooltipPosition="below" matTooltip="Polygone" i18n="Polygone|Dessiner un polygone"
-    (click)="draw('Polygon')">
-    <mat-icon class="mat-24" [style.color]="color('Polygon')">
-      details
-    </mat-icon>
-  </button>
-  <button mat-icon-button aria-label="Rectangle" matTooltipPosition="below" matTooltip="Rectangle" i18n="Rectangle|Dessiner un rectangle"
-    (click)="draw('Rectangle')">
-    <mat-icon class="mat-24" [style.color]="color('Rectangle')">
-      crop_square
-    </mat-icon>
-  </button>
-  <button mat-icon-button aria-label="Disque" matTooltipPosition="below" matTooltip="Disque" i18n="Disque|Dessiner un disque"
-    (click)="draw('Circle')">
-    <mat-icon class="mat-24" [style.color]="color('Circle')">
-      fiber_manual_record
-    </mat-icon>
-  </button>
-  <button mat-icon-button aria-label="Modifier" matTooltipPosition="below" matTooltip="Modifier" i18n="Modify|Modify the features"
-    (click)="edit($event)">
-    <mat-icon class="mat-24" [style.color]="color('edit')">
-      edit
-    </mat-icon>
-  </button>
-  <button mat-icon-button aria-label="Delete" matTooltipPosition="below" matTooltip="Supprimer" i18n="Delete|Delete a feature"
-    (click)="delete($event)">
-  <mat-icon class="mat-24" [style.color]="color('delete')">
-    delete
-  </mat-icon>
-  </button>
-  <button mat-icon-button class="app-canimap-color-chooser" aria-label="Color" matTooltipPosition="below" matTooltip="Changer la couleur"
-    i18n="Color|Change the color" (click)="chooseColor($event)">
-      <img class="app-canimap-color-chooser-img" src="../assets/icons/colorwheel-30x30.png"/>
-  </button>
+    <button (click)="draw('LineString')" aria-label="Multilignes" i18n="Multilignes|Tracer des lignes" mat-icon-button
+            matTooltip="Multilignes"
+            matTooltipPosition="below">
+        <mat-icon [style.color]="color('LineString')" class="mat-24">
+            timeline
+        </mat-icon>
+    </button>
+    <button (click)="draw('LineStringArrow')" aria-label="Multilignes" i18n="Multilignes|Tracer des lignes" mat-icon-button
+            matTooltip="Multilignes Avec Flêches"
+            matTooltipPosition="below">
+        <mat-icon [style.color]="color('LineStringArrow')" class="mat-24">
+            call_missed_outgoing
+        </mat-icon>
+    </button>
+    <button (click)="draw('Polygon')" aria-label="Polygone" i18n="Polygone|Dessiner un polygone" mat-icon-button
+            matTooltip="Polygone"
+            matTooltipPosition="below">
+        <mat-icon [style.color]="color('Polygon')" class="mat-24">
+            details
+        </mat-icon>
+    </button>
+    <button (click)="draw('Rectangle')" aria-label="Rectangle" i18n="Rectangle|Dessiner un rectangle" mat-icon-button
+            matTooltip="Rectangle"
+            matTooltipPosition="below">
+        <mat-icon [style.color]="color('Rectangle')" class="mat-24">
+            crop_square
+        </mat-icon>
+    </button>
+    <button (click)="draw('Circle')" aria-label="Disque" i18n="Disque|Dessiner un disque" mat-icon-button
+            matTooltip="Disque"
+            matTooltipPosition="below">
+        <mat-icon [style.color]="color('Circle')" class="mat-24">
+            fiber_manual_record
+        </mat-icon>
+    </button>
+    <button (click)="edit()" aria-label="Modifier" i18n="Modify|Modify the features" mat-icon-button
+            matTooltip="Modifier"
+            matTooltipPosition="below">
+        <mat-icon [style.color]="color('edit')" class="mat-24">
+            edit
+        </mat-icon>
+    </button>
+    <button (click)="delete()" aria-label="Delete" i18n="Delete|Delete a feature" mat-icon-button
+            matTooltip="Supprimer"
+            matTooltipPosition="below">
+        <mat-icon [style.color]="color('delete')" class="mat-24">
+            delete
+        </mat-icon>
+    </button>
+    <button (click)="chooseColor()" aria-label="Color" class="app-canimap-color-chooser" i18n="Color|Change the color"
+            mat-icon-button
+            matTooltip="Changer la couleur" matTooltipPosition="below">
+        <img class="app-canimap-color-chooser-img" src="../assets/icons/colorwheel-30x30.png" alt="choisissez une couleur"/>
+    </button>
 </mat-menu>

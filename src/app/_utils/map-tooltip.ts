@@ -1,12 +1,12 @@
 /**
  * Created by a140980 on 17/04/2015.
  */
-import { formatLength } from './map-format-length';
-import { formatArea } from './map-format-area';
-import { Map, Feature } from 'openlayers';
-
+import {formatLength} from './map-format-length';
+import {formatArea} from './map-format-area';
 import * as ol from 'openlayers';
-import { Events } from '../_consts/events';
+import {Feature, Map} from 'openlayers';
+import {Events} from '../_consts/events';
+
 declare var $;
 
 /**
@@ -78,10 +78,10 @@ export class Tooltip {
         tooltipDom = document.createElement('div');
         tooltipDom.className = options.class;
         tooltipOverlay = new ol.Overlay(
-            $.extend({ element: tooltipDom }, options)
+            $.extend({element: tooltipDom}, options)
         );
         map.addOverlay(tooltipOverlay);
-        return { overlay: tooltipOverlay, element: tooltipDom };
+        return {overlay: tooltipOverlay, element: tooltipDom};
     }
 
     /**

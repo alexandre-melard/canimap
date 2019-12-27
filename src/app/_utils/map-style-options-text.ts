@@ -14,11 +14,11 @@ import * as ol from 'openlayers';
  *     stroke: (ol.style.Stroke|undefined)}}
  */
 export function textOptions(feature: ol.Feature, key?: string): ol.olx.style.TextOptions {
-  const textOptions: ol.olx.style.TextOptions = {};
-  ['font', 'offsetX', 'offsetY', 'scale', 'rotateWithView', 'rotation', 'text', 'textAlign', 'textBaseline'].forEach((param) => {
-    if (feature.get((key ? key : 'custom.text.') + param)) {
-      textOptions[param] = feature.get((key ? key : 'custom.text.') + param);
-    }
-  });
-  return textOptions;
+    const textOptions: ol.olx.style.TextOptions = {};
+    ['font', 'offsetX', 'offsetY', 'scale', 'rotateWithView', 'rotation', 'text', 'textAlign', 'textBaseline'].forEach((param) => {
+        if (feature.get((key ? key : 'custom.text.') + param)) {
+            textOptions[param] = feature.get((key ? key : 'custom.text.') + param);
+        }
+    });
+    return textOptions;
 }

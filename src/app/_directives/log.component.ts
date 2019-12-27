@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
-import { LogService } from '../_services/log.service';
+import {LogService} from '../_services/log.service';
 
 @Component({
     moduleId: module.id.toString(),
@@ -11,11 +11,14 @@ import { LogService } from '../_services/log.service';
 export class LogComponent implements OnInit {
     message: any;
 
-    constructor(private log: LogService) { }
+    constructor(private log: LogService) {
+    }
 
     ngOnInit() {
         this.log.debug('[LogComponent] [INIT]');
-        this.log.getMessage().subscribe(message => { this.message = message; });
+        this.log.getMessage().subscribe(message => {
+            this.message = message;
+        });
     }
 }
 

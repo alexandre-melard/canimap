@@ -1,6 +1,6 @@
-import { Events } from '../_consts/events';
+import {Events} from '../_consts/events';
 import * as ol from 'openlayers';
-import { EventService } from '../_services/event.service';
+import {EventService} from '../_services/event.service';
 
 declare var $;
 
@@ -56,8 +56,10 @@ export function popupName(selector: string, map: ol.Map, eventService: EventServ
         const coordinate = evt.coordinate;
         const f = map.forEachFeatureAtPixel(
             evt.pixel,
-            function (ft, layer) { return ft; },
-            { hitTolerance: 20 }
+            function (ft, layer) {
+                return ft;
+            },
+            {hitTolerance: 20}
         );
         if (f) {
             const content = $(popupDom).find('.ol-popup-content');

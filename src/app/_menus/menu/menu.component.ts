@@ -1,42 +1,42 @@
-﻿import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { DeviceDetectorService } from 'ngx-device-detector';
-import { LogService } from '../../_services/log.service';
+﻿import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {DeviceDetectorService} from 'ngx-device-detector';
+import {LogService} from '../../_services/log.service';
 
 
 @Component({
-  selector: 'app-canimap-menu',
-  moduleId: module.id.toString(),
-  templateUrl: 'menu.component.html'
+    selector: 'app-canimap-menu',
+    moduleId: module.id.toString(),
+    templateUrl: 'menu.component.html'
 })
 export class MenuComponent implements OnInit {
-  deviceInfo = null;
+    deviceInfo = null;
 
-  get displayMap() {
-    return (this.router.url === '/map');
-  }
+    constructor(
+        private log: LogService,
+        private router: Router,
+        private deviceService: DeviceDetectorService
+    ) {
+        this.deviceInfo = this.deviceService.getDeviceInfo();
+    }
 
-  get isMapVisible() {
-    return this.router.url === '/map';
-  }
+    get displayMap() {
+        return (this.router.url === '/map');
+    }
 
-  get isMobileApp() {
-    return this.deviceService.isMobile();
-  }
+    get isMapVisible() {
+        return this.router.url === '/map';
+    }
 
-  get isRegisterVisible() {
-    return this.router.url === '/register';
-  }
+    get isMobileApp() {
+        return this.deviceService.isMobile();
+    }
 
-  constructor(
-    private log: LogService,
-    private router: Router,
-    private deviceService: DeviceDetectorService
-  ) {
-    this.deviceInfo = this.deviceService.getDeviceInfo();
-  }
+    get isRegisterVisible() {
+        return this.router.url === '/register';
+    }
 
-  ngOnInit() {
-    this.log.debug('[MenuComponent] [INIT]');
-  }
+    ngOnInit() {
+        this.log.debug('[MenuComponent] [INIT]');
+    }
 }

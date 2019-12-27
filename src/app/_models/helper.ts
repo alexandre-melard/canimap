@@ -1,4 +1,4 @@
 export class Helper {
-  key: string;
-  visible: boolean;
+    key: string;
+    visible: boolean;
 }

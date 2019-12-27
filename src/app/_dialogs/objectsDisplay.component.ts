@@ -1,55 +1,57 @@
-import { Inject, Component } from '@angular/core';
-import { DataSource } from '@angular/cdk/collections';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
+import {Component, Inject} from '@angular/core';
+import {DataSource} from '@angular/cdk/collections';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatTableDataSource} from '@angular/material';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Observable} from 'rxjs/Observable';
 
-import { CaniDrawObject } from '../_models/caniDrawObject';
-import { DialogChooseColorComponent } from '../_dialogs/chooseColor.component';
-import {MatTableDataSource} from '@angular/material';
+import {CaniDrawObject} from '../_models/caniDrawObject';
+import {DialogChooseColorComponent} from '../_dialogs/chooseColor.component';
 
 @Component({
-  selector: 'app-dialog-display-objects',
-  templateUrl: './templates/app-dialog-objects-display.html',
+    selector: 'app-dialog-display-objects',
+    templateUrl: './templates/app-dialog-objects-display.html',
 })
 export class DialogObjectsDisplayComponent {
-  displayedColumns = ['index', 'name', 'position', 'color', 'fabric', 'wind', 'specificity'];
-  dataSource: MatTableDataSource<CaniDrawObject>;
+    displayedColumns = ['index', 'name', 'position', 'color', 'fabric', 'wind', 'specificity'];
+    dataSource: MatTableDataSource<CaniDrawObject>;
 
-  constructor(
-    public dialogRef: MatDialogRef<DialogObjectsDisplayComponent>,
-    public dialog: MatDialog,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
-      this.dataSource = new MatTableDataSource<CaniDrawObject>(data.objects);
-  }
-
-  update(el: CaniDrawObject, key: string, value: string) {
-    if (!value) { return; }
-    // copy and mutate
-    el[key] = value;
-  }
-
-  confirm(): void {
-    this.dialogRef.close();
-  }
-  getColor(color: string) {
-    if (color && !color.startsWith('#')) {
-      color = '#' + color;
+    constructor(
+        public dialogRef: MatDialogRef<DialogObjectsDisplayComponent>,
+        public dialog: MatDialog,
+        @Inject(MAT_DIALOG_DATA) public data: any) {
+        this.dataSource = new MatTableDataSource<CaniDrawObject>(data.objects);
     }
-    return color;
-  }
 
-  chooseColor(object: CaniDrawObject) {
-    const dialogRef = this.dialog.open(DialogChooseColorComponent, {
-      width: '500px',
-      data: object.color
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        object.color = result;
-      }
-    });
-  }
+    update(el: CaniDrawObject, key: string, value: string) {
+        if (!value) {
+            return;
+        }
+        // copy and mutate
+        el[key] = value;
+    }
+
+    confirm(): void {
+        this.dialogRef.close();
+    }
+
+    getColor(color: string) {
+        if (color && !color.startsWith('#')) {
+            color = '#' + color;
+        }
+        return color;
+    }
+
+    chooseColor(object: CaniDrawObject) {
+        const dialogRef = this.dialog.open(DialogChooseColorComponent, {
+            width: '500px',
+            data: object.color
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                object.color = result;
+            }
+        });
+    }
 
 }
 
@@ -61,25 +63,26 @@ export class DialogObjectsDisplayComponent {
  */
 export class ObjectDataSource extends DataSource<any> {
 
-  private dataSubject = new BehaviorSubject<Element[]>([]);
+    private dataSubject = new BehaviorSubject<Element[]>([]);
 
-  data() {
-    return this.dataSubject.value;
-  }
+    constructor(data: any[]) {
+        super();
+        this.dataSubject.next(data);
+    }
 
-  update(data) {
-    this.dataSubject.next(data);
-  }
+    data() {
+        return this.dataSubject.value;
+    }
 
-  constructor(data: any[]) {
-    super();
-    this.dataSubject.next(data);
-  }
+    update(data) {
+        this.dataSubject.next(data);
+    }
 
-  /** Connect function called by the table to retrieve one stream containing the data to render. */
-  connect(): Observable<Element[]> {
-    return this.dataSubject;
-  }
+    /** Connect function called by the table to retrieve one stream containing the data to render. */
+    connect(): Observable<Element[]> {
+        return this.dataSubject;
+    }
 
-  disconnect() {}
+    disconnect() {
+    }
 }

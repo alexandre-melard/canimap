@@ -1,14 +1,15 @@
-<h2 mat-dialog-title [innerHTML]="data.title"></h2>
+<h2 [innerHTML]="data.title" mat-dialog-title></h2>
 <hr/>
-<div mat-dialog-content [innerHTML]="data.body"></div>
+<div [innerHTML]="data.body" mat-dialog-content></div>
 <hr/>
 <div class="form-check">
-  <label class="form-check-label">
-        <input type="checkbox" class="form-check-input" name="help" [checked]="dismissHelp" (change)="dismissHelp = !dismissHelp"/>
+    <label class="form-check-label">
+        <input (change)="dismissHelp = !dismissHelp" [checked]="dismissHelp" class="form-check-input" name="help"
+               type="checkbox"/>
         J'ai compris, ne plus afficher cette aide.
-  </label>
+    </label>
 </div>
 <hr/>
 <div mat-dialog-actions>
-    <button mat-button #dismiss (click)="close()">OK</button>
+    <button #dismiss (click)="close()" mat-button>OK</button>
 </div>

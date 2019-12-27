@@ -1,103 +1,107 @@
 <h2 mat-dialog-title>Ajoutez un objet</h2>
 <div mat-dialog-content>
-  <mat-accordion>
-    <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle="true">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Type
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <mat-select placeholder="Type" [(ngModel)]="caniDrawObject.type">
-        <mat-option *ngFor="let type of types" [value]="type.value">
-          {{ type.label }}
-        </mat-option>
-      </mat-select>
-      <mat-action-row>
-        <button mat-button color="primary" (click)="nextStep()">Suivant</button>
-      </mat-action-row>
-    </mat-expansion-panel>
-  <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle="true">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Nom
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <mat-form-field>
-        <input matInput placeholder="Entrez le nom" [(ngModel)]="caniDrawObject.name">
-      </mat-form-field>    
-        <mat-action-row>
-          <button mat-button color="warn" (click)="prevStep()">Précédent</button>
-        <button mat-button color="primary" (click)="nextStep()">Suivant</button>
-      </mat-action-row>
-    </mat-expansion-panel>
-    <mat-expansion-panel [expanded]="step === 2" (opened)="setStep(2)" hideToggle="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Position sur le chemin
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <mat-form-field>
-          <mat-select placeholder="Position" [(ngModel)]="caniDrawObject.position">
-            <mat-option *ngFor="let position of positions" [value]="position.value">
-              {{ position.label }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-action-row>
-          <button mat-button color="warn" (click)="prevStep()">Précédent</button>
-          <button mat-button color="primary" (click)="nextStep()">Suivant</button>
-        </mat-action-row>
-      </mat-expansion-panel>
-      <mat-expansion-panel [expanded]="step === 3" (opened)="setStep(3)" hideToggle="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Direction du vent
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <mat-form-field>
-          <mat-select placeholder="Vent" [(ngModel)]="caniDrawObject.wind">
-            <mat-option *ngFor="let vent of vents" [value]="vent.value">
-              {{ vent.label }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-action-row>
-          <button mat-button color="warn" (click)="prevStep()">Précédent</button>
-          <button mat-button color="primary" (click)="nextStep()">Suivant</button>
-        </mat-action-row>
-      </mat-expansion-panel>
-      <mat-expansion-panel [expanded]="step === 4" (opened)="setStep(4)" hideToggle="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Couleur
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <mat-action-row>
-          <button mat-button style="width:100%" [style.background-color]="getColor(caniDrawObject.color)" (click)="chooseColor()">cliquez ici</button>
-        </mat-action-row>
-        <mat-action-row>
-          <button mat-button color="warn" (click)="prevStep()">Précédent</button>
-          <button mat-button color="primary" (click)="nextStep()">Suivant</button>
-        </mat-action-row>
-      </mat-expansion-panel>
-      <mat-expansion-panel [expanded]="step === 5" (opened)="setStep(5)" hideToggle="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Type de matière
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <mat-select placeholder="Matière" [(ngModel)]="caniDrawObject.fabric">
-          <mat-option *ngFor="let fabric of fabrics" [value]="fabric.value">
-            {{ fabric.label }}
-          </mat-option>
-        </mat-select>
-        <mat-action-row>
-          <button mat-button color="warn" (click)="prevStep()">Précédent</button>
-          <button mat-button color="primary" (click)="save()">Fin</button>
-        </mat-action-row>
-      </mat-expansion-panel>
+    <mat-accordion>
+        <mat-expansion-panel (opened)="setStep(0)" [expanded]="step === 0" hideToggle="true">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Type
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-select [(ngModel)]="caniDrawObject.type" placeholder="Type">
+                <mat-option *ngFor="let type of types" [value]="type.value">
+                    {{ type.label }}
+                </mat-option>
+            </mat-select>
+            <mat-action-row>
+                <button (click)="nextStep()" color="primary" mat-button>Suivant</button>
+            </mat-action-row>
+        </mat-expansion-panel>
+        <mat-expansion-panel (opened)="setStep(1)" [expanded]="step === 1" hideToggle="true">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Nom
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-form-field>
+                <label>
+                    <input [(ngModel)]="caniDrawObject.name" matInput placeholder="Entrez le nom">
+                </label>
+            </mat-form-field>
+            <mat-action-row>
+                <button (click)="prevStep()" color="warn" mat-button>Précédent</button>
+                <button (click)="nextStep()" color="primary" mat-button>Suivant</button>
+            </mat-action-row>
+        </mat-expansion-panel>
+        <mat-expansion-panel (opened)="setStep(2)" [expanded]="step === 2" hideToggle="true">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Position sur le chemin
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-form-field>
+                <mat-select [(ngModel)]="caniDrawObject.position" placeholder="Position">
+                    <mat-option *ngFor="let position of positions" [value]="position.value">
+                        {{ position.label }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-action-row>
+                <button (click)="prevStep()" color="warn" mat-button>Précédent</button>
+                <button (click)="nextStep()" color="primary" mat-button>Suivant</button>
+            </mat-action-row>
+        </mat-expansion-panel>
+        <mat-expansion-panel (opened)="setStep(3)" [expanded]="step === 3" hideToggle="true">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Direction du vent
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-form-field>
+                <mat-select [(ngModel)]="caniDrawObject.wind" placeholder="Vent">
+                    <mat-option *ngFor="let vent of vents" [value]="vent.value">
+                        {{ vent.label }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-action-row>
+                <button (click)="prevStep()" color="warn" mat-button>Précédent</button>
+                <button (click)="nextStep()" color="primary" mat-button>Suivant</button>
+            </mat-action-row>
+        </mat-expansion-panel>
+        <mat-expansion-panel (opened)="setStep(4)" [expanded]="step === 4" hideToggle="true">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Couleur
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-action-row>
+                <button (click)="chooseColor()" [style.background-color]="getColor(caniDrawObject.color)" mat-button
+                        style="width:100%">cliquez ici
+                </button>
+            </mat-action-row>
+            <mat-action-row>
+                <button (click)="prevStep()" color="warn" mat-button>Précédent</button>
+                <button (click)="nextStep()" color="primary" mat-button>Suivant</button>
+            </mat-action-row>
+        </mat-expansion-panel>
+        <mat-expansion-panel (opened)="setStep(5)" [expanded]="step === 5" hideToggle="true">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Type de matière
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-select [(ngModel)]="caniDrawObject.fabric" placeholder="Matière">
+                <mat-option *ngFor="let fabric of fabrics" [value]="fabric.value">
+                    {{ fabric.label }}
+                </mat-option>
+            </mat-select>
+            <mat-action-row>
+                <button (click)="prevStep()" color="warn" mat-button>Précédent</button>
+                <button (click)="save()" color="primary" mat-button>Fin</button>
+            </mat-action-row>
+        </mat-expansion-panel>
     </mat-accordion>
     <div mat-dialog-actions>
-        <button mat-button #dismiss (click)="save()">OK</button>
+        <button #dismiss (click)="save()" mat-button>OK</button>
     </div>
 </div>

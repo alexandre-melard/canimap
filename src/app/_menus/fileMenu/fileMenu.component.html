@@ -1,36 +1,44 @@
-<button mat-icon-button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="appMenu" matTooltipPosition="right" matTooltip="Fichiers">
-  <mat-icon class="mat-24">
-      folder
-  </mat-icon>
+<button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="appMenu" mat-icon-button matTooltip="Fichiers"
+        matTooltipPosition="right">
+    <mat-icon class="mat-24">
+        folder
+    </mat-icon>
 </button>
-<mat-menu #appMenu="matMenu" [overlapTrigger]="true">  <button mat-icon-button aria-label="Files open" matTooltipPosition="below" matTooltip="Ouvrir une ou des carte(s)" i18n="Open Files|Open saved files"
-    (click)="filesOpen($event)">
-      <mat-icon class="mat-24">
-        folder_open
-      </mat-icon>
+<mat-menu #appMenu="matMenu" [overlapTrigger]="true">
+    <button (click)="filesOpen($event)" aria-label="Files open" i18n="Open Files|Open saved files" mat-icon-button
+            matTooltip="Ouvrir une ou des carte(s)"
+            matTooltipPosition="below">
+        <mat-icon class="mat-24">
+            folder_open
+        </mat-icon>
     </button>
-  <button mat-icon-button aria-label="File save" matTooltipPosition="below" matTooltip="Enregistrer une carte" i18n="Save|Save the map to file"
-    (click)="fileSave($event)">
-      <mat-icon class="mat-24">
-        file_download
-      </mat-icon>
+    <button (click)="fileSave($event)" aria-label="File save" i18n="Save|Save the map to file" mat-icon-button
+            matTooltip="Enregistrer une carte"
+            matTooltipPosition="below">
+        <mat-icon class="mat-24">
+            file_download
+        </mat-icon>
     </button>
-  <button mat-icon-button aria-label="Image save" matTooltipPosition="below" matTooltip="Enregistrer une photo de l'ecran" i18n="Print|print the map to file"
-    (click)="printScreen($event)">
-      <mat-icon class="mat-24">
-        photo_camera
-      </mat-icon>
+    <button (click)="printScreen()" aria-label="Image save" i18n="Print|print the map to file"
+            mat-icon-button matTooltip="Enregistrer une photo de l'ecran"
+            matTooltipPosition="below">
+        <mat-icon class="mat-24">
+            photo_camera
+        </mat-icon>
     </button>
-  <button mat-icon-button aria-label="Load GPS" matTooltipPosition="below" matTooltip="Charger une trace GPS" i18n="Gps|load GPS file"
-    (click)="gps($event)">
-    <img src="../assets/icons/gps.png" width=32/>
-  </button>
-    <button mat-icon-button aria-label="Export GPX" matTooltipPosition="below" matTooltip="Exporter une trace GPX" i18n="Gps|export to GPX file"
-    (click)="gpx($event)">
-    <img src="../assets/icons/gpx.png" width=32/>
-  </button>
-    <button mat-icon-button aria-label="Export KML" matTooltipPosition="below" matTooltip="Exporter une trace KML" i18n="Kml|export to KML file"
-    (click)="kml($event)">
-      <img src="../assets/icons/kml.png" width=32/>
+    <button (click)="gps()" aria-label="Load GPS" i18n="Gps|load GPS file" mat-icon-button
+            matTooltip="Charger une trace GPS"
+            matTooltipPosition="below">
+        <img src="../assets/icons/gps.png" width=32 alt="gps" />
+    </button>
+    <button (click)="gpx()" aria-label="Export GPX" i18n="Gps|export to GPX file" mat-icon-button
+            matTooltip="Exporter une trace GPX"
+            matTooltipPosition="below">
+        <img src="../assets/icons/gpx.png" width=32 alt="gpx" />
+    </button>
+    <button (click)="kml()" aria-label="Export KML" i18n="Kml|export to KML file" mat-icon-button
+            matTooltip="Exporter une trace KML"
+            matTooltipPosition="below">
+        <img src="../assets/icons/kml.png" width=32 alt="kml" />
     </button>
 </mat-menu>

@@ -1,12 +1,13 @@
-import { ErrorHandler, Injectable, Injector } from '@angular/core';
-import { LogService } from '../_services/log.service';
-import { SETTINGS } from '../_consts/settings';
-import { DeviceDetectorService } from 'ngx-device-detector';
+import {ErrorHandler, Injectable, Injector} from '@angular/core';
+import {LogService} from '../_services/log.service';
+import {SETTINGS} from '../_consts/settings';
+import {DeviceDetectorService} from 'ngx-device-detector';
 
 @Injectable()
 export class CanimapErrorHandler implements ErrorHandler {
     private log: LogService;
     private deviceDetectorService: DeviceDetectorService;
+
     constructor(injector: Injector) {
         setTimeout(() => this.log = injector.get(LogService));
         setTimeout(() => this.deviceDetectorService = injector.get(DeviceDetectorService));

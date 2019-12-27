@@ -4,29 +4,50 @@
         <div class="canimap-main col-6">
             <h2 *ngIf="!udpate">S'inscrire</h2>
             <h2 *ngIf="udpate">Mettre à jour</h2>
-            <form name="form" class="register" (ngSubmit)="f.form.valid && save()" #f="ngForm" novalidate>
+            <form #f="ngForm" (ngSubmit)="f.form.valid && save()" class="register" name="form" novalidate>
                 <mat-form-field>
-                    <input matInput type="email" name="email" [(ngModel)]="model.email" #lastName="ngModel" placeholder="Email" required>
+                    <label>
+                        <input #lastName="ngModel" [(ngModel)]="model.email" matInput name="email" placeholder="Email"
+                               required type="email">
+                    </label>
                 </mat-form-field>
                 <mat-form-field>
-                    <input matInput type="text" name="lastName" [(ngModel)]="model.lastName" #lastName="ngModel" placeholder="Nom" required>
+                    <label>
+                        <input #lastName="ngModel" [(ngModel)]="model.lastName" matInput name="lastName" placeholder="Nom"
+                               required type="text">
+                    </label>
                 </mat-form-field>
                 <mat-form-field>
-                    <input matInput type="text" name="firstName" [(ngModel)]="model.firstName" #firstName="ngModel" placeholder="Prénom" required>
+                    <label>
+                        <input #firstName="ngModel" [(ngModel)]="model.firstName" matInput name="firstName" placeholder="Prénom"
+                               required type="text">
+                    </label>
                 </mat-form-field>
                 <div class="no-break">
                     <mat-form-field>
-                        <input matInput type="text" name="street" [(ngModel)]="model.street" #street="ngModel" placeholder="Rue" required>
+                        <label>
+                            <input #street="ngModel" [(ngModel)]="model.street" matInput name="street" placeholder="Rue"
+                                   required type="text">
+                        </label>
                     </mat-form-field>
                     <mat-form-field>
-                        <input matInput type="text" name="cp" [(ngModel)]="model.cp" #cp="ngModel" placeholder="Code Postal" required>
+                        <label>
+                            <input #cp="ngModel" [(ngModel)]="model.cp" matInput name="cp" placeholder="Code Postal"
+                                   required type="text">
+                        </label>
                     </mat-form-field>
                     <mat-form-field>
-                        <input matInput type="text" name="city" [(ngModel)]="model.city" #city="ngModel" placeholder="Ville" required>
+                        <label>
+                            <input #city="ngModel" [(ngModel)]="model.city" matInput name="city" placeholder="Ville"
+                                   required type="text">
+                        </label>
                     </mat-form-field>
                 </div>
                 <mat-form-field>
-                    <input matInput type="text" name="club" [(ngModel)]="model.club" #club="ngModel" placeholder="Club" required>
+                    <label>
+                        <input #club="ngModel" [(ngModel)]="model.club" matInput name="club" placeholder="Club" required
+                               type="text">
+                    </label>
                 </mat-form-field>
                 <div [hidden]="!error" class="alert alert-danger">
                     {{error}}
@@ -35,7 +56,7 @@
                     {{success}}
                 </div>
                 <div class="form-group">
-                    <button mat-button color="primary" type="submit" [disabled]="loading">Enregistrer</button>
+                    <button [disabled]="loading" color="primary" mat-button type="submit">Enregistrer</button>
                 </div>
             </form>
         </div>

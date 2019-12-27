@@ -4,11 +4,11 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: false,
-  google: 'UA-106820417-1',
-  backend: 'https://canimap.melard.fr',
-  auth: {
-    redirect: 'http://localhost:4200/login',
-    id: 'HXGX610IWqnjdjz3EgF0O4qXHuL4ZSbJ'
-  }
+    production: false,
+    google: 'AIzaSyBB7Ozb8V6ujJm4ViERlBnSU2qFokMTazQ',
+    backend: 'https://canimap.melard.fr',
+    auth: {
+        redirect: 'http://localhost:4200/login',
+        id: 'HXGX610IWqnjdjz3EgF0O4qXHuL4ZSbJ'
+    }
 };

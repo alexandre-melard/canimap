@@ -1,10 +1,10 @@
-import { Injectable, Injector, forwardRef, Inject } from '@angular/core';
-import { Router, NavigationStart } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { environment } from '../../environments/environment';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
-import { User } from '../_models';
+import {Injectable} from '@angular/core';
+import {NavigationStart, Router} from '@angular/router';
+import {Observable} from 'rxjs/Observable';
+import {Subject} from 'rxjs/Subject';
+import {environment} from '../../environments/environment';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {User} from '../_models';
 
 @Injectable()
 export class LogService {
@@ -29,17 +29,17 @@ export class LogService {
         });
     }
 
-    public setUser(user: User) {
-        this.user = user;
-    }
-
-    private get httpOptions() {
+    private static get httpOptions() {
         return {
             headers: new HttpHeaders({
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + localStorage.getItem('id_token')
             })
         };
+    }
+
+    public setUser(user: User) {
+        this.user = user;
     }
 
     sendError(log: string, keepAfterNavigationChange = false) {
@@ -53,13 +53,13 @@ export class LogService {
         return this.http
             .post<{ email: string, content: string }>(
                 environment.backend + '/api/logs',
-                { email: email, content: log },
-                this.httpOptions);
+                {email: email, content: log},
+                LogService.httpOptions);
     }
 
     log(type: string, message: string, keepAfterNavigationChange = false) {
         this.keepAfterNavigationChange = keepAfterNavigationChange;
-        this.subject.next({ type: type, text: message });
+        this.subject.next({type: type, text: message});
         if (!keepAfterNavigationChange) {
             setTimeout(() => this.subject.next(), 4000);
         }

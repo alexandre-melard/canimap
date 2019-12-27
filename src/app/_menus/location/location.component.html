@@ -1,11 +1,15 @@
-﻿<form>  
-      <input (click)="$event.stopPropagation()" placeholder="Rechercher une adresse ou une coordonnée GPS" matTooltip="Entrez une adresse ou nom de ville"
-    autocorrect="off" autocapitalize="off" spellcheck="off" type="search" #search [formControl]="searchControl">
+﻿<form>
+    <label>
+        <input #search (click)="$event.stopPropagation()"
+               [formControl]="searchControl"
+               autocapitalize="off" matTooltip="Entrez une adresse ou nom de ville"
+               placeholder="Rechercher une adresse ou une coordonnée GPS" spellcheck="false" type="search">
+        <button (click)="gps()" aria-label="Carte" i18n="Localisation|Center the map on your location"
+                mat-icon-button
+                matTooltip="Centrer la carte sur votre position">
+            <mat-icon class="mat-24">
+                explore
+            </mat-icon>
+        </button>
+    </label>
 </form>
-<button mat-icon-button aria-label="Carte" matTooltip="Centrer la carte sur votre position"
-i18n="Localisation|Center the map on your location"
-(click)="gps()">
-<mat-icon class="mat-24">
-  explore
-</mat-icon>
-</button>

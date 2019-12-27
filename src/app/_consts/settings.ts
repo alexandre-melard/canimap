@@ -1,4 +1,4 @@
-import { environment } from '../../environments/environment';
+import {environment} from '../../environments/environment';
 
 interface AuthConfig {
     CLIENT_ID: string;
@@ -24,7 +24,7 @@ export const AUTH_CONFIG: AuthConfig = {
 
 export const SETTINGS = {
     VERSION: 'v5.3.3',
-    TRACK : {
+    TRACK: {
         FREQUENCY: 5,
         COLOR: '#00F'
     }

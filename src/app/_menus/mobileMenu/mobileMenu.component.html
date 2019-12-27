@@ -1,14 +1,14 @@
 <div class="canimap-menu-mobile">
-  <div class="btn-group-vertical menu-bar">
-    <button mat-icon-button aria-label="Track" i18n="Record|Record the track" (click)="recordTrack()">
-      <mat-icon class="mat-24" [color]="color">
-        fiber_manual_record
-      </mat-icon>
-    </button>
-    <button mat-icon-button aria-label="Object" i18n="Object|Add an object to the track" (click)="addObject()">
-      <mat-icon class="mat-24">
-        location_on
-      </mat-icon>
-    </button>
-  </div>
+    <div class="btn-group-vertical menu-bar">
+        <button (click)="recordTrack()" aria-label="Track" i18n="Record|Record the track" mat-icon-button>
+            <mat-icon [color]="color" class="mat-24">
+                fiber_manual_record
+            </mat-icon>
+        </button>
+        <button (click)="addObject()" aria-label="Object" i18n="Object|Add an object to the track" mat-icon-button>
+            <mat-icon class="mat-24">
+                location_on
+            </mat-icon>
+        </button>
+    </div>
 </div>

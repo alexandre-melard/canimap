@@ -1,29 +1,34 @@
-﻿<button mat-icon-button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="appMenu" matTooltipPosition="right" matTooltip="Outils de carte">
-  <mat-icon class="mat-24">
-    photo
-  </mat-icon>
+﻿<button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="appMenu" mat-icon-button matTooltip="Outils de carte"
+        matTooltipPosition="right">
+    <mat-icon class="mat-24">
+        photo
+    </mat-icon>
 </button>
 <mat-menu #appMenu="matMenu" [overlapTrigger]="true">
-  <button mat-icon-button (click)="chooseLayers($event)" aria-label="Layers" matTooltipPosition="below" matTooltip="Choisir le fond de carte"
-    i18n="Layers|Choose the map layers">
-    <mat-icon class="mat-24" color="default">
-      layers
-    </mat-icon>
-  </button>
-  <button mat-icon-button aria-label="Coordinates" matTooltipPosition="below" matTooltip="Position GPS" i18n="GPG|Add GPS marker"
-    (click)="gpsMarker($event)">
-    <mat-icon class="mat-24">
-      location_searching
-    </mat-icon>
-  </button>
-  <button mat-icon-button aria-label="Move" matTooltipPosition="below" matTooltip="Déplacer la carte" i18n="Move|Move the map"
-    (click)="move($event)">
-    <mat-icon class="mat-24" [style.color]="color('move')">
-      zoom_out_map
-    </mat-icon>
-  </button>
-  <button mat-icon-button aria-label="Zoom" matTooltipPosition="below" matTooltip="Carte aux 1/25000" i18n="Zoom|Zoom the map to 1/25000"
-    (click)="zoom(25000)">
-    1/25
-  </button>
+    <button (click)="chooseLayers($event)" aria-label="Layers" i18n="Layers|Choose the map layers" mat-icon-button
+            matTooltip="Choisir le fond de carte"
+            matTooltipPosition="below">
+        <mat-icon class="mat-24" color="default">
+            layers
+        </mat-icon>
+    </button>
+    <button (click)="gpsMarker($event)" aria-label="Coordinates" i18n="GPG|Add GPS marker" mat-icon-button
+            matTooltip="Position GPS"
+            matTooltipPosition="below">
+        <mat-icon class="mat-24">
+            location_searching
+        </mat-icon>
+    </button>
+    <button (click)="move($event)" aria-label="Move" i18n="Move|Move the map" mat-icon-button
+            matTooltip="Déplacer la carte"
+            matTooltipPosition="below">
+        <mat-icon [style.color]="color('move')" class="mat-24">
+            zoom_out_map
+        </mat-icon>
+    </button>
+    <button (click)="zoom(25000)" aria-label="Zoom" i18n="Zoom|Zoom the map to 1/25000" mat-icon-button
+            matTooltip="Carte aux 1/25000"
+            matTooltipPosition="below">
+        1/25
+    </button>
 </mat-menu>

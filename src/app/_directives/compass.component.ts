@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { LogService } from '../_services/log.service';
-import { MapService } from '../_services/map.service';
-import { EventService } from '../_services/event.service';
-import { Events } from '../_consts/events';
+import {Component, OnInit} from '@angular/core';
+import {LogService} from '../_services/log.service';
+import {MapService} from '../_services/map.service';
+import {EventService} from '../_services/event.service';
+import {Events} from '../_consts/events';
 
 declare var $;
 
@@ -19,14 +19,15 @@ export class CompassComponent implements OnInit {
     constructor(
         private log: LogService,
         private eventService: EventService,
-        private mapService: MapService) { }
+        private mapService: MapService) {
+    }
 
     ngOnInit() {
         this.log.debug('[CompassComponent] [INIT]');
         const me = this;
         this.eventService.subscribe(Events.MAP_STATE_LOADED, (map: ol.Map) => {
             map.getView().on(Events.OL_MAP_CHANGE_ROTATION, (rotation: ol.ObjectEvent) => {
-                const degree = - Math.round((rotation.oldValue * (180 / Math.PI) * -1) + 100);
+                const degree = -Math.round((rotation.oldValue * (180 / Math.PI) * -1) + 100);
                 const rotateCSS = 'rotate(' + (degree + 90) + 'deg)';
                 $('#rotateable').css({
                     '-moz-transform': rotateCSS,
@@ -48,7 +49,7 @@ export class CompassComponent implements OnInit {
                     mouse_x = event.pageX,
                     mouse_y = event.pageY,
                     radians = Math.atan2(center_x - mouse_x, center_y - mouse_y),
-                    degree = - Math.round(radians * (180 / Math.PI));
+                    degree = -Math.round(radians * (180 / Math.PI));
                 // degree = Math.round((radians * (180 / Math.PI) * -1) + 100);
 
                 me.mapService.rotate(radians);

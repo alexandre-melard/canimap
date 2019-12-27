@@ -1,382 +1,392 @@
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
 html, body, app-canimap, app-canimap-map, .map {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 body {
-  background-image: url("../assets/carte.jpg");
-  background-size: auto;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
+    background-image: url("../assets/carte.jpg");
+    background-size: auto;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
 }
 
 .map {
-  background: white;
-  background-image: unset;
-  overflow: hidden;
+    background: white;
+    background-image: unset;
+    overflow: hidden;
 }
 
 button.mat-icon-button {
-  font-weight: bold!important;
-	outline: none;
+    font-weight: bold !important;
+    outline: none;
 }
 
 .canimap-main {
-  margin-top: 100px;
+    margin-top: 100px;
 }
 
 .col-6 {
-  background-color: rgba(255,255,255,0.8);
+    background-color: rgba(255, 255, 255, 0.8);
 }
 
 .intro {
-  width: 80%;
-  margin-top: 5%;
-  margin-left: 15%;
-  padding: 10px;
-  background-color: white;
+    width: 80%;
+    margin-top: 5%;
+    margin-left: 15%;
+    padding: 10px;
+    background-color: white;
 }
 
 .intro p, .intro h2 {
-  background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.8);
 }
 
 .brand {
-  color: rgb(224, 152, 6);
-  font: impact;
+    color: rgb(224, 152, 6);
+    font: impact;
 }
 
 .home-tab-content {
-  margin-top: 50px;
+    margin-top: 50px;
 }
 
 .mat-menu-panel {
-  border: 2px solid gray!important;
-  border-radius: 10px!important;
-  background-color: rgba(255,255,255,0.8)!important;
-  /* width:100%!important; */
-  max-width: 100%!important;
-  min-width: 0!important;
-  margin-left: 45px!important;
+    border: 2px solid gray !important;
+    border-radius: 10px !important;
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    /* width:100%!important; */
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 45px !important;
 }
 
 .mat-menu-content {
-  padding: 0!important;
-  background-color: rgba(255,255,255,0.7)!important;
+    padding: 0 !important;
+    background-color: rgba(255, 255, 255, 0.7) !important;
 }
 
 
 .menu-bar, .pac-container {
-  -moz-border-radius:10px;  /* for Firefox */
-  -webkit-border-radius:10px; /* for Webkit-Browsers */
-  border-radius:10px; /* regular */
-  background:rgba(255,255,255,0.9); /* Transparent Background 50% */
-  border: 2px solid gray;
-  float: left;
+    -moz-border-radius: 10px; /* for Firefox */
+    -webkit-border-radius: 10px; /* for Webkit-Browsers */
+    border-radius: 10px; /* regular */
+    background: rgba(255, 255, 255, 0.9); /* Transparent Background 50% */
+    border: 2px solid gray;
+    float: left;
 }
 
 .pac-logo, .pac-logo:after {
-  background-image: none;
+    background-image: none;
 }
+
 .ol-zoom {
-  top: 10px;
-  left: unset;
-  right: 10px;
+    top: 10px;
+    left: unset;
+    right: 10px;
 }
 
 .ol-scale-line {
-  left: 80px !important;
+    left: 80px !important;
 }
 
 .ol-scale-line-inner {
-  font-size: 14px !important;
+    font-size: 14px !important;
 }
 
 app-log {
-  text-align: center;
-  width: 80%;
-  position: absolute;
-  bottom: 5px;
-  left: 10%;
-  z-index: 9999;
+    text-align: center;
+    width: 80%;
+    position: absolute;
+    bottom: 5px;
+    left: 10%;
+    z-index: 9999;
 }
 
 .canimap-menu {
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  text-align: center;
-  z-index: 1000;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    text-align: center;
+    z-index: 1000;
 }
 
 .ol-popup, .ol-popup-name {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .loading {
-  visibility: hidden;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  /* bring your own prefixes */
-  transform: translate(-50%, -50%);
+    visibility: hidden;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%);
 }
 
 mat-dialog-container.mat-dialog-container {
-  background-color: rgba(255,255,255,0.9);
+    background-color: rgba(255, 255, 255, 0.9);
 }
 
 .mat-dialog-content output {
-  width: 100%;
+    width: 100%;
 }
 
 #drop_zone {
-  border: 2px dashed #bbb;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  padding: 25px;
-  margin: 10px;
-  text-align: center;
-  font: 15pt bold 'Vollkorn';
-  color: #bbb;
+    border: 2px dashed #bbb;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    padding: 25px;
+    margin: 10px;
+    text-align: center;
+    font: 15pt bold 'Vollkorn';
+    color: #bbb;
 }
 
 #drop_zone a {
-  color: blue;
-  text-decoration: underline;
-  cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .app-canimap-tooltip-help, .app-canimap-tooltip-measure {
-  position: relative;
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 4px;
-  color: white;
-  padding: 4px 8px;
-  opacity: 1;
-  white-space: nowrap;
+    position: relative;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 4px;
+    color: white;
+    padding: 4px 8px;
+    opacity: 1;
+    white-space: nowrap;
 }
 
 .app-canimap-tooltip-measure {
-  background: rgba(200, 100, 100, 0.6);
+    background: rgba(200, 100, 100, 0.6);
 }
 
 /* LOCATION */
 app-canimap-location {
-  position: absolute;
-  right: 50px;
-  top: 12px;
-  z-index: 9999;
+    position: absolute;
+    right: 50px;
+    top: 12px;
+    z-index: 9999;
 }
 
-app-canimap-location > form > input[type=search] {
-	outline: none;
+app-canimap-location > form > label > input[type=search] {
+    outline: none;
 }
 
-app-canimap-location > form > input[type=search] {
-	-webkit-appearance: textfield;
-	-webkit-box-sizing: content-box;
-	font-family: inherit;
-	font-size: 100%;
+app-canimap-location > form > label > input[type=search] {
+    -webkit-appearance: textfield;
+    -webkit-box-sizing: content-box;
+    font-family: inherit;
+    font-size: 100%;
 }
 
-app-canimap-location > form > input::-webkit-search-decoration,
-app-canimap-location > form > input::-webkit-search-cancel-button {
-	display: none;
+app-canimap-location > form > label > input::-webkit-search-decoration,
+app-canimap-location > form > label > input::-webkit-search-cancel-button {
+    display: none;
 }
 
 
-app-canimap-location > form > input[type=search] {
-  background: #ededed url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-  background-color: rgba(255,255,255,0.8);
-	border: solid 2px gray;
-	padding: 7px 32px 6px 32px;
-	width: 80px;
+app-canimap-location > form > label > input[type=search] {
+    background: #ededed url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: solid 2px gray;
+    padding: 7px 32px 6px 32px;
+    width: 80px;
 
-	-webkit-border-radius: 10em;
-	-moz-border-radius: 10em;
-	border-radius: 10em;
+    -webkit-border-radius: 10em;
+    -moz-border-radius: 10em;
+    border-radius: 10em;
 
-	-webkit-transition: all .5s;
-	-moz-transition: all .5s;
-	transition: all .5s;
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-app-canimap-location > form > input[type=search]:focus {
-	width: 250px;
-  background-color: rgba(255,255,255,0.9);
-	border-color: #66CC75;
-
-	-webkit-box-shadow: 0 0 5px rgba(109,207,246,.5);
-	-moz-box-shadow: 0 0 5px rgba(109,207,246,.5);
-	box-shadow: 0 0 5px rgba(109,207,246,.5);
+    -webkit-transition: all .5s;
+    -moz-transition: all .5s;
+    transition: all .5s;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
-app-canimap-location > form > input:-moz-placeholder {
-	color: #999;
+app-canimap-location > form > label > input[type=search]:focus {
+    width: 250px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-color: #66CC75;
+
+    -webkit-box-shadow: 0 0 5px rgba(109, 207, 246, .5);
+    -moz-box-shadow: 0 0 5px rgba(109, 207, 246, .5);
+    box-shadow: 0 0 5px rgba(109, 207, 246, .5);
 }
 
-app-canimap-location > form > input::-webkit-input-placeholder {
-	color: #999;
+app-canimap-location > form > label > input:-moz-placeholder {
+    color: #999;
+}
+
+app-canimap-location > form > label > input::-webkit-input-placeholder {
+    color: #999;
 }
 
 app-canimap-menu-mobile {
-  position: absolute;
-  right: 5px;
-  top: 10px;  
-  z-index: 9999;
+    position: absolute;
+    right: 5px;
+    top: 10px;
+    z-index: 9999;
 }
 
 .log-info {
-  background-color: rgba(0,0,0,0.6);
-  border: 1px solid rgba(255,255,255,0.4);
-  color: white;
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
 }
 
 .log-debug {
-  background-color: rgba(255,255,255,0.7);
-  border: 1px solid rgba(255,255,255,0.8);
-  color: black;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    color: black;
 }
 
 .editable-cell {
-  cursor: pointer;  
+    cursor: pointer;
 }
 
 /* OL POPUP */
 .ol-selectable {
-  user-select: text;
+    user-select: text;
 }
 
 .ol-popup, .ol-popup-name {
-  position: absolute;
-  display: none;
-  background-color: rgba(0,0,0,0.4);
-  -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
-  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid #cccccc;
-  bottom: -15px;
-  left: -49px;
-  min-width: 205px;
+    position: absolute;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.4);
+    -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #cccccc;
+    bottom: -15px;
+    left: -49px;
+    min-width: 205px;
 }
+
 .ol-popup:after, .ol-popup:before, .ol-popup-name:after, .ol-popup-name:before {
-  top: 100%;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none;
+    top: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
 }
+
 .ol-popup:after, .ol-popup-name:after {
-  border-top-color: white;
-  border-width: 10px;
-  left: 48px;
-  margin-left: -10px;
+    border-top-color: white;
+    border-width: 10px;
+    left: 48px;
+    margin-left: -10px;
 }
+
 .ol-popup:before, .ol-popup-name:before {
-  border-top-color: #cccccc;
-  border-width: 11px;
-  left: 48px;
-  margin-left: -11px;
+    border-top-color: #cccccc;
+    border-width: 11px;
+    left: 48px;
+    margin-left: -11px;
 }
+
 .ol-popup-name {
-  min-width: 100px;
-  padding: 3px;
-  border-radius: 5px;
+    min-width: 100px;
+    padding: 3px;
+    border-radius: 5px;
 }
+
 .ol-popup-closer {
-  text-decoration: none;
-  position: absolute;
-  color: white;
-  top: 2px;
-  right: 8px;
+    text-decoration: none;
+    position: absolute;
+    color: white;
+    top: 2px;
+    right: 8px;
 }
+
 a.ol-popup-closer {
-  color: white!important;
+    color: white !important;
 }
 
 .ol-popup-closer:after {
-  content: "✖";
+    content: "✖";
 }
+
 code {
-  background-color: transparent;
-  color: white;
-  cursor: text;
+    background-color: transparent;
+    color: white;
+    cursor: text;
 }
 
 /* INLINE EDITOR */
 a.c-inline-editor {
-  text-decoration: none;
-  color: #428bca;
-  border-bottom: dashed 1px #428bca;
-  cursor: pointer;
-  line-height: 2;
-  margin-right: 5px;
-  margin-left: 5px;
+    text-decoration: none;
+    color: #428bca;
+    border-bottom: dashed 1px #428bca;
+    cursor: pointer;
+    line-height: 2;
+    margin-right: 5px;
+    margin-left: 5px;
 }
+
 .c-inline-editor.editable-empty,
 .c-inline-editor.editable-empty:hover,
 .c-inline-editor.editable-empty:focus,
 .c-inline-editor.a.editable-empty,
 .c-inline-editor.a.editable-empty:hover,
 .c-inline-editor.a.editable-empty:focus {
-  font-style: italic;
-  color: #DD1144;
-  text-decoration: none;
+    font-style: italic;
+    color: #DD1144;
+    text-decoration: none;
 }
 
 .c-inline-editor.inlineEditForm {
-  display: inline-block;
-  white-space: nowrap;
-  margin: 0;
+    display: inline-block;
+    white-space: nowrap;
+    margin: 0;
 }
 
 #inlineEditWrapper {
-  display: inline-block;
+    display: inline-block;
 }
 
 .c-inline-editor.inlineEditForm input,
 .c-inline-editor.select {
-  width: 150px;
-  display: inline;
+    width: 150px;
+    display: inline;
 }
 
 .c-inline-editor.inline-editor-button-group {
-  display: inline-block;
+    display: inline-block;
 }
 
 .c-inline-editor.editInvalid {
-  color: #a94442;
-  margin-bottom: 0;
+    color: #a94442;
+    margin-bottom: 0;
 }
 
 .c-inline-editor.error {
-  border-color: #a94442;
+    border-color: #a94442;
 }
 
 [hidden].c-inline-editor {
-  display: none;
+    display: none;
 }
 
 .fa.fa-check:after {
-  content: "OK";  
+    content: "OK";
 }
 
 .fa.fa-remove:after {
-  content: "X";  
+    content: "X";
 }
 
 button.c-inline-editor {
-  padding: .5rem 0.3rem;
-  font-size: 12px;
-  line-height: 0.25;
+    padding: .5rem 0.3rem;
+    font-size: 12px;
+    line-height: 0.25;
 }

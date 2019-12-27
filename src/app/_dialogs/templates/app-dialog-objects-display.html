@@ -1,118 +1,120 @@
 <h2 mat-dialog-title>Liste des objets</h2>
 <div mat-dialog-content>
-  <mat-table #table [dataSource]="dataSource">
-    <ng-container matColumnDef="index">
-      <mat-header-cell *matHeaderCellDef> Index </mat-header-cell>
-      <mat-cell *matCellDef="let element; let i = index"> {{i}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef> Nom </mat-header-cell>
-      <mat-cell *matCellDef="let element" [satPopoverAnchorFor]="p" (click)="p.open()">
-        <ng-container *ngIf="element.name">
+    <mat-table #table [dataSource]="dataSource">
+        <ng-container matColumnDef="index">
+            <mat-header-cell *matHeaderCellDef> Index</mat-header-cell>
+            <mat-cell *matCellDef="let element; let i = index"> {{i}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef> Nom</mat-header-cell>
+            <mat-cell (click)="p.open()" *matCellDef="let element" [satPopoverAnchor]="p">
+                <ng-container *ngIf="element.name">
           <span class="editable-cell">
             {{element.name}}
           </span>
-          </ng-container>
-          <span class="editable-cell" *ngIf="!element.name">
+                </ng-container>
+                <span *ngIf="!element.name" class="editable-cell">
             nom
           </span>
-          <sat-popover #p
-              hasBackdrop
-              xAlign="start"
-              yAlign="start"
-              (closed)="update(element, 'name', $event)">
-            <app-inline-edit key="Entrez un nom pour l'objet" [value]="element.name"></app-inline-edit>
-          </sat-popover>
-      </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="position">
-      <mat-header-cell *matHeaderCellDef> Position </mat-header-cell>
-      <mat-cell *matCellDef="let element" [satPopoverAnchorFor]="p" (click)="p.open()">
-          <ng-container *ngIf="element.position">
+                <sat-popover #p
+                             (closed)="update(element, 'name', $event)"
+                             hasBackdrop
+                             xAlign="start"
+                             yAlign="start">
+                    <app-inline-edit [value]="element.name" key="Entrez un nom pour l'objet"></app-inline-edit>
+                </sat-popover>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="position">
+            <mat-header-cell *matHeaderCellDef> Position</mat-header-cell>
+            <mat-cell (click)="p.open()" *matCellDef="let element" [satPopoverAnchor]="p">
+                <ng-container *ngIf="element.position">
             <span class="editable-cell">
               {{element.position}}
             </span>
-            </ng-container>
-            <span class="editable-cell" *ngIf="!element.position">
+                </ng-container>
+                <span *ngIf="!element.position" class="editable-cell">
               position
             </span>
-            <sat-popover #p
-                hasBackdrop
-                xAlign="start"
-                yAlign="start"
-                (closed)="update(element, 'position', $event)">
-              <app-inline-edit key="Entrez la position de l'objet" [value]="element.position"></app-inline-edit>
-            </sat-popover>
-        </mat-cell> 
-    </ng-container>
-    <ng-container matColumnDef="color">
-      <mat-header-cell *matHeaderCellDef> Couleur </mat-header-cell>
-      <mat-cell *matCellDef="let element" [style.background-color]="getColor(element.color)" (click)="chooseColor(element)">&nbsp;</mat-cell>
-    </ng-container>  
-    <ng-container matColumnDef="fabric">
-      <mat-header-cell *matHeaderCellDef> Matière </mat-header-cell>
-      <mat-cell *matCellDef="let element" [satPopoverAnchorFor]="p" (click)="p.open()">
-          <ng-container *ngIf="element.fabric">
+                <sat-popover #p
+                             (closed)="update(element, 'position', $event)"
+                             hasBackdrop
+                             xAlign="start"
+                             yAlign="start">
+                    <app-inline-edit [value]="element.position" key="Entrez la position de l'objet"></app-inline-edit>
+                </sat-popover>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="color">
+            <mat-header-cell *matHeaderCellDef> Couleur</mat-header-cell>
+            <mat-cell (click)="chooseColor(element)" *matCellDef="let element"
+                      [style.background-color]="getColor(element.color)">&nbsp;
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="fabric">
+            <mat-header-cell *matHeaderCellDef> Matière</mat-header-cell>
+            <mat-cell (click)="p.open()" *matCellDef="let element" [satPopoverAnchor]="p">
+                <ng-container *ngIf="element.fabric">
             <span class="editable-cell">
               {{element.fabric}}
             </span>
-            </ng-container>
-            <span class="editable-cell" *ngIf="!element.fabric">
+                </ng-container>
+                <span *ngIf="!element.fabric" class="editable-cell">
                 matière
             </span>
-            <sat-popover #p
-                hasBackdrop
-                xAlign="start"
-                yAlign="start"
-                (closed)="update(element, 'fabric', $event)">
-              <app-inline-edit key="Entrez la matière de l'objet" [value]="element.fabric"></app-inline-edit>
-            </sat-popover>
-        </mat-cell> 
-    </ng-container>    
-    <ng-container matColumnDef="wind">
-      <mat-header-cell *matHeaderCellDef> Vent </mat-header-cell>
-      <mat-cell *matCellDef="let element" [satPopoverAnchorFor]="p" (click)="p.open()">
-          <ng-container *ngIf="element.wind">
+                <sat-popover #p
+                             (closed)="update(element, 'fabric', $event)"
+                             hasBackdrop
+                             xAlign="start"
+                             yAlign="start">
+                    <app-inline-edit [value]="element.fabric" key="Entrez la matière de l'objet"></app-inline-edit>
+                </sat-popover>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="wind">
+            <mat-header-cell *matHeaderCellDef> Vent</mat-header-cell>
+            <mat-cell (click)="p.open()" *matCellDef="let element" [satPopoverAnchor]="p">
+                <ng-container *ngIf="element.wind">
             <span class="editable-cell">
               {{element.wind}}
             </span>
-            </ng-container>
-            <span class="editable-cell" *ngIf="!element.wind">
+                </ng-container>
+                <span *ngIf="!element.wind" class="editable-cell">
                 vent
             </span>
-            <sat-popover #p
-                hasBackdrop
-                xAlign="start"
-                yAlign="start"
-                (closed)="update(element, 'wind', $event)">
-              <app-inline-edit key="Entrez le sens du vent" [value]="element.wind"></app-inline-edit>
-            </sat-popover>
-        </mat-cell> 
-    </ng-container>    
-    <ng-container matColumnDef="specificity">
-      <mat-header-cell *matHeaderCellDef> Commentaire </mat-header-cell>
-      <mat-cell *matCellDef="let element" [satPopoverAnchorFor]="p" (click)="p.open()">
-        <ng-container *ngIf="element.specificity">
+                <sat-popover #p
+                             (closed)="update(element, 'wind', $event)"
+                             hasBackdrop
+                             xAlign="start"
+                             yAlign="start">
+                    <app-inline-edit [value]="element.wind" key="Entrez le sens du vent"></app-inline-edit>
+                </sat-popover>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="specificity">
+            <mat-header-cell *matHeaderCellDef> Commentaire</mat-header-cell>
+            <mat-cell (click)="p.open()" *matCellDef="let element" [satPopoverAnchor]="p">
+                <ng-container *ngIf="element.specificity">
           <span class="editable-cell">
             {{element.specificity}}
           </span>
-        </ng-container>
-        <span class="editable-cell" *ngIf="!element.specificity">
+                </ng-container>
+                <span *ngIf="!element.specificity" class="editable-cell">
           Commentaire
         </span>
-        <sat-popover #p
-          hasBackdrop
-          xAlign="start"
-          yAlign="start"
-          (closed)="update(element, 'specificity', $event)">
-          <app-inline-edit key="Entrez un commentaire" [value]="element.specificity"></app-inline-edit>
-        </sat-popover>
-      </mat-cell> 
-    </ng-container>    
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>    
-  </mat-table>
+                <sat-popover #p
+                             (closed)="update(element, 'specificity', $event)"
+                             hasBackdrop
+                             xAlign="start"
+                             yAlign="start">
+                    <app-inline-edit [value]="element.specificity" key="Entrez un commentaire"></app-inline-edit>
+                </sat-popover>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
 </div>
 <div mat-dialog-actions>
-    <button mat-button (click)="confirm()" tabindex="-1">Ok</button>
+    <button (click)="confirm()" mat-button tabindex="-1">Ok</button>
 </div>

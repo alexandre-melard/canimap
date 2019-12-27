@@ -1,38 +1,43 @@
 ﻿<div class="container-fluid">
     <div class="row">
-      <div class="col-3"></div>
-      <div class="canimap-main col-6">
-        <h1>bonjour {{currentUser.firstName}}!</h1>
-        <p>Vous êtes bien connectés à l'application Canimap, vous pouvez aller sur
-          <a [routerLink]="['/map']">la carte</a>
-        </p>
-      </div>
+        <div class="col-3"></div>
+        <div class="canimap-main col-6">
+            <h1>bonjour {{currentUser.firstName}}!</h1>
+            <p>Vous êtes bien connectés à l'application Canimap, vous pouvez aller sur
+                <a [routerLink]="['/map']">la carte</a>
+            </p>
+        </div>
     </div>
     <div class="row">
-      <div class="col-3"></div>
-      <div class="col-6">
-        <mat-tab-group class="home-tab-group" (selectedTabChange)="change($event)">
-          <mat-tab label="Gestion de l'utilisateur">
-            <div class="home-tab-content">
-              <ul>
-                <li>Modifiez les données utilisateurs: <button mat-button routerLink="/register">Modifier</button></li>
-                <li>Pour modifier votre mot de passe, cliquez sur le lien puis sur "Mot de passe oublié?": <button mat-button (click)="resetPassword()">Reset</button></li>
-                <li>Deconnectez vous: <button mat-button (click)="logout()">Deconnexion</button></li>
-              </ul>
-            </div>
-          </mat-tab>
-          <mat-tab label="Modifications">
-            <div class="home-tab-content" id="modifications">
-              <h2>Journal des modifications</h2>
-              <hr/>
-            </div>
-          </mat-tab>
-          <mat-tab label="Paramètres">
-            <div class="home-tab-content">
-            </div>
-          </mat-tab>
-        </mat-tab-group>
-      </div>
+        <div class="col-3"></div>
+        <div class="col-6">
+            <mat-tab-group (selectedTabChange)="change($event)" class="home-tab-group">
+                <mat-tab label="Gestion de l'utilisateur">
+                    <div class="home-tab-content">
+                        <ul>
+                            <li>Modifiez les données utilisateurs:
+                                <button mat-button routerLink="/register">Modifier</button>
+                            </li>
+                            <li>Pour modifier votre mot de passe, cliquez sur le lien puis sur "Mot de passe oublié?":
+                                <button (click)="resetPassword()" mat-button>Reset</button>
+                            </li>
+                            <li>Deconnectez vous:
+                                <button (click)="logout()" mat-button>Deconnexion</button>
+                            </li>
+                        </ul>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Modifications">
+                    <div class="home-tab-content" id="modifications">
+                        <h2>Journal des modifications</h2>
+                        <hr/>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Paramètres">
+                    <div class="home-tab-content">
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
     </div>
-  </div>
-  
+</div>

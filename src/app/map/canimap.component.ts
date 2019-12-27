@@ -1,46 +1,47 @@
-﻿import { Component, OnInit, HostListener } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { UserService } from '../_services/user.service';
-import { MapService } from '../_services/map.service';
-import { DeviceDetectorService } from 'ngx-device-detector';
+﻿import {Component, HostListener, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {UserService} from '../_services/user.service';
+import {MapService} from '../_services/map.service';
+import {DeviceDetectorService} from 'ngx-device-detector';
 
 @Component({
-  selector: 'app-canimap-map',
-  templateUrl: './canimap.component.html',
-  styleUrls: ['./canimap.component.css']
+    selector: 'app-canimap-map',
+    templateUrl: './canimap.component.html',
+    styleUrls: ['./canimap.component.css']
 })
 export class CanimapComponent implements OnInit {
-  notMobile = true;
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private userService: UserService,
-    private mapService: MapService,
-    private deviceService: DeviceDetectorService
-  ) {
-    this.notMobile = !deviceService.isMobile();
-  }
+    notMobile = true;
 
-  ngOnInit(): void {
-    this.userService.currentUser()
-      .subscribe(user => {
-        if (user) {
-          this.mapService.setMapFromUserPreferences(user).subscribe(() => this.mapService.loadMap());
-        } else {
-          this.router.navigate(['/register']);
-        }
-      }, () => {
-        this.router.navigate(['/register']);
-      });
-  }
+    constructor(
+        private route: ActivatedRoute,
+        private router: Router,
+        private userService: UserService,
+        private mapService: MapService,
+        private deviceService: DeviceDetectorService
+    ) {
+        this.notMobile = !deviceService.isMobile();
+    }
 
-  @HostListener('window:beforeunload', ['$event'])
-  beforeunloadHandler(event) {
-    return false;
-  }
+    ngOnInit(): void {
+        this.userService.currentUser()
+            .subscribe(user => {
+                if (user) {
+                    this.mapService.setMapFromUserPreferences(user).subscribe(() => this.mapService.loadMap());
+                } else {
+                    this.router.navigate(['/register']);
+                }
+            }, () => {
+                this.router.navigate(['/register']);
+            });
+    }
 
-  @HostListener('window:unload', ['$event'])
-  unloadHandler(event) {
-    return false;
-  }
+    @HostListener('window:beforeunload', ['$event'])
+    beforeunloadHandler() {
+        return false;
+    }
+
+    @HostListener('window:unload', ['$event'])
+    unloadHandler() {
+        return false;
+    }
 }

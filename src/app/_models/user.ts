@@ -1,5 +1,5 @@
-﻿import { MapBox } from './mapBox';
-import { Helper } from './helper';
+﻿import {MapBox} from './mapBox';
+import {Helper} from './helper';
 
 export class User {
     _id: String;

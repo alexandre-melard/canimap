@@ -1,44 +1,53 @@
 ﻿<div class="container-fluid">
-  <div class="row">
-    <div class="col-3"></div>
-    <div class="canimap-main col-6">
-      <h1>Aide en ligne</h1>
-      <p>Veuillez trouver ci-après l'intégralité des aides disponible ne cliquant sur un icône.</p>
-      <p>Vous pouvez réactiver les aides que vous avez désactivé par erreur ici.</p>
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="canimap-main col-6">
+            <h1>Aide en ligne</h1>
+            <p>Veuillez trouver ci-après l'intégralité des aides disponible ne cliquant sur un icône.</p>
+            <p>Vous pouvez réactiver les aides que vous avez désactivé par erreur ici.</p>
+        </div>
+        <hr/>
     </div>
-    <hr/>
-  </div>
-  <div class="row">
-    <div class="col-3"></div>
-    <div class="canimap-main col-6">
-      <h2>Vidéos</h2>
-      <hr/>
-      <h3>Création d'un utilisateur</h3>
-      <iframe width="100%" height="400px" src="https://www.youtube.com/embed/rPdGc_Nl9uo" frameborder="0" allowfullscreen></iframe>
-      <h3>Modification du compte</h3>
-      <iframe width="100%" height="400px" src="https://www.youtube.com/embed/sln5NZbLCmI" frameborder="0" allowfullscreen></iframe>
-      <h3>Recherche et Coordonnées GPS</h3>
-      <iframe width="100%" height="400px" src="https://www.youtube.com/embed/8-lZU_uMTeg" frameborder="0" allowfullscreen></iframe>
-      <h3>Gestion des fonds de cartes</h3>
-      <iframe width="100%" height="400px" src="https://www.youtube.com/embed/__Cujfp-h9Y" frameborder="0" allowfullscreen></iframe>
-      <h3>Utilisation de la sourie pour naviguer sur la carte</h3>
-      <iframe width="100%" height="400px" src="https://www.youtube.com/embed/hKXQfdM8KCA" frameborder="0" allowfullscreen></iframe>
-      <h3>Tracé d'une piste</h3>
-      <iframe width="100%" height="400px" src="https://www.youtube.com/embed/OzASbLA0WFw" frameborder="0" allowfullscreen></iframe>
-      <h3>Modification et suppression du tracé</h3>
-      <iframe width="100%" height="400px" src="https://www.youtube.com/embed/dykHfWktRkI" frameborder="0" allowfullscreen></iframe>
-      <h3>Sauvegarde et chargement d'un fichier canimap Geojson</h3>
-      <iframe width="100%" height="400px" src="https://www.youtube.com/embed/oFgz_TvGyUc" frameborder="0" allowfullscreen></iframe>
-      <h3>Exemple d'une piste d'entrainement</h3>
-      <iframe width="100%" height="400px" src="https://www.youtube.com/embed/Lzcl57bkqds " frameborder="0" allowfullscreen></iframe>
-      <h2>Aides</h2>
-      <hr/>
-        <h3>Fichiers</h3>
-      <div *ngFor="let help of helps">
-        <h4>{{help.title}}</h4>
-        <div class="help" width="100%" height="100%" [innerHtml]="help.body"></div>  
-      </div>
-      <hr/>
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="canimap-main col-6">
+            <h2>Vidéos</h2>
+            <hr/>
+            <h3>Création d'un utilisateur</h3>
+            <iframe allowfullscreen frameborder="0" height="400px" src="https://www.youtube.com/embed/rPdGc_Nl9uo"
+                    width="100%"></iframe>
+            <h3>Modification du compte</h3>
+            <iframe allowfullscreen frameborder="0" height="400px" src="https://www.youtube.com/embed/sln5NZbLCmI"
+                    width="100%"></iframe>
+            <h3>Recherche et Coordonnées GPS</h3>
+            <iframe allowfullscreen frameborder="0" height="400px" src="https://www.youtube.com/embed/8-lZU_uMTeg"
+                    width="100%"></iframe>
+            <h3>Gestion des fonds de cartes</h3>
+            <iframe allowfullscreen frameborder="0" height="400px" src="https://www.youtube.com/embed/__Cujfp-h9Y"
+                    width="100%"></iframe>
+            <h3>Utilisation de la sourie pour naviguer sur la carte</h3>
+            <iframe allowfullscreen frameborder="0" height="400px" src="https://www.youtube.com/embed/hKXQfdM8KCA"
+                    width="100%"></iframe>
+            <h3>Tracé d'une piste</h3>
+            <iframe allowfullscreen frameborder="0" height="400px" src="https://www.youtube.com/embed/OzASbLA0WFw"
+                    width="100%"></iframe>
+            <h3>Modification et suppression du tracé</h3>
+            <iframe allowfullscreen frameborder="0" height="400px" src="https://www.youtube.com/embed/dykHfWktRkI"
+                    width="100%"></iframe>
+            <h3>Sauvegarde et chargement d'un fichier canimap Geojson</h3>
+            <iframe allowfullscreen frameborder="0" height="400px" src="https://www.youtube.com/embed/oFgz_TvGyUc"
+                    width="100%"></iframe>
+            <h3>Exemple d'une piste d'entrainement</h3>
+            <iframe allowfullscreen frameborder="0" height="400px" src="https://www.youtube.com/embed/Lzcl57bkqds "
+                    width="100%"></iframe>
+            <h2>Aides</h2>
+            <hr/>
+            <h3>Fichiers</h3>
+            <div *ngFor="let help of helps">
+                <h4>{{help.title}}</h4>
+                <div [innerHtml]="help.body" class="help" height="100%" width="100%"></div>
+            </div>
+            <hr/>
+        </div>
     </div>
-  </div>
 </div>

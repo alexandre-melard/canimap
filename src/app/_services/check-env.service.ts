@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { CanActivate } from '@angular/router';
-import { LogService } from '../_services/log.service';
+import {Injectable} from '@angular/core';
+import {CanActivate} from '@angular/router';
+import {LogService} from './log.service';
 
 @Injectable()
 export class CheckEnv implements CanActivate {
 
     constructor(
         private log: LogService
-    ) { }
+    ) {
+    }
 
     canActivate() {
         const currentUser = localStorage.getItem('currentUser');
