@@ -23,7 +23,7 @@ export const AUTH_CONFIG: AuthConfig = {
 };
 
 export const SETTINGS = {
-    VERSION: 'v5.3.3',
+    VERSION: 'v7.0.0',
     TRACK: {
         FREQUENCY: 5,
         COLOR: '#00F'
