@@ -1,22 +1,26 @@
 import {Events} from '../_consts/events';
-import * as ol from 'openlayers';
 import {EventService} from '../_services/event.service';
+import Map from 'ol/Map';
+import Overlay from 'ol/Overlay';
+import {transform} from 'ol/proj';
+import {toStringHDMS} from 'ol/coordinate';
+import MapBrowserEvent from 'ol/MapBrowserEvent';
 
 declare var $;
 
-export function popup(popupDom: any, overlay: any, map: ol.Map, exec: ol.EventsListenerFunctionType) {
+export function popup(popupDom: any, overlay: any, map: Map, exec) {
     $(popupDom).css('display', 'block');
     const closer = $(popupDom).find('a');
     map.once('singleclick', exec);
-    closer.on('click', (event) => {
+    closer.on('click', () => {
         overlay.setPosition(undefined);
         closer.blur();
         return false;
     });
 }
 
-function options(popupDom: any): ol.olx.OverlayOptions {
-    const opts: ol.olx.OverlayOptions = {
+function options(popupDom: any) {
+    return {
         element: popupDom,
         autoPan: true,
         offset: [0, -25],
@@ -25,17 +29,16 @@ function options(popupDom: any): ol.olx.OverlayOptions {
             source: null
         }
     };
-    return opts;
 }
 
-export function popupDMS(selector: string, map: ol.Map, eventService: EventService) {
+export function popupDMS(selector: string, map: Map, eventService: EventService) {
     const popupDom = $(selector).clone().get(0);
-    const overlay = new ol.Overlay(options(popupDom));
+    const overlay = new Overlay(options(popupDom));
     $('#map').css('cursor', 'crosshair');
-    return popup(popupDom, overlay, map, function (evt: ol.MapBrowserEvent) {
+    return popup(popupDom, overlay, map, function (evt: MapBrowserEvent) {
         map.addOverlay(overlay);
         const coordinate = evt.coordinate;
-        let hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
+        let hdms = toStringHDMS(transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
         hdms = hdms.split(' ').join('');
         hdms = hdms.replace('N', 'N ');
         hdms = hdms.replace('S', 'S ');
@@ -48,15 +51,15 @@ export function popupDMS(selector: string, map: ol.Map, eventService: EventServi
 }
 
 
-export function popupName(selector: string, map: ol.Map, eventService: EventService) {
+export function popupName(selector: string, map: Map) {
     const popupDom = $(selector).clone().get(0);
-    const overlay = new ol.Overlay(options(popupDom));
-    return popup(popupDom, overlay, map, function (evt: ol.MapBrowserEvent) {
+    const overlay = new Overlay(options(popupDom));
+    return popup(popupDom, overlay, map, function (evt: MapBrowserEvent) {
         map.addOverlay(overlay);
         const coordinate = evt.coordinate;
         const f = map.forEachFeatureAtPixel(
             evt.pixel,
-            function (ft, layer) {
+            function (ft) {
                 return ft;
             },
             {hitTolerance: 20}

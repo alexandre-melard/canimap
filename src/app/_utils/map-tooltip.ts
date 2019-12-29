@@ -3,9 +3,14 @@
  */
 import {formatLength} from './map-format-length';
 import {formatArea} from './map-format-area';
-import * as ol from 'openlayers';
-import {Feature, Map} from 'openlayers';
 import {Events} from '../_consts/events';
+import Map from 'ol/Map';
+import Polygon from 'ol/geom/Polygon';
+import LineString from 'ol/geom/LineString';
+import Point from 'ol/geom/Point';
+import Overlay from 'ol/Overlay';
+import Feature from 'ol/Feature';
+import {unByKey} from 'ol/Observable';
 
 declare var $;
 
@@ -22,17 +27,17 @@ const continuePolygonMsg = 'Cliquez pour continuer le polygone';
 const continueLineMsg = 'Cliquez pour continuer le tracé';
 
 export class Tooltip {
-    helpTooltipElement = null;
-    helpTooltip = null;
-    measureTooltipElement = null;
-    measureTooltip = null;
-    sketch = null;
-    map = null;
-    moveListenerKey = null;
+    static helpTooltipElement = null;
+    static helpTooltip = null;
+    static measureTooltipElement = null;
+    static measureTooltip = null;
+    static sketch = null;
+    static map = null;
+    static moveListenerKey = null;
 
     removePointerMoveHandler(map: Map) {
-        this.deleteTooltip(map, null, null, this.moveListenerKey);
-        this.moveListenerKey = null;
+        this.deleteTooltip(map, null, null);
+        Tooltip.moveListenerKey = null;
     }
 
     /**
@@ -48,27 +53,27 @@ export class Tooltip {
         /** @type {ol.Coordinate|undefined} */
         let tooltipCoord = evt.coordinate;
 
-        if (this.sketch) {
+        if (Tooltip.sketch) {
             let output = null;
-            const geom = this.sketch.getGeometry();
-            if (geom instanceof ol.geom.Polygon) {
-                output = formatArea(this.map.getView().getProjection(), geom);
+            const geom = Tooltip.sketch.getGeometry();
+            if (geom instanceof Polygon) {
+                output = formatArea(Tooltip.map.getView().getProjection(), geom);
                 helpMsg = continuePolygonMsg;
                 tooltipCoord = geom.getInteriorPoint().getCoordinates();
-            } else if (geom instanceof ol.geom.LineString) {
+            } else if (geom instanceof LineString) {
                 output = formatLength(geom);
                 helpMsg = continueLineMsg;
                 tooltipCoord = geom.getLastCoordinate();
-            } else if (geom instanceof ol.geom.Point) {
+            } else if (geom instanceof Point) {
                 helpMsg = 'Cliquez pour ajouter un point';
             }
             if (output) {
-                this.measureTooltipElement.innerHTML = output;
-                this.measureTooltip.setPosition(tooltipCoord);
+                Tooltip.measureTooltipElement.innerHTML = output;
+                Tooltip.measureTooltip.setPosition(tooltipCoord);
             }
         }
-        this.helpTooltipElement.innerHTML = helpMsg;
-        this.helpTooltip.setPosition(evt.coordinate);
+        Tooltip.helpTooltipElement.innerHTML = helpMsg;
+        Tooltip.helpTooltip.setPosition(evt.coordinate);
     }
 
     createTooltip(map, tooltipDom, tooltipOverlay, options) {
@@ -77,7 +82,7 @@ export class Tooltip {
         }
         tooltipDom = document.createElement('div');
         tooltipDom.className = options.class;
-        tooltipOverlay = new ol.Overlay(
+        tooltipOverlay = new Overlay(
             $.extend({element: tooltipDom}, options)
         );
         map.addOverlay(tooltipOverlay);
@@ -88,47 +93,47 @@ export class Tooltip {
      * Creates a new help tooltip
      */
     createHelpTooltip(map) {
-        const ret = this.createTooltip(map, this.helpTooltipElement, this.helpTooltip,
+        const ret = this.createTooltip(map, Tooltip.helpTooltipElement, Tooltip.helpTooltip,
             {
                 offset: [15, 0],
                 positioning: 'center-left',
                 class: 'app-canimap-tooltip-help'
             });
-        this.helpTooltip = ret.overlay;
-        this.helpTooltipElement = ret.element;
+        Tooltip.helpTooltip = ret.overlay;
+        Tooltip.helpTooltipElement = ret.element;
     }
 
     /**
      * Creates a new measure tooltip
      */
     createMeasureTooltip(map) {
-        const ret = this.createTooltip(map, this.measureTooltipElement, this.measureTooltip,
+        const ret = this.createTooltip(map, Tooltip.measureTooltipElement, Tooltip.measureTooltip,
             {
                 offset: [50, -18],
                 positioning: 'bottom-center',
                 class: 'app-canimap-tooltip-measure'
             });
-        this.measureTooltip = ret.overlay;
-        this.measureTooltipElement = ret.element;
+        Tooltip.measureTooltip = ret.overlay;
+        Tooltip.measureTooltipElement = ret.element;
     }
 
     createTooltips(map: Map, sketch?: Feature) {
         this.createMeasureTooltip(map);
         this.createHelpTooltip(map);
-        this.sketch = sketch;
-        this.map = map;
-        this.moveListenerKey = map.on(Events.OL_MAP_POINTERMOVE, this.pointerMoveHandler, this);
+        Tooltip.sketch = sketch;
+        Tooltip.map = map;
+        Tooltip.moveListenerKey = map.on(Events.OL_MAP_POINTERMOVE, this.pointerMoveHandler, this);
     }
 
-    deleteTooltip(map, tooltipDom, tooltipOverlay, moveListenerKey) {
+    deleteTooltip(map: Map, tooltipDom, tooltipOverlay) {
         if (tooltipDom) {
             tooltipDom.parentNode.removeChild(tooltipDom);
         }
         if (tooltipOverlay) {
             map.removeOverlay(tooltipOverlay);
         }
-        if (moveListenerKey) {
-            ol.Observable.unByKey(moveListenerKey);
+        if (Tooltip.moveListenerKey) {
+            unByKey(Tooltip.moveListenerKey);
         }
     }
 
@@ -136,18 +141,18 @@ export class Tooltip {
      * Creates a new help tooltip
      */
     deleteHelpTooltip(map) {
-        this.deleteTooltip(map, this.helpTooltipElement, this.helpTooltip, null);
-        this.helpTooltipElement = null;
-        this.helpTooltip = null;
+        this.deleteTooltip(map, Tooltip.helpTooltipElement, Tooltip.helpTooltip);
+        Tooltip.helpTooltipElement = null;
+        Tooltip.helpTooltip = null;
     }
 
     /**
      * Creates a new measure tooltip
      */
     deleteMeasureTooltip(map) {
-        this.deleteTooltip(map, this.measureTooltipElement, this.measureTooltip, null);
-        this.measureTooltipElement = null;
-        this.measureTooltip = null;
+        this.deleteTooltip(map, Tooltip.measureTooltipElement, Tooltip.measureTooltip);
+        Tooltip.measureTooltipElement = null;
+        Tooltip.measureTooltip = null;
     }
 
     deleteTooltips(map) {

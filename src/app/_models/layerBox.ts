@@ -1,11 +1,11 @@
-import {layer} from 'openlayers';
+import {Layer} from 'ol/layer/Layer';
 
 export class LayerBox {
     key: string;
     name: string;
-    layer: layer.Base;
+    layer: Layer;
 
-    constructor(key: string, name: string, base: layer.Base) {
+    constructor(key: string, name: string, base: Layer) {
         this.key = key;
         this.layer = base;
         this.name = name;

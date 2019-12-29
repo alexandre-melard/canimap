@@ -1,8 +1,8 @@
-import * as ol from 'openlayers';
 import {CaniDrawPoint} from './caniDrawPoint';
+import {Icon} from 'ol/style/Icon';
 
 export class CaniDrawPointMarker extends CaniDrawPoint {
-    constructor(helper: string, style?: (color?: string) => ol.olx.style.IconOptions) {
+    constructor(helper: string, style?: (color?: string) => Icon) {
         super('Marker', helper, style);
     }
 }

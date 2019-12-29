@@ -1,13 +1,16 @@
-import * as ol from 'openlayers';
 import {CaniDraw} from './caniDraw';
+import {default as GeometryType} from 'ol/geom/GeometryType';
+import {Style} from 'ol/style/Style';
+import {Fill} from 'ol/style/Fill';
+import {Stroke} from 'ol/style/Stroke';
 
-export interface CaniDrawPolygonOptions extends ol.olx.style.StyleOptions {
-    fillOptions?: ol.olx.style.FillOptions;
-    strokeOptions?: ol.olx.style.StrokeOptions;
+export interface CaniDrawPolygonOptions extends Style {
+    fill?: Fill;
+    stroke?: Stroke;
 }
 
 export class CaniDrawPolygon extends CaniDraw {
-    geometry: ol.geom.GeometryType = 'Polygon';
+    geometry = GeometryType.POLYGON;
     style: (color?: string) => CaniDrawPolygonOptions;
 
     constructor(type: string, helper: string, style?: (color?: string) => CaniDrawPolygonOptions) {

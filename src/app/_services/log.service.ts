@@ -81,7 +81,8 @@ export class LogService {
     }
 
     error(message: string, keepAfterNavigationChange = false) {
-        this.sendError(message, keepAfterNavigationChange).subscribe(() => this.success('error sent to server'));
+        this.log('error', message, keepAfterNavigationChange);
+        // this.sendError(message, keepAfterNavigationChange).subscribe(() => this.success('error sent to server'));
     }
 
     getMessage(): Observable<any> {

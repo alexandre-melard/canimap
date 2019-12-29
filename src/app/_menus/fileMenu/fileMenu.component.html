@@ -5,14 +5,14 @@
     </mat-icon>
 </button>
 <mat-menu #appMenu="matMenu" [overlapTrigger]="true">
-    <button (click)="filesOpen($event)" aria-label="Files open" i18n="Open Files|Open saved files" mat-icon-button
+    <button (click)="filesOpen()" aria-label="Files open" i18n="Open Files|Open saved files" mat-icon-button
             matTooltip="Ouvrir une ou des carte(s)"
             matTooltipPosition="below">
         <mat-icon class="mat-24">
             folder_open
         </mat-icon>
     </button>
-    <button (click)="fileSave($event)" aria-label="File save" i18n="Save|Save the map to file" mat-icon-button
+    <button (click)="fileSave()" aria-label="File save" i18n="Save|Save the map to file" mat-icon-button
             matTooltip="Enregistrer une carte"
             matTooltipPosition="below">
         <mat-icon class="mat-24">

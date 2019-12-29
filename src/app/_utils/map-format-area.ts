@@ -1,7 +1,7 @@
-import * as ol from 'openlayers';
+import {getArea} from 'ol/sphere';
 
 export function formatArea(projection, polygon) {
-    const area = ol.Sphere.getArea(polygon);
+    const area = getArea(polygon);
     let output;
     if (area > 10000) {
         output = (Math.round(area / 1000000 * 100) / 100) +

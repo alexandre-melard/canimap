@@ -3,6 +3,8 @@ import {LogService} from '../_services/log.service';
 import {MapService} from '../_services/map.service';
 import {EventService} from '../_services/event.service';
 import {Events} from '../_consts/events';
+import {Map} from 'ol/Map';
+import {default as ObjectEvent} from 'ol/ObjectEventType';
 
 declare var $;
 
@@ -25,8 +27,8 @@ export class CompassComponent implements OnInit {
     ngOnInit() {
         this.log.debug('[CompassComponent] [INIT]');
         const me = this;
-        this.eventService.subscribe(Events.MAP_STATE_LOADED, (map: ol.Map) => {
-            map.getView().on(Events.OL_MAP_CHANGE_ROTATION, (rotation: ol.ObjectEvent) => {
+        this.eventService.subscribe(Events.MAP_STATE_LOADED, (map: Map) => {
+            map.getView().on(Events.OL_MAP_CHANGE_ROTATION, (rotation: ObjectEvent) => {
                 const degree = -Math.round((rotation.oldValue * (180 / Math.PI) * -1) + 100);
                 const rotateCSS = 'rotate(' + (degree + 90) + 'deg)';
                 $('#rotateable').css({

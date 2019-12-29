@@ -1,14 +1,18 @@
-import * as ol from 'openlayers';
+import {Draw} from 'ol/interaction/Draw';
+import {Style} from 'ol/style/Style';
+
+import {GeometryType} from 'ol/geom/GeometryType';
+
 
 export class CaniDraw {
     event: string;
     type: string;
-    interaction: ol.interaction.Draw;
+    interaction: Draw;
     helper: string;
-    geometry: ol.geom.GeometryType;
-    style: Function;
+    geometry: GeometryType;
+    style: Style;
 
-    constructor(type: string, helper: string, style?: Function) {
+    constructor(type: string, helper: string, style?: Style) {
         this.event = 'draw-' + type;
         this.type = type;
         this.helper = helper;

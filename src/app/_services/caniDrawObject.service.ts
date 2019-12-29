@@ -7,15 +7,18 @@ import {DialogObjectsDisplayComponent} from '../_dialogs/objectsDisplay.componen
 import {CaniDrawObject} from '../_models/caniDrawObject';
 import {DialogObjectsAddComponent} from '../_dialogs/objectsAdd.component';
 import {Events} from '../_consts/events';
-
-import * as ol from 'openlayers';
+import Map from 'ol/Map';
+import Select from 'ol/interaction/Select';
+import Feature from 'ol/Feature';
 import {LogService} from './log.service';
+import {singleClick} from 'ol/events/condition';
+import {Event} from 'ol/interaction/Select';
 
 @Injectable()
 export class CaniDrawObjectService implements OnDestroy {
     private objects = new Array<CaniDrawObject>();
-    private map: ol.Map;
-    private selectInteraction: ol.interaction.Select;
+    private map: Map;
+    private selectInteraction: Select;
 
     constructor(
         private eventService: EventService,
@@ -24,22 +27,22 @@ export class CaniDrawObjectService implements OnDestroy {
     ) {
         const me = this;
         eventService.subscribe(Events.MAP_STATE_LOADED,
-            (map: ol.Map) => me.mapLoaded(map)
+            (map: Map) => me.mapLoaded(map)
         );
     }
 
 
-    mapLoaded(map: ol.Map) {
+    mapLoaded(map: Map) {
         const me = this;
         me.map = map;
-        me.selectInteraction = new ol.interaction.Select({
-            condition: ol.events.condition.singleClick,
-            filter: (f: ol.Feature) => {
+        me.selectInteraction = new Select({
+            condition: singleClick,
+            filter: (f: Feature) => {
                 return me.objects.find((object: CaniDrawObject) => (object.feature === f)) !== undefined;
             }
         });
         me.selectInteraction.on(Events.OL_DRAW_SELECT,
-            (event: ol.interaction.Select.Event) => {
+            (event: Event) => {
                 if (event.selected.length > 0) {
                     this.log.debug('[CaniDrawObjectService] OL_DRAW_SELECT: point click detected');
                     me.eventService.call(Events.MAP_DRAW_OBJECT_DISPLAY, null);
@@ -59,7 +62,7 @@ export class CaniDrawObjectService implements OnDestroy {
             }
         );
         this.eventService.subscribe(Events.MAP_DRAW_OBJECT_REGISTER,
-            (feature: ol.Feature) => {
+            (feature: Feature) => {
                 const properties: any = feature.getProperties();
                 const ruObject: CaniDrawObject = new CaniDrawObject();
                 ruObject.name = properties['name'];
@@ -95,7 +98,7 @@ export class CaniDrawObjectService implements OnDestroy {
         );
 
         this.eventService.subscribe(Events.MAP_DRAW_FEATURE_CREATED,
-            (data: { feature: ol.Feature, draw: any }) => {
+            (data: { feature: Feature, draw: any }) => {
                 const feature = data.feature;
                 const draw = data.draw;
                 this.log.debug('[CaniDrawObjectService] MAP_DRAW_FEATURE_CREATED');
@@ -114,7 +117,7 @@ export class CaniDrawObjectService implements OnDestroy {
         );
     }
 
-    createObject(feature: ol.Feature) {
+    createObject(feature: Feature) {
         return new Observable((observer: Observer<CaniDrawObject>) => {
             const dialogRef = this.dialog.open(DialogObjectsAddComponent, {
                 width: '800px'

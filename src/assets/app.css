@@ -390,3 +390,8 @@ button.c-inline-editor {
     font-size: 12px;
     line-height: 0.25;
 }
+.ol-attribution {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}

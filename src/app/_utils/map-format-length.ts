@@ -1,7 +1,7 @@
-import * as ol from 'openlayers';
+import {getLength} from 'ol/sphere';
 
-export function formatLength(line: ol.geom.Geometry) {
-    const length = ol.Sphere.getLength(line);
+export function formatLength(line) {
+    const length = getLength(line);
     let output;
     if (length > 1000) {
         output = (Math.round(length / 1000 * 100) / 100) +
@@ -13,6 +13,3 @@ export function formatLength(line: ol.geom.Geometry) {
     return output;
 }
 
-export function getLength(line: ol.geom.Geometry) {
-    return ol.Sphere.getLength(line);
-}

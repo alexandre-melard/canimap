@@ -3,15 +3,33 @@ import {Observable} from 'rxjs/Observable';
 import {EventService} from './event.service';
 import {UserService} from './user.service';
 import {DeviceDetectorService} from 'ngx-device-detector';
-import {LogService} from '../_services/log.service';
+import {LogService} from './log.service';
 import {MapBox} from '../_models/mapBox';
 import {LayerBox} from '../_models/layerBox';
-import {User} from '../_models/user';
-import {SETTINGS} from '../_consts/settings';
+import {User} from '../_models';
 import {Events} from '../_consts/events';
 import {popupDMS} from '../_utils/map-popup';
-
-import * as ol from 'openlayers';
+import Feature from 'ol/Feature';
+import Map from 'ol/Map';
+import Point from 'ol/geom/Point';
+import Circle from 'ol/style/Circle';
+import Fill from 'ol/style/Fill';
+import Stroke from 'ol/style/Stroke';
+import Style from 'ol/style/Style';
+import {fromLonLat, get, transform} from 'ol/proj';
+import Layer from 'ol/layer/Layer';
+import TileLayer from 'ol/layer/Tile';
+import VectorLayer from 'ol/layer/Vector';
+import BingMaps from 'ol/source/BingMaps';
+import OSM from 'ol/source/OSM';
+import WMTS from 'ol/source/WMTS';
+import XYZ from 'ol/source/XYZ';
+import VectorSource from 'ol/source/Vector';
+import {defaults as defaultsControl, ScaleLine} from 'ol/control';
+import View from 'ol/View';
+import {MapBrowserEvent} from 'ol/MapBrowserEvent';
+import {getWidth} from 'ol/extent';
+import WMTSTileGrid from 'ol/tilegrid/WMTS';
 
 declare var $;
 declare var GyroNorm;
@@ -56,7 +74,7 @@ export class MapService implements OnDestroy {
     );
     private gn: any;
     private watchPositionId: number;
-    private map: ol.Map;
+    private map: Map;
 
     constructor(
         private eventService: EventService,
@@ -70,7 +88,7 @@ export class MapService implements OnDestroy {
         this.eventService.subscribe(Events.MAP_MOVE, (
             (coords: any) => {
                 this.log.debug('[MapService] moving map to :' + JSON.stringify(coords));
-                this.map.getView().setCenter(ol.proj.fromLonLat([coords.lng, coords.lat]));
+                this.map.getView().setCenter(fromLonLat([coords.lng, coords.lat]));
                 this.map.getView().setZoom(18);
                 if (coords.success) {
                     coords.success();
@@ -117,7 +135,6 @@ export class MapService implements OnDestroy {
             const me = this;
             me.gn.init({frequency: 50, orientationBase: GyroNorm.GAME}).then(function () {
                 me.gn.start(function (event) {
-                    event.do.alpha = event.do.alpha;
                     const alpha = event.do.alpha * Math.PI * 2 / 360;
                     me.log.info(`a: ${event.do.alpha}`, true);
                     me.map.getView().setRotation(initialAngle + alpha);
@@ -128,22 +145,22 @@ export class MapService implements OnDestroy {
 
     addMarker(coords) {
         this.log.debug('[MapService] adding marker to :' + JSON.stringify(coords));
-        const iconFeature = new ol.Feature({
-            geometry: new ol.geom.Point(ol.proj.fromLonLat([coords.lng, coords.lat])),
+        const iconFeature = new Feature({
+            geometry: new Point(fromLonLat([coords.lng, coords.lat])),
         });
-        iconFeature.setStyle(new ol.style.Style({
-            image: new ol.style.Circle({
+        iconFeature.setStyle(new Style({
+            image: new Circle({
                 radius: 10,
-                stroke: new ol.style.Stroke({
+                stroke: new Stroke({
                     color: 'purple',
                     width: 2
                 }),
-                fill: new ol.style.Fill({
+                fill: new Fill({
                     color: 'rgba(255,0,0,0.5)'
                 })
             })
         }));
-        this.map.addLayer(new ol.layer.Vector({source: new ol.source.Vector({features: [iconFeature]})}));
+        this.map.addLayer(new VectorLayer({source: new VectorSource({features: [iconFeature]})}));
     }
 
     gpsMarker() {
@@ -157,7 +174,7 @@ export class MapService implements OnDestroy {
     }
 
     setMapFromUserPreferences(user: User): Observable<any> {
-        const observable = new Observable((observer) => {
+        return new Observable((observer) => {
             if (user.mapBoxes) {
                 user.mapBoxes.forEach(m => {
                     const layerBox = this.layerBoxes.find(l => m.key === l.key);
@@ -177,23 +194,22 @@ export class MapService implements OnDestroy {
             }
             observer.next();
         });
-        return observable;
     }
 
     loadMap() {
-        const map = new ol.Map({
+        const map = new Map({
             target: 'map',
-            controls: ol.control.defaults({
-                attributionOptions: /** @type {ol.control.AttributionOptions} */ {
+            controls: defaultsControl({
+                attributionOptions: {
                     collapsible: false
                 }
             }).extend([
-                new ol.control.ScaleLine()
+                new ScaleLine()
             ]),
             loadTilesWhileAnimating: false,
-            view: new ol.View({
+            view: new View({
                 zoom: 15,
-                center: ol.proj.transform([5.347022, 45.419364], 'EPSG:4326', 'EPSG:3857')
+                center: transform([5.347022, 45.419364], 'EPSG:4326', 'EPSG:3857')
             })
         });
 
@@ -201,7 +217,7 @@ export class MapService implements OnDestroy {
          * Rustine, permet d'eviter les cartes blanches sur mobile en attendant de trouver la vrai raison
          */
         if (this.deviceService.isMobile) {
-            map.on(Events.OL_MAP_POSTRENDER, (event: ol.MapBrowserEvent) => {
+            map.on(Events.OL_MAP_POSTRENDER, (event: MapBrowserEvent) => {
                 const canva = document.getElementsByTagName('canvas')[0];
                 const reload = document.location.href.endsWith('map') && canva && canva.style.display === 'none';
                 if (reload) {
@@ -239,12 +255,12 @@ export class MapService implements OnDestroy {
     }
 
     getBingLayer(key: string, type: string, opacity: number, visible: boolean) {
-        const l = new ol.layer.Tile(
+        const l = new TileLayer(
             {
                 visible: visible,
                 opacity: opacity,
                 preload: Infinity,
-                source: new ol.source.BingMaps({
+                source: new BingMaps({
                     key: 'AkI1BkPAQ-KOw7uZLelGWgLQ5Vbxq7-5K8p-2oMsMuboW8wGBMKA6T63GJ1nJVFK',
                     imagerySet: type
                 })
@@ -254,14 +270,13 @@ export class MapService implements OnDestroy {
     }
 
     getGoogleLayer(key: string, type: string, opacity: number, visible: boolean) {
-        const l = new ol.layer.Tile(
+        const l = new TileLayer(
             {
                 visible: visible,
                 opacity: opacity,
                 preload: Infinity,
-                source: new ol.source.XYZ({
-                    url: `https://mt0.google.com/vt/lyrs=${type}&hl=en&x={x}&y={y}&z={z}&s=Ga`,
-                    attributions: SETTINGS.VERSION
+                source: new XYZ({
+                    url: `https://mt0.google.com/vt/lyrs=${type}&hl=en&x={x}&y={y}&z={z}&s=Ga`
                 })
             });
         l.set('id', key);
@@ -269,30 +284,28 @@ export class MapService implements OnDestroy {
     }
 
     getOsmLayer(key: string, opacity: number, visible: boolean) {
-        const l = new ol.layer.Tile(
+        const l = new TileLayer(
             {
                 visible: visible,
                 opacity: opacity,
-                source: new ol.source.OSM(
-                    {attributions: SETTINGS.VERSION}
-                )
+                source: new OSM()
             });
         l.set('id', key);
         return l;
     }
 
-    getIgnLayer(key: string, type: string, opacity: number, visible: boolean): ol.layer.Base {
+    getIgnLayer(key: string, type: string, opacity: number, visible: boolean): Layer {
         const resolutions = [];
         const matrixIds = [];
-        const proj3857 = ol.proj.get('EPSG:3857');
-        const maxResolution = ol.extent.getWidth(proj3857.getExtent()) / 256;
+        const proj3857 = get('EPSG:3857');
+        const maxResolution = getWidth(proj3857.getExtent()) / 256;
 
         for (let i = 0; i < 18; i++) {
             matrixIds[i] = i.toString();
             resolutions[i] = maxResolution / Math.pow(2, i);
         }
 
-        const tileGrid = new ol.tilegrid.WMTS({
+        const tileGrid = new WMTSTileGrid({
             origin: [-20037508, 20037508],
             resolutions: resolutions,
             matrixIds: matrixIds
@@ -302,7 +315,7 @@ export class MapService implements OnDestroy {
         // Expiration date is 06/29/2018.
         const apiKey = '6i88pkdxubzayoady4upbkjg';
 
-        const ign_source = new ol.source.WMTS({
+        const ign_source = new WMTS({
             url: 'https://wxs.ign.fr/' + apiKey + '/wmts',
             layer: type,
             matrixSet: 'PM',
@@ -310,13 +323,13 @@ export class MapService implements OnDestroy {
             projection: 'EPSG:3857',
             tileGrid: tileGrid,
             style: 'normal',
-            attributions: SETTINGS.VERSION + ' <a href="http://www.geoportail.fr/" target="_blank">' +
+            attributions: '<a href="http://www.geoportail.fr/" target="_blank">' +
                 '<img src="https://api.ign.fr/geoportail/api/js/latest/' +
-                'theme/geoportal/img/logo_gp.gif"></a>',
+                'theme/geoportal/img/logo_gp.gif" alt="ign"></a>',
             crossOrigin: ''
         });
 
-        const ign = new ol.layer.Tile({
+        const ign = new TileLayer({
             opacity: opacity,
             visible: visible,
             source: ign_source
@@ -324,16 +337,6 @@ export class MapService implements OnDestroy {
         ign.set('id', key);
 
         return ign;
-    }
-
-    getLayer(map: ol.Map, id): ol.layer.Base {
-        let layer;
-        map.getLayers().forEach(function (lyr) {
-            if (id === lyr.get('id')) {
-                layer = lyr;
-            }
-        });
-        return layer;
     }
 
     saveOpacity() {

@@ -12,6 +12,7 @@ import {LocationService} from './_services/location.service';
 import {LogService} from './_services/log.service';
 import {MapService} from './_services/map.service';
 import {UserService} from './_services/user.service';
+import {SETTINGS} from './_consts/settings';
 
 @Component({
     moduleId: module.id.toString(),
@@ -23,6 +24,7 @@ import {UserService} from './_services/user.service';
 export class AppComponent {
     google_api = environment.google;
     google_src = 'https://www.googletagmanager.com/gtag/js?id=' + this.google_api;
+    version: any = SETTINGS.VERSION;
 
     constructor(
         private authService: AuthService,

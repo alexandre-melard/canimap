@@ -5,32 +5,51 @@ import {CaniDraw} from '../_models/caniDraw';
 import {Tooltip} from '../_utils/map-tooltip';
 import {drawInteractions} from '../_consts/drawings';
 import {SETTINGS} from '../_consts/settings';
-import {styleFunction} from '../_utils/map-style';
 import {CaniDrawObject} from '../_models/caniDrawObject';
-import {LogService} from '../_services/log.service';
+import {LogService} from './log.service';
 import {formatLength} from '../_utils/map-format-length';
 import {Events} from '../_consts/events';
 import {writeScaleToCanvas} from '../_utils/write-scale-to-canvas';
 import {randomColor} from 'randomcolor';
 import {popupName} from '../_utils/map-popup';
 
-import * as ol from 'openlayers';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
+import Modify from 'ol/interaction/Modify';
+import Select from 'ol/interaction/Select';
+import Snap from 'ol/interaction/Snap';
+import Map from 'ol/Map';
+import LineString from 'ol/geom/LineString';
+import Draw, {createBox, Event} from 'ol/interaction/Draw';
+import Feature from 'ol/Feature';
+import GeoJSON from 'ol/format/GeoJSON';
+import KML from 'ol/format/KML';
+import GPX from 'ol/format/GPX';
+import Circle from 'ol/geom/Circle';
+import RenderEvent from 'ol/render/Event';
+import MultiLineString from 'ol/geom/MultiLineString';
+import {transform} from 'ol/proj';
+import Point from 'ol/geom/Point';
+import MapBrowserEvent from 'ol/MapBrowserEvent';
+import {feature2json} from '../_utils/convert-feature-json';
+import {json2feature} from '../_utils/convert-json-feature';
+import {convertFromLegacy} from '../_utils/convert-json-from-legacy';
 
 declare var $;
 
 @Injectable()
 export class DrawService implements OnDestroy {
-    vector: ol.layer.Vector;
-    source: ol.source.Vector;
-    modify: ol.interaction.Modify;
-    select: ol.interaction.Select;
-    delete: ol.interaction.Select;
-    snap: ol.interaction.Snap;
+    vector: VectorLayer;
+    source: VectorSource;
+    modify: Modify;
+    select: Select;
+    delete: Select;
+    snap: Snap;
     tooltip = new Tooltip();
     public color = undefined;
-    private map: ol.Map;
+    private map: Map;
     private watchId;
-    private track: ol.geom.LineString;
+    private track: LineString;
 
     constructor(
         private eventService: EventService,
@@ -39,7 +58,7 @@ export class DrawService implements OnDestroy {
     ) {
         const me = this;
         this.eventService.subscribe(Events.MAP_STATE_LOADED,
-            (map: ol.Map) => {
+            (map: Map) => {
                 me.mapLoaded(map);
             }
         );
@@ -49,13 +68,15 @@ export class DrawService implements OnDestroy {
     }
 
     configureFeature(draw: CaniDraw) {
-        draw.interaction.on(Events.OL_DRAW_START, (event: ol.interaction.Draw.Event) => {
-            this.tooltip.sketch = event.feature;
+        draw.interaction.on(Events.OL_DRAW_START, (event: Event) => {
+            Tooltip.sketch = event.feature;
         });
-        draw.interaction.on(Events.OL_DRAW_END, (event: ol.interaction.Draw.Event) => {
+        draw.interaction.on(Events.OL_DRAW_END, (event: Event) => {
             const feature = event.feature;
-            feature.set('style', draw.style(this.color));
-            this.tooltip.sketch = null;
+            feature.setStyle(draw.style(this.color));
+            feature.set('type', draw.type);
+            feature.set('color', this.color);
+            Tooltip.sketch = null;
             this.tooltip.resetTooltips(this.map);
             this.eventService.call(Events.MAP_STATE_MOVE);
             this.eventService.call(Events.MAP_DRAW_FEATURE_CREATED, {feature: feature, draw: draw});
@@ -69,33 +90,32 @@ export class DrawService implements OnDestroy {
         });
     }
 
-    mapLoaded(map: ol.Map) {
+    mapLoaded(map: Map) {
         const me = this;
-        this.source = new ol.source.Vector({wrapX: false});
-        this.vector = new ol.layer.Vector({
+        this.source = new VectorSource({wrapX: false});
+        this.vector = new VectorLayer({
             source: this.source,
-            style: styleFunction,
             map: map
         });
         drawInteractions.forEach((drawInteraction) => {
-            const options: ol.olx.interaction.DrawOptions = {
+            const options = {
                 source: this.source,
                 type: drawInteraction.geometry,
             };
             if (drawInteraction.type === 'Rectangle') {
-                options.geometryFunction = ol.interaction.Draw.createBox();
+                options['geometryFunction'] = createBox();
             } else {
             }
-            drawInteraction.interaction = new ol.interaction.Draw(options);
+            drawInteraction.interaction = new Draw(options);
             this.configureFeature(drawInteraction);
             map.addInteraction(drawInteraction.interaction);
             drawInteraction.interaction.setActive(false);
         });
 
-        this.select = new ol.interaction.Select();
+        this.select = new Select();
         map.addInteraction(this.select);
         this.select.setActive(false);
-        this.select.on(Events.OL_DRAW_SELECT, (selectEvent: ol.interaction.Select.Event) => {
+        this.select.on(Events.OL_DRAW_SELECT, (selectEvent: Select.Event) => {
             const selected = selectEvent.selected;
             $(document).keydown((e) => {
                 if (e.which === 46) {
@@ -106,20 +126,20 @@ export class DrawService implements OnDestroy {
             });
         });
 
-        this.delete = new ol.interaction.Select();
+        this.delete = new Select();
         map.addInteraction(this.delete);
         this.delete.setActive(false);
         const deletedFeatures = this.delete.getFeatures();
         this.delete.on(Events.OL_MAP_CHANGE_ACTIVE, () => {
             deletedFeatures.forEach(deletedFeatures.remove, deletedFeatures);
         });
-        this.delete.on(Events.OL_DRAW_SELECT, (selectEvent: ol.interaction.Select.Event) => {
+        this.delete.on(Events.OL_DRAW_SELECT, (selectEvent: Select.Event) => {
             while (selectEvent.selected.length > 0) {
                 this.source.removeFeature(selectEvent.selected.pop());
             }
         });
 
-        this.modify = new ol.interaction.Modify({
+        this.modify = new Modify({
             features: this.select.getFeatures()
         });
         map.addInteraction(this.modify);
@@ -128,7 +148,7 @@ export class DrawService implements OnDestroy {
         // The snap interaction must be added after the Modify and Draw interactions
         // in order for its map browser event handlers to be fired first. Its handlers
         // are responsible of doing the snapping.
-        this.snap = new ol.interaction.Snap({
+        this.snap = new Snap({
             source: this.vector.getSource()
         });
         map.addInteraction(this.snap);
@@ -167,54 +187,26 @@ export class DrawService implements OnDestroy {
         );
         this.eventService.subscribe(Events.MAP_DRAW_JSON_LAYERS_ADD,
             (file: any) => {
+                this.log.debug('[DrawService] MAP_DRAW_JSON_LAYERS_ADD: importing json as draw');
                 const fileName = file.fileName;
                 const json = JSON.parse(file.content);
-                let features = new Array<ol.Feature>();
-                this.log.debug('[DrawService] MAP_DRAW_JSON_LAYERS_ADD: importing json as draw');
-                let i = 0;
-                const toDelete = new Array();
-                json.features.forEach((f) => {
-                    if (f.geometry.type === 'Circle') {
-                        const feature = new ol.Feature(new ol.geom.Circle(f.geometry.coordinates.center, f.geometry.coordinates.radius));
-                        feature.set('style', f.properties.style);
-                        features.push(feature);
-                        toDelete.push(i);
-                    }
-                    i++;
-                });
-                // Delete circles features
-                while (toDelete.length > 0) {
-                    json.features.splice(toDelete.pop(), 1);
-                }
-
-                const geojsonFormat = new ol.format.GeoJSON();
-                features = features.concat(geojsonFormat.readFeatures(json));
-                features.forEach((f: ol.Feature) => {
-                    const properties = f.getProperties();
-                    let lStyle;
-                    drawInteractions.forEach((draw) => {
-                        if (
-                            (draw.type === f.getGeometry().getType())
-                            ||
-                            (properties.style.type && (draw.type === properties.style.type))) {
-                            lStyle = properties.style;
-                        }
-                    });
-                    f.set('style', lStyle);
-                    if ((f.getGeometry().getType() === 'Point') && f.getProperties().type && (f.getProperties().type === 'RuObject')) {
+                json.features.forEach(f => {
+                    f = convertFromLegacy(f);
+                    const feature = json2feature(f);
+                    feature.set('fileName', fileName.slice(0, -8));
+                    me.source.addFeature(feature);
+                    if (f.properties.type && (f.properties.type === 'RuObject')) {
                         this.log.debug('[DrawService] MAP_DRAW_JSON_LAYERS_ADD: found object');
                         me.eventService.call(Events.MAP_DRAW_OBJECT_REGISTER, f);
                     }
-                    f.set('fileName', fileName.slice(0, -8));
                 });
-                me.source.addFeatures(features);
                 me.map.getView().fit(me.source.getExtent());
             }
         );
         this.eventService.subscribe(Events.MAP_DRAW_KML_EXPORT,
             (success: Function) => {
                 this.log.debug('[DrawService] MAP_DRAW_KML_EXPORT: converting drawings to KML');
-                const kmlFormat = new ol.format.KML();
+                const kmlFormat = new KML();
                 const kml = kmlFormat.writeFeatures(me.source.getFeatures(),
                     {
                         dataProjection: 'EPSG:4326',
@@ -226,7 +218,7 @@ export class DrawService implements OnDestroy {
         this.eventService.subscribe(Events.MAP_DRAW_GPX_EXPORT,
             (success: Function) => {
                 this.log.debug('[DrawService] MAP_DRAW_GPX_EXPORT: converting drawings to GPX');
-                const gpxFormat = new ol.format.GPX();
+                const gpxFormat = new GPX();
                 const gpx = gpxFormat.writeFeatures(me.source.getFeatures(),
                     {
                         dataProjection: 'EPSG:4326',
@@ -238,29 +230,18 @@ export class DrawService implements OnDestroy {
         this.eventService.subscribe(Events.MAP_DRAW_GEO_JSON_EXPORT,
             (success: Function) => {
                 this.log.debug('[DrawService] MAP_DRAW_GEO_JSON_EXPORT: converting drawings to geoJson');
-                const geojsonFormat = new ol.format.GeoJSON();
-                const jsonStr = geojsonFormat.writeFeatures(me.source.getFeatures());
-                const json = JSON.parse(jsonStr);
-                const circles = json.features.filter((f) => (f.properties.style.type === 'Circle'));
-                const featCircles = me.source.getFeatures().filter((f) => (f.getGeometry().getType() === 'Circle'));
-                const coords = new Array();
-                featCircles.map((f) => coords.push(
-                    {
-                        center: (<ol.geom.Circle>f.getGeometry()).getCenter(),
-                        radius: (<ol.geom.Circle>f.getGeometry()).getRadius()
-                    }
-                ));
-                let i;
-                for (i = 0; i < featCircles.length; i++) {
-                    circles[i].geometry = {type: 'Circle', coordinates: coords[i]};
-                }
+                const json: { type, features } = {
+                    type: 'FeatureCollection',
+                    features: []
+                };
+                me.source.getFeatures().forEach(f => json.features.push(feature2json(f)));
                 success(JSON.stringify(json));
             }
         );
         this.eventService.subscribe(Events.MAP_DRAW_PNG_EXPORT,
             (success: Function) => {
                 this.log.debug('[DrawService] MAP_DRAW_PNG_EXPORT: converting drawings to png');
-                me.map.once('postcompose', function (event: ol.render.Event) {
+                me.map.once('postcompose', function (event: RenderEvent) {
                     let canvas = event.context.canvas;
                     canvas.setAttribute('crossOrigin', 'anonymous');
                     const olscale = $('.ol-scale-line-inner');
@@ -285,23 +266,23 @@ export class DrawService implements OnDestroy {
                 let f;
                 switch (gps.type) {
                     case 'gpx':
-                        f = new ol.format.GPX();
+                        f = new GPX();
                         break;
                     case 'kml':
-                        f = new ol.format.KML();
+                        f = new KML();
                         break;
                 }
                 const features = f.readFeatures(gps.content, {dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'});
-                features.forEach((feature: ol.Feature) => {
+                features.forEach((feature: Feature) => {
                     const lStyle = drawInteractions.find((draw) => (draw.type === 'LineStringGps')).style;
                     if (feature.getGeometry().getType() === 'MultiLineString') {
-                        (<ol.geom.MultiLineString>feature.getGeometry()).getLineStrings().forEach((lineStringGeom: ol.geom.LineString) => {
-                            const feat = new ol.Feature(lineStringGeom);
-                            feat.set('style', lStyle(this.color ? this.color : randomColor()));
+                        (<MultiLineString>feature.getGeometry()).getLineStrings().forEach((lineStringGeom: LineString) => {
+                            const feat = new Feature(lineStringGeom);
+                            feat.setStyle(lStyle(this.color ? this.color : randomColor()));
                             me.source.addFeature(feat);
                         });
                     } else {
-                        feature.set('style', lStyle(this.color ? this.color : randomColor()));
+                        feature.setStyle(lStyle(this.color ? this.color : randomColor()));
                         me.source.addFeature(feature);
                     }
                     if ((feature.getGeometry().getType() === 'Point') && feature.getProperties().type &&
@@ -324,7 +305,7 @@ export class DrawService implements OnDestroy {
                             this.log.debug('[DrawService] MAP_DRAW_TRACK_RECORD: ' + position.coords);
                             const lat = position.coords.latitude;
                             const lng = position.coords.longitude;
-                            const coords = ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:3857');
+                            const coords = transform([lng, lat], 'EPSG:4326', 'EPSG:3857');
                             me.map.getView().setCenter(coords);
 
                             // We skip the first coordinates as it's always the last known position and not always right
@@ -332,15 +313,15 @@ export class DrawService implements OnDestroy {
                                 first = false;
                             } else {
                                 if (!me.track) {
-                                    me.track = new ol.geom.LineString([coords]);
+                                    me.track = new LineString([coords]);
                                     const lStyle = drawInteractions.find((draw) => (draw.type === 'LineStringGps')).style;
-                                    const feature = new ol.Feature({geometry: me.track});
-                                    feature.set('style', lStyle(SETTINGS.TRACK.COLOR));
+                                    const feature = new Feature({geometry: me.track});
+                                    feature.setStyle(lStyle(SETTINGS.TRACK.COLOR));
                                     me.source.addFeature(feature);
                                 } else {
                                     const coordinates = me.track.getCoordinates();
                                     const lastCoordinates = coordinates[coordinates.length - 1];
-                                    let tmpLine = new ol.geom.LineString([lastCoordinates, coords]);
+                                    let tmpLine = new LineString([lastCoordinates, coords]);
                                     if (tmpLine.getLength() > SETTINGS.TRACK.FREQUENCY) {
                                         coordinates.push(coords);
                                         me.track.setCoordinates(coordinates);
@@ -370,12 +351,12 @@ export class DrawService implements OnDestroy {
                     this.log.debug('[DrawService] MAP_DRAW_OBJECT_ADD: ' + position.coords);
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
-                    const coords = ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:3857');
+                    const coords = transform([lng, lat], 'EPSG:4326', 'EPSG:3857');
                     me.map.getView().setCenter(coords);
-                    const feature = new ol.Feature(new ol.geom.Point(coords));
+                    const feature = new Feature(new Point(coords));
                     this.caniDrawObjectService.createObject(feature).subscribe((object: CaniDrawObject) => {
                         const lStyle = drawInteractions.find((drawInteraction) => drawInteraction.type === object.type).style;
-                        feature.set('style', lStyle(this.color));
+                        feature.setStyle(lStyle(this.color));
                         this.source.addFeature(feature);
                     });
                 });
@@ -386,8 +367,8 @@ export class DrawService implements OnDestroy {
             () => {
                 this.log.debug('[DrawService] MAP_DRAW_NAME_DISPLAY_SUBSCRIBE: subscribe display name on track');
                 if (!drawNameDisplayKey) {
-                    drawNameDisplayKey = me.map.on('click', function (evt: ol.MapBrowserEvent) {
-                        popupName('.ol-popup-name', me.map, me.eventService);
+                    drawNameDisplayKey = me.map.on('click', function (evt: MapBrowserEvent) {
+                        popupName('.ol-popup-name', me.map);
                     });
                 }
             }
@@ -396,7 +377,7 @@ export class DrawService implements OnDestroy {
             () => {
                 this.log.debug('[DrawService] MAP_DRAW_NAME_DISPLAY_UNSUBSCRIBE: unsubscribe display name on track');
                 if (drawNameDisplayKey) {
-                    ol.Map.unByKey(drawNameDisplayKey);
+                    Map.unByKey(drawNameDisplayKey);
                 }
                 me.eventService.call(Events.MAP_STATE_MOVE);
             }
@@ -412,7 +393,7 @@ export class DrawService implements OnDestroy {
         this.tooltip.deleteTooltips(this.map);
     }
 
-    getDrawInteraction(type: string): ol.interaction.Draw {
+    getDrawInteraction(type: string): Draw {
         return drawInteractions.find((drawInteraction) => drawInteraction.type === type).interaction;
     }
 
