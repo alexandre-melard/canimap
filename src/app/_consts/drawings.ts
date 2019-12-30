@@ -15,7 +15,6 @@ import Text from 'ol/style/Text';
 import Feature from 'ol/Feature';
 import LineString from 'ol/geom/LineString';
 import {formatLength} from '../_utils/map-format-length';
-import {getLength} from 'ol/sphere';
 import Point from 'ol/geom/Point';
 
 function getTextColor(color: string) {
@@ -66,11 +65,13 @@ function getArrowLineStyle(color: string) {
     return (feature: Feature, resolution: number) => {
         const styles = new Array<Style>();
         styles.push(formatText(feature, color));
-        let frequency = 25;
-        const geometry: LineString = <LineString>feature.getGeometry();
-        const length = getLength(geometry);
+        let frequency = 50;
+        const geometry: LineString = feature.getGeometry();
+        const length = geometry.getLength();
         let cursor = 0, segments = 0;
-        geometry.forEachSegment(() => ++segments);
+        geometry.forEachSegment(() => {
+            ++segments;
+        });
         frequency = Math.ceil((frequency * resolution) / (length / segments));
         geometry.forEachSegment((start, end) => {
             if ((++cursor % frequency) !== 0) {
